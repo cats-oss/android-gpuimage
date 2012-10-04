@@ -16,4 +16,6 @@ Copy the the following files/folders to your projects libs folder.
 * bin/gpuimage.jar
 
 ## Create libs/armeabi
-    
+Run the following command in the library folder. Make sure you have android-ndk in your PATH.
+
+    ndk-build
