@@ -22,7 +22,6 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
 
 @TargetApi(11)
 public class GPUImageRenderer implements Renderer, PreviewCallback {
@@ -133,7 +132,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
-        Log.i("ASDF", "Angle: " + camera.getParameters().getVerticalViewAngle());
         final Size previewSize = camera.getParameters().getPreviewSize();
         if (mGLRgbBuffer == null) {
             mGLRgbBuffer = IntBuffer.allocate(previewSize.width * previewSize.height);

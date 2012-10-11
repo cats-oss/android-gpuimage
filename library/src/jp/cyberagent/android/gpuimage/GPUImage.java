@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import jp.cyberagent.android.gpuimage.GPUImageRenderer.Rotation;
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
@@ -14,11 +16,14 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -60,6 +65,27 @@ public class GPUImage {
     public void requestRender() {
         if (mGlSurfaceView != null) {
             mGlSurfaceView.requestRender();
+        }
+    }
+
+    public void setUpCamera(final Camera camera) {
+        mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            setUpCameraGingerbread(camera);
+        } else {
+            camera.setPreviewCallback(mRenderer);
+            camera.startPreview();
+        }
+        mRenderer.setRotation(Rotation.RIGHT);
+    }
+
+    @TargetApi(11)
+    private void setUpCameraGingerbread(final Camera camera) {
+        try {
+            mRenderer.setUpSurfaceTexture(camera);
+            camera.setPreviewTexture(new SurfaceTexture(0));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -194,6 +220,7 @@ public class GPUImage {
         private final int mMaxWidth;
         private final int mMaxHeight;
 
+        @SuppressWarnings("deprecation")
         public SetImageTask(final GPUImage gpuImage, final File file) {
             mImageFile = file;
             mGPUImage = gpuImage;
