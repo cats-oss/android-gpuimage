@@ -121,7 +121,8 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     @Override
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
             final FloatBuffer textureBuffer, final ShortBuffer indexBuffer) {
-        if (mFrameBuffers == null || mFrameBufferTextures == null) {
+        runPendingOnDrawTasks();
+        if (!isInitialized() || mFrameBuffers == null || mFrameBufferTextures == null) {
             return;
         }
         int previousTexture = textureId;

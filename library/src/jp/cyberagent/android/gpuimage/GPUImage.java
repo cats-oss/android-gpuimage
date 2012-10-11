@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 
 import jp.cyberagent.android.gpuimage.GPUImageRenderer.Rotation;
 import android.annotation.TargetApi;
@@ -16,7 +17,6 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
@@ -81,17 +81,13 @@ public class GPUImage {
 
     @TargetApi(11)
     private void setUpCameraGingerbread(final Camera camera) {
-        try {
-            mRenderer.setUpSurfaceTexture(camera);
-            camera.setPreviewTexture(new SurfaceTexture(0));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mRenderer.setUpSurfaceTexture(camera);
     }
 
     public void setFilter(final GPUImageFilter filter) {
         mFilter = filter;
         mRenderer.setFilter(mFilter);
+        requestRender();
     }
 
     public void setImage(final Bitmap bitmap) {
@@ -123,29 +119,38 @@ public class GPUImage {
         return path;
     }
 
-    public Bitmap getBitmapWithFilterApplied() {
+    public Bitmap getBitmapWithFilterApplied(final Bitmap bitmap) {
         mRenderer.deleteImage();
+        final Semaphore lock = new Semaphore(0);
         mRenderer.runOnDraw(new Runnable() {
 
             @Override
             public void run() {
                 mFilter.onDestroy();
+                lock.release();
             }
         });
         requestRender();
 
+        try {
+            lock.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         GPUImageRenderer renderer = new GPUImageRenderer(mFilter);
-        PixelBuffer buffer = new PixelBuffer(mCurrentBitmap.getWidth(),
-                mCurrentBitmap.getHeight());
+        PixelBuffer buffer = new PixelBuffer(bitmap.getWidth(), bitmap.getHeight());
         buffer.setRenderer(renderer);
-        renderer.setImageBitmap(mCurrentBitmap, false);
+        renderer.setImageBitmap(bitmap, false);
         Bitmap result = buffer.getBitmap();
         mFilter.onDestroy();
         renderer.deleteImage();
         buffer.destroy();
 
         mRenderer.setFilter(mFilter);
-        mRenderer.setImageBitmap(mCurrentBitmap, false);
+        if (mCurrentBitmap != null) {
+            mRenderer.setImageBitmap(mCurrentBitmap, false);
+        }
         requestRender();
 
         return result;
@@ -153,18 +158,25 @@ public class GPUImage {
 
     public void saveToPictures(final String folderName, final String fileName,
             final OnPictureSavedListener listener) {
-        new SaveTask(folderName, fileName, listener).execute();
+        saveToPictures(mCurrentBitmap, folderName, fileName, listener);
+    }
+
+    public void saveToPictures(final Bitmap bitmap, final String folderName, final String fileName,
+            final OnPictureSavedListener listener) {
+        new SaveTask(bitmap, folderName, fileName, listener).execute();
     }
 
     private class SaveTask extends AsyncTask<Void, Void, Void> {
 
+        private final Bitmap mBitmap;
         private final String mFolderName;
         private final String mFileName;
         private final OnPictureSavedListener mListener;
         private final Handler mHandler;
 
-        public SaveTask(final String folderName, final String fileName,
+        public SaveTask(final Bitmap bitmap, final String folderName, final String fileName,
                 final OnPictureSavedListener listener) {
+            mBitmap = bitmap;
             mFolderName = folderName;
             mFileName = fileName;
             mListener = listener;
@@ -173,7 +185,7 @@ public class GPUImage {
 
         @Override
         protected Void doInBackground(final Void... params) {
-            Bitmap result = getBitmapWithFilterApplied();
+            Bitmap result = getBitmapWithFilterApplied(mBitmap);
             saveImage(mFolderName, mFileName, result);
             return null;
         }
