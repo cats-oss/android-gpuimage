@@ -2,10 +2,9 @@
 package jp.cyberagent.android.gpuimage.sample.activity;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 
 import jp.cyberagent.android.gpuimage.GPUImage;
+import jp.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
@@ -16,13 +15,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,7 +27,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
 
 public class ActivityGallery extends Activity implements OnSeekBarChangeListener,
-        OnClickListener {
+        OnClickListener, OnPictureSavedListener {
 
     private static final int REQUEST_PICK_IMAGE = 1;
     private GPUImageFilter mFilter;
@@ -94,8 +90,14 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
 
     }
 
+    @Override
+    public void onPictureSaved(final Uri uri) {
+        Toast.makeText(this, "Saved: " + uri.toString(), Toast.LENGTH_SHORT).show();
+    }
+
     private void saveImage() {
-        new SaveTask().execute();
+        String fileName = System.currentTimeMillis() + ".jpg";
+        mGPUImage.saveToPictures("GPUImage", fileName, this);
     }
 
     private void switchFilterTo(final GPUImageFilter filter) {
@@ -160,45 +162,6 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
         protected void onPostExecute(final Bitmap result) {
             super.onPostExecute(result);
             mGPUImage.setImage(result);
-        }
-    }
-
-    private class SaveTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            Bitmap result = mGPUImage.getBitmapWithFilterApplied();
-            String fileName = System.currentTimeMillis() + ".jpg";
-            saveImage("GPUImage", fileName, result);
-            return null;
-        }
-
-        private void saveImage(final String folderName, final String fileName, final Bitmap image) {
-            File path = Environment
-                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            File file = new File(path, folderName + "/" + fileName);
-            try {
-                file.getParentFile().mkdirs();
-                image.compress(CompressFormat.JPEG, 80, new FileOutputStream(file));
-                MediaScannerConnection.scanFile(ActivityGallery.this,
-                        new String[] {
-                            file.toString()
-                        }, null,
-                        new MediaScannerConnection.OnScanCompletedListener() {
-                            @Override
-                            public void onScanCompleted(final String path, final Uri uri) {
-                            }
-                        });
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(final Void result) {
-            super.onPostExecute(result);
-            Toast.makeText(ActivityGallery.this, "Image saved", Toast.LENGTH_SHORT)
-                    .show();
         }
     }
 }

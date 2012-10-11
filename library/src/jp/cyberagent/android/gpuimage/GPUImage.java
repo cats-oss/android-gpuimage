@@ -1,12 +1,22 @@
 
 package jp.cyberagent.android.gpuimage;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
+import android.os.AsyncTask;
+import android.os.Environment;
+import android.os.Handler;
 
 public class GPUImage {
     private final GLSurfaceView mGlSurfaceView;
@@ -81,5 +91,67 @@ public class GPUImage {
         mGlSurfaceView.requestRender();
 
         return result;
+    }
+
+    public void saveToPictures(final String folderName, final String fileName,
+            final OnPictureSavedListener listener) {
+        new SaveTask(folderName, fileName, listener).execute();
+    }
+
+    private class SaveTask extends AsyncTask<Void, Void, Void> {
+
+        private final String mFolderName;
+        private final String mFileName;
+        private final OnPictureSavedListener mListener;
+        private final Handler mHandler;
+
+        public SaveTask(final String folderName, final String fileName,
+                final OnPictureSavedListener listener) {
+            mFolderName = folderName;
+            mFileName = fileName;
+            mListener = listener;
+            mHandler = new Handler();
+        }
+
+        @Override
+        protected Void doInBackground(final Void... params) {
+            Bitmap result = getBitmapWithFilterApplied();
+            saveImage(mFolderName, mFileName, result);
+            return null;
+        }
+
+        private void saveImage(final String folderName, final String fileName, final Bitmap image) {
+            File path = Environment
+                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            File file = new File(path, folderName + "/" + fileName);
+            try {
+                file.getParentFile().mkdirs();
+                image.compress(CompressFormat.JPEG, 80, new FileOutputStream(file));
+                MediaScannerConnection.scanFile(mGlSurfaceView.getContext(),
+                        new String[] {
+                            file.toString()
+                        }, null,
+                        new MediaScannerConnection.OnScanCompletedListener() {
+                            @Override
+                            public void onScanCompleted(final String path, final Uri uri) {
+                                if (mListener != null) {
+                                    mHandler.post(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            mListener.onPictureSaved(uri);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public interface OnPictureSavedListener {
+        void onPictureSaved(Uri uri);
     }
 }
