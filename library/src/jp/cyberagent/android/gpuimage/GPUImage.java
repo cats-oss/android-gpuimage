@@ -4,19 +4,27 @@ package jp.cyberagent.android.gpuimage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.view.Display;
+import android.view.WindowManager;
 
 public class GPUImage {
     private final GLSurfaceView mGlSurfaceView;
@@ -63,6 +71,25 @@ public class GPUImage {
     private void setImage(final Bitmap bitmap, final boolean recycle) {
         mRenderer.setImageBitmap(bitmap, recycle);
         mGlSurfaceView.requestRender();
+    }
+
+    public void setImage(final Uri uri) {
+        new ShowImage(this, new File(getPath(uri))).execute();
+    }
+
+    private String getPath(final Uri uri) {
+        String[] projection = {
+                MediaStore.Images.Media.DATA,
+        };
+        Cursor cursor = mGlSurfaceView.getContext().getContentResolver()
+                .query(uri, projection, null, null, null);
+        int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        String path = null;
+        if (cursor.moveToFirst()) {
+            path = cursor.getString(pathIndex);
+        }
+        cursor.close();
+        return path;
     }
 
     public Bitmap getBitmapWithFilterApplied() {
@@ -153,5 +180,121 @@ public class GPUImage {
 
     public interface OnPictureSavedListener {
         void onPictureSaved(Uri uri);
+    }
+
+    private class ShowImage extends AsyncTask<Void, Void, Bitmap> {
+
+        private final GPUImage mGPUImage;
+        private final File mImageFile;
+        private final int mMaxWidth;
+        private final int mMaxHeight;
+
+        public ShowImage(final GPUImage gpuImage, final File file) {
+            mImageFile = file;
+            mGPUImage = gpuImage;
+
+            WindowManager windowManager = (WindowManager) mGlSurfaceView.getContext()
+                    .getSystemService(Context.WINDOW_SERVICE);
+            Display display = windowManager.getDefaultDisplay();
+            mMaxWidth = display.getWidth();
+            mMaxHeight = display.getHeight();
+        }
+
+        @Override
+        protected Bitmap doInBackground(final Void... params) {
+            return loadResizedImage(mImageFile);
+        }
+
+        @Override
+        protected void onPostExecute(final Bitmap result) {
+            super.onPostExecute(result);
+            mGPUImage.setImage(result);
+        }
+
+        private Bitmap loadResizedImage(final File imageFile) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+            int scale = 1;
+            while (options.outWidth / scale > mMaxWidth || options.outHeight / scale > mMaxHeight) {
+                scale++;
+            }
+            Bitmap bitmap = null;
+            Bitmap scaledBitmap = null;
+            if (scale > 1) {
+                scale--;
+                options = new BitmapFactory.Options();
+                options.inSampleSize = scale;
+                options.inPreferredConfig = Bitmap.Config.RGB_565;
+                options.inPurgeable = true;
+                options.inTempStorage = new byte[32 * 1024];
+                bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+                if (bitmap == null) {
+                    return null;
+                }
+
+                // resize to desired dimensions
+                int width = bitmap.getWidth();
+                int height = bitmap.getHeight();
+                double newWidth;
+                double newHeight;
+                if ((double) width / mMaxWidth < (double) height / mMaxHeight) {
+                    newHeight = mMaxHeight;
+                    newWidth = (newHeight / height) * width;
+                } else {
+                    newWidth = mMaxWidth;
+                    newHeight = (newWidth / width) * height;
+                }
+
+                scaledBitmap = Bitmap.createScaledBitmap(bitmap, Math.round((float) newWidth),
+                        Math.round((float) newHeight), true);
+                bitmap.recycle();
+                bitmap = scaledBitmap;
+
+                System.gc();
+            } else {
+                bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+            }
+
+            return rotateImage(bitmap, imageFile);
+        }
+
+        private Bitmap rotateImage(final Bitmap bitmap, final File fileWithExifInfo) {
+            if (bitmap == null) {
+                return null;
+            }
+            Bitmap rotatedBitmap = bitmap;
+            int orientation = 0;
+            try {
+                orientation = getImageOrientation(fileWithExifInfo.getAbsolutePath());
+                if (orientation != 0) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(orientation);
+                    rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                            bitmap.getHeight(), matrix, true);
+                    bitmap.recycle();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return rotatedBitmap;
+        }
+
+        private int getImageOrientation(final String file) throws IOException {
+            ExifInterface exif = new ExifInterface(file);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_NORMAL:
+                    return 0;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return 270;
+                default:
+                    return 0;
+            }
+        }
     }
 }

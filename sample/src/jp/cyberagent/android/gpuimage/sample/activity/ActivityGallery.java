@@ -1,25 +1,18 @@
 
 package jp.cyberagent.android.gpuimage.sample.activity;
 
-import java.io.File;
-
 import jp.cyberagent.android.gpuimage.GPUImage;
 import jp.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFilterChosenListener;
-import jp.cyberagent.android.gpuimage.sample.ImageUtils;
 import jp.cyberagent.android.gpuimage.sample.R;
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.SeekBar;
@@ -126,42 +119,6 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
     }
 
     private void handleImage(final Uri selectedImage) {
-        new ShowImage(new File(getPath(selectedImage))).execute();
-    }
-
-    private String getPath(final Uri uri) {
-        String[] projection = {
-                MediaStore.Images.Media.DATA,
-        };
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        String path = null;
-        if (cursor.moveToFirst()) {
-            path = cursor.getString(pathIndex);
-        }
-        cursor.close();
-        return path;
-    }
-
-    private class ShowImage extends AsyncTask<Void, Void, Bitmap> {
-
-        private final File mImageFile;
-
-        public ShowImage(final File file) {
-            mImageFile = file;
-        }
-
-        @Override
-        protected Bitmap doInBackground(final Void... params) {
-            int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
-            int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
-            return ImageUtils.loadResizedImageMax(mImageFile, screenWidth, screenHeight);
-        }
-
-        @Override
-        protected void onPostExecute(final Bitmap result) {
-            super.onPostExecute(result);
-            mGPUImage.setImage(result);
-        }
+        mGPUImage.setImage(selectedImage);
     }
 }
