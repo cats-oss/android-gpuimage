@@ -65,18 +65,22 @@ public class GPUImageFilterGroup extends GPUImageFilter {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         destroyFramebuffers();
         for (GPUImageFilter filter : mFilters) {
             filter.onDestroy();
         }
+        super.onDestroy();
     }
 
     private void destroyFramebuffers() {
-        GLES20.glDeleteTextures(mFrameBufferTextures.length, mFrameBufferTextures, 0);
-        mFrameBufferTextures = null;
-        GLES20.glDeleteFramebuffers(mFrameBuffers.length, mFrameBuffers, 0);
-        mFrameBuffers = null;
+        if (mFrameBufferTextures != null) {
+            GLES20.glDeleteTextures(mFrameBufferTextures.length, mFrameBufferTextures, 0);
+            mFrameBufferTextures = null;
+        }
+        if (mFrameBuffers != null) {
+            GLES20.glDeleteFramebuffers(mFrameBuffers.length, mFrameBuffers, 0);
+            mFrameBuffers = null;
+        }
     }
 
     @Override
@@ -117,7 +121,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     @Override
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
             final FloatBuffer textureBuffer, final ShortBuffer indexBuffer) {
-        if (mFrameBuffers == null) {
+        if (mFrameBuffers == null || mFrameBufferTextures == null) {
             return;
         }
         int previousTexture = textureId;

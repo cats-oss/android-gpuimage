@@ -109,10 +109,23 @@ public class PixelBuffer {
             return null;
         }
 
-        // Call the renderer draw routine
+        // Call the renderer draw routine (it seems that some filters do not
+        // work if this is only called once)
+        mRenderer.onDrawFrame(mGL);
         mRenderer.onDrawFrame(mGL);
         convertToBitmap();
         return mBitmap;
+    }
+
+    public void destroy() {
+        mRenderer.onDrawFrame(mGL);
+        mRenderer.onDrawFrame(mGL);
+        mEGL.eglMakeCurrent(mEGLDisplay, EGL10.EGL_NO_SURFACE,
+                EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+
+        mEGL.eglDestroySurface(mEGLDisplay, mEGLSurface);
+        mEGL.eglDestroyContext(mEGLDisplay, mEGLContext);
+        mEGL.eglTerminate(mEGLDisplay);
     }
 
     private EGLConfig chooseConfig() {

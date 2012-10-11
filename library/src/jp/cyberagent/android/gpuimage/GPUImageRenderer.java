@@ -176,12 +176,12 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     }
 
     public void setFilter(final GPUImageFilter filter) {
-        final GPUImageFilter oldFilter = mFilter;
-        mFilter = filter;
         runOnDraw(new Runnable() {
 
             @Override
             public void run() {
+                final GPUImageFilter oldFilter = mFilter;
+                mFilter = filter;
                 if (oldFilter != null) {
                     oldFilter.onDestroy();
                 }

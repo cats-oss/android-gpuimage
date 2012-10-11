@@ -5,19 +5,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import jp.cyberagent.android.gpuimage.GPUImage;
 import jp.cyberagent.android.gpuimage.GPUImageFilter;
-import jp.cyberagent.android.gpuimage.GPUImageRenderer;
-import jp.cyberagent.android.gpuimage.PixelBuffer;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 import jp.cyberagent.android.gpuimage.sample.ImageUtils;
 import jp.cyberagent.android.gpuimage.sample.R;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ConfigurationInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -38,42 +34,23 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
         OnClickListener {
 
     private static final int REQUEST_PICK_IMAGE = 1;
-    private GLSurfaceView mGLSurfaceView;
     private GPUImageFilter mFilter;
     private FilterAdjuster mFilterAdjuster;
-    private GPUImageRenderer mRenderer;
-    private Bitmap mCurrentBitmap;
+    private GPUImage mGPUImage;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-        mGLSurfaceView = (GLSurfaceView) findViewById(R.id.surfaceView);
         ((SeekBar) findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
+        findViewById(R.id.button_choose_filter).setOnClickListener(this);
+        findViewById(R.id.button_save).setOnClickListener(this);
 
-        // Check if the system supports OpenGL ES 2.0.
-        final ActivityManager activityManager = (ActivityManager)
-                getSystemService(Context.ACTIVITY_SERVICE);
-        final ConfigurationInfo configurationInfo =
-                activityManager.getDeviceConfigurationInfo();
-        final boolean supportsEs2 = configurationInfo.reqGlEsVersion >=
-                0x20000;
-        if (supportsEs2) {
-            // Handle if not supported?
-        }
-
-        mFilter = new GPUImageFilter();
-        mRenderer = new GPUImageRenderer(mFilter);
-        mGLSurfaceView.setEGLContextClientVersion(2);
-        mGLSurfaceView.setRenderer(mRenderer);
-        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        mGLSurfaceView.requestRender();
+        mGPUImage = new GPUImage(this, (GLSurfaceView) findViewById(R.id.surfaceView));
 
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, REQUEST_PICK_IMAGE);
-        findViewById(R.id.button_choose_filter).setOnClickListener(this);
-        findViewById(R.id.button_save).setOnClickListener(this);
     }
 
     @Override
@@ -102,7 +79,7 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
                     @Override
                     public void onGpuImageFilterChosenListener(final GPUImageFilter filter) {
                         switchFilterTo(filter);
-                        mGLSurfaceView.requestRender();
+                        mGPUImage.requestRender();
                     }
 
                 });
@@ -125,7 +102,7 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
         if (mFilter == null
                 || (filter != null && !mFilter.getClass().equals(filter.getClass()))) {
             mFilter = filter;
-            mRenderer.setFilter(mFilter);
+            mGPUImage.setFilter(mFilter);
             mFilterAdjuster = new FilterAdjuster(mFilter);
         }
     }
@@ -135,7 +112,7 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
         if (mFilterAdjuster != null) {
             mFilterAdjuster.adjust(progress);
         }
-        mGLSurfaceView.requestRender();
+        mGPUImage.requestRender();
     }
 
     @Override
@@ -182,27 +159,15 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
         @Override
         protected void onPostExecute(final Bitmap result) {
             super.onPostExecute(result);
-            mRenderer.setImageBitmap(result, false);
-            mGLSurfaceView.requestRender();
-            mCurrentBitmap = result;
+            mGPUImage.setImage(result);
         }
     }
 
     private class SaveTask extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
         protected Void doInBackground(final Void... params) {
-            GPUImageRenderer renderer = new GPUImageRenderer(mFilter);
-            PixelBuffer buffer = new PixelBuffer(mCurrentBitmap.getWidth(),
-                    mCurrentBitmap.getHeight());
-            buffer.setRenderer(renderer);
-            renderer.setImageBitmap(mCurrentBitmap, false);
-            Bitmap result = buffer.getBitmap();
+            Bitmap result = mGPUImage.getBitmapWithFilterApplied();
             String fileName = System.currentTimeMillis() + ".jpg";
             saveImage("GPUImage", fileName, result);
             return null;
@@ -232,10 +197,6 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
         @Override
         protected void onPostExecute(final Void result) {
             super.onPostExecute(result);
-            mRenderer.deleteImage();
-            mRenderer.setFilter(mFilter);
-            mRenderer.setImageBitmap(mCurrentBitmap, false);
-            mGLSurfaceView.requestRender();
             Toast.makeText(ActivityGallery.this, "Image saved", Toast.LENGTH_SHORT)
                     .show();
         }
