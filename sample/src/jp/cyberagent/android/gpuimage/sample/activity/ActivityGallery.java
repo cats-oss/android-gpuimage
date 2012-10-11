@@ -35,7 +35,8 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
         findViewById(R.id.button_choose_filter).setOnClickListener(this);
         findViewById(R.id.button_save).setOnClickListener(this);
 
-        mGPUImage = new GPUImage(this, (GLSurfaceView) findViewById(R.id.surfaceView));
+        mGPUImage = new GPUImage(this);
+        mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
 
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");

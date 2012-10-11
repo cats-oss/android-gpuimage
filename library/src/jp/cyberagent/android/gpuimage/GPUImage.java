@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
@@ -27,17 +26,16 @@ import android.view.Display;
 import android.view.WindowManager;
 
 public class GPUImage {
-    private final GLSurfaceView mGlSurfaceView;
+    private final Context mContext;
     private final GPUImageRenderer mRenderer;
+    private GLSurfaceView mGlSurfaceView;
     private GPUImageFilter mFilter;
     private Bitmap mCurrentBitmap;
 
-    public GPUImage(final Activity activity, final GLSurfaceView glSurfaceView) {
-        mGlSurfaceView = glSurfaceView;
-
+    public GPUImage(final Context context) {
         // Check if the system supports OpenGL ES 2.0.
         final ActivityManager activityManager = (ActivityManager)
-                activity.getSystemService(Context.ACTIVITY_SERVICE);
+                context.getSystemService(Context.ACTIVITY_SERVICE);
         final ConfigurationInfo configurationInfo =
                 activityManager.getDeviceConfigurationInfo();
         final boolean supportsEs2 = configurationInfo.reqGlEsVersion >=
@@ -46,8 +44,13 @@ public class GPUImage {
             throw new IllegalStateException("OpenGL ES 2.0 is not supported on this phone.");
         }
 
+        mContext = context;
         mFilter = new GPUImageFilter();
         mRenderer = new GPUImageRenderer(mFilter);
+    }
+
+    public void setGLSurfaceView(final GLSurfaceView view) {
+        mGlSurfaceView = view;
         mGlSurfaceView.setEGLContextClientVersion(2);
         mGlSurfaceView.setRenderer(mRenderer);
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -55,7 +58,9 @@ public class GPUImage {
     }
 
     public void requestRender() {
-        mGlSurfaceView.requestRender();
+        if (mGlSurfaceView != null) {
+            mGlSurfaceView.requestRender();
+        }
     }
 
     public void setFilter(final GPUImageFilter filter) {
@@ -70,18 +75,18 @@ public class GPUImage {
 
     private void setImage(final Bitmap bitmap, final boolean recycle) {
         mRenderer.setImageBitmap(bitmap, recycle);
-        mGlSurfaceView.requestRender();
+        requestRender();
     }
 
     public void setImage(final Uri uri) {
-        new ShowImage(this, new File(getPath(uri))).execute();
+        new SetImageTask(this, new File(getPath(uri))).execute();
     }
 
     private String getPath(final Uri uri) {
         String[] projection = {
                 MediaStore.Images.Media.DATA,
         };
-        Cursor cursor = mGlSurfaceView.getContext().getContentResolver()
+        Cursor cursor = mContext.getContentResolver()
                 .query(uri, projection, null, null, null);
         int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         String path = null;
@@ -115,7 +120,7 @@ public class GPUImage {
 
         mRenderer.setFilter(mFilter);
         mRenderer.setImageBitmap(mCurrentBitmap, false);
-        mGlSurfaceView.requestRender();
+        requestRender();
 
         return result;
     }
@@ -154,7 +159,7 @@ public class GPUImage {
             try {
                 file.getParentFile().mkdirs();
                 image.compress(CompressFormat.JPEG, 80, new FileOutputStream(file));
-                MediaScannerConnection.scanFile(mGlSurfaceView.getContext(),
+                MediaScannerConnection.scanFile(mContext,
                         new String[] {
                             file.toString()
                         }, null,
@@ -182,19 +187,19 @@ public class GPUImage {
         void onPictureSaved(Uri uri);
     }
 
-    private class ShowImage extends AsyncTask<Void, Void, Bitmap> {
+    private class SetImageTask extends AsyncTask<Void, Void, Bitmap> {
 
         private final GPUImage mGPUImage;
         private final File mImageFile;
         private final int mMaxWidth;
         private final int mMaxHeight;
 
-        public ShowImage(final GPUImage gpuImage, final File file) {
+        public SetImageTask(final GPUImage gpuImage, final File file) {
             mImageFile = file;
             mGPUImage = gpuImage;
 
-            WindowManager windowManager = (WindowManager) mGlSurfaceView.getContext()
-                    .getSystemService(Context.WINDOW_SERVICE);
+            WindowManager windowManager =
+                    (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
             Display display = windowManager.getDefaultDisplay();
             mMaxWidth = display.getWidth();
             mMaxHeight = display.getHeight();
