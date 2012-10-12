@@ -84,8 +84,8 @@ public class GPUImageSharpenFilter extends GPUImageFilter {
     @Override
     public void onOutputSizeChanged(final int width, final int height) {
         super.onOutputSizeChanged(width, height);
-        GLES20.glUniform1f(mImageWidthFactorLocation, 1.0f / width);
-        GLES20.glUniform1f(mImageHeightFactorLocation, 1.0f / height);
+        setFloat(mImageWidthFactorLocation, 1.0f / width);
+        setFloat(mImageHeightFactorLocation, 1.0f / height);
     }
 
     public void setSharpness(final float sharpness) {
