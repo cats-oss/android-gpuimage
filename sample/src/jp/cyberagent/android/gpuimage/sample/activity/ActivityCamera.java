@@ -78,19 +78,8 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
                 break;
 
             case R.id.button_capture:
-                Camera.Size size = mCamera.mCameraInstance.getParameters().getPictureSize();
-                Log.i("ASDF", size.width + "x" + size.height);
-                // TODO get a size that is about the size of the screen
-                Camera.Parameters params = mCamera.mCameraInstance.getParameters();
-                params.setPictureSize(1280, 960);
-                params.setRotation(90);
-                mCamera.mCameraInstance.setParameters(params);
-                for (Camera.Size size2 : mCamera.mCameraInstance.getParameters()
-                        .getSupportedPictureSizes()) {
-                    Log.i("ASDF", "Supported: " + size2.width + "x" + size2.height);
-                }
-
-                if (params.getFocusMode().equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
+                        Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
                     takePicture();
                 } else {
                     mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
@@ -106,6 +95,15 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     }
 
     private void takePicture() {
+        // TODO get a size that is about the size of the screen
+        Camera.Parameters params = mCamera.mCameraInstance.getParameters();
+        params.setPictureSize(1280, 960);
+        params.setRotation(90);
+        mCamera.mCameraInstance.setParameters(params);
+        for (Camera.Size size2 : mCamera.mCameraInstance.getParameters()
+                .getSupportedPictureSizes()) {
+            Log.i("ASDF", "Supported: " + size2.width + "x" + size2.height);
+        }
         mCamera.mCameraInstance.takePicture(null, null,
                 new Camera.PictureCallback() {
 
