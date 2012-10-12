@@ -89,57 +89,66 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
                         .getSupportedPictureSizes()) {
                     Log.i("ASDF", "Supported: " + size2.width + "x" + size2.height);
                 }
-                mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
+
+                if (params.getFocusMode().equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                    takePicture();
+                } else {
+                    mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
+
+                        @Override
+                        public void onAutoFocus(final boolean success, final Camera camera) {
+                            takePicture();
+                        }
+                    });
+                }
+                break;
+        }
+    }
+
+    private void takePicture() {
+        mCamera.mCameraInstance.takePicture(null, null,
+                new Camera.PictureCallback() {
 
                     @Override
-                    public void onAutoFocus(final boolean success, final Camera camera) {
-                        mCamera.mCameraInstance.takePicture(null, null,
-                                new Camera.PictureCallback() {
+                    public void onPictureTaken(byte[] data, final Camera camera) {
+
+                        final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+                        if (pictureFile == null) {
+                            Log.d("ASDF",
+                                    "Error creating media file, check storage permissions");
+                            return;
+                        }
+
+                        try {
+                            FileOutputStream fos = new FileOutputStream(pictureFile);
+                            fos.write(data);
+                            fos.close();
+                        } catch (FileNotFoundException e) {
+                            Log.d("ASDF", "File not found: " + e.getMessage());
+                        } catch (IOException e) {
+                            Log.d("ASDF", "Error accessing file: " + e.getMessage());
+                        }
+
+                        data = null;
+                        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile
+                                .getAbsolutePath());
+                        // mGPUImage.setImage(bitmap);
+                        final GLSurfaceView view = (GLSurfaceView) findViewById(R.id.surfaceView);
+                        view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+                        mGPUImage.saveToPictures(bitmap, "GPUImage",
+                                System.currentTimeMillis() + ".jpg",
+                                new OnPictureSavedListener() {
 
                                     @Override
-                                    public void onPictureTaken(byte[] data, final Camera camera) {
-
-                                        final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-                                        if (pictureFile == null) {
-                                            Log.d("ASDF",
-                                                    "Error creating media file, check storage permissions");
-                                            return;
-                                        }
-
-                                        try {
-                                            FileOutputStream fos = new FileOutputStream(pictureFile);
-                                            fos.write(data);
-                                            fos.close();
-                                        } catch (FileNotFoundException e) {
-                                            Log.d("ASDF", "File not found: " + e.getMessage());
-                                        } catch (IOException e) {
-                                            Log.d("ASDF", "Error accessing file: " + e.getMessage());
-                                        }
-
-                                        data = null;
-                                        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile
-                                                .getAbsolutePath());
-                                        // mGPUImage.setImage(bitmap);
-                                        final GLSurfaceView view = (GLSurfaceView) findViewById(R.id.surfaceView);
-                                        view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-                                        mGPUImage.saveToPictures(bitmap, "GPUImage",
-                                                System.currentTimeMillis() + ".jpg",
-                                                new OnPictureSavedListener() {
-
-                                                    @Override
-                                                    public void onPictureSaved(final Uri
-                                                            uri) {
-                                                        pictureFile.delete();
-                                                        camera.startPreview();
-                                                        view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-                                                    }
-                                                });
+                                    public void onPictureSaved(final Uri
+                                            uri) {
+                                        pictureFile.delete();
+                                        camera.startPreview();
+                                        view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
                                     }
                                 });
                     }
                 });
-                break;
-        }
     }
 
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -211,7 +220,10 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
             // TODO adjust by getting supportedPreviewSizes and then choosing
             // the best one for screen size (best fill screen)
             parameters.setPreviewSize(720, 480);
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            if (parameters.getSupportedFocusModes().contains(
+                    Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            }
             mCameraInstance.setParameters(parameters);
 
             mGPUImage.setUpCamera(mCameraInstance);
