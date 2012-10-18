@@ -10,6 +10,16 @@ import android.hardware.Camera.CameraInfo;
 public class CameraHelperGB implements CameraHelperImpl {
 
     @Override
+    public int getNumberOfCameras() {
+        return Camera.getNumberOfCameras();
+    }
+
+    @Override
+    public Camera openCamera(final int id) {
+        return Camera.open(id);
+    }
+
+    @Override
     public Camera openDefaultCamera() {
         return Camera.open(0);
     }
@@ -20,7 +30,7 @@ public class CameraHelperGB implements CameraHelperImpl {
     }
 
     @Override
-    public Camera openCamera(final int facing) {
+    public Camera openCameraFacing(final int facing) {
         return Camera.open(getCameraId(facing));
     }
 

@@ -35,6 +35,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         OnClickListener {
 
     private GPUImage mGPUImage;
+    private CameraHelper mCameraHelper;
     private CameraLoader mCamera;
     private GPUImageFilter mFilter;
     private FilterAdjuster mFilterAdjuster;
@@ -50,7 +51,14 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         mGPUImage = new GPUImage(this);
         mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
 
+        mCameraHelper = new CameraHelper(this);
         mCamera = new CameraLoader();
+
+        View cameraSwitchView = findViewById(R.id.img_switch_camera);
+        cameraSwitchView.setOnClickListener(this);
+        if (!mCameraHelper.hasFrontCamera() || !mCameraHelper.hasBackCamera()) {
+            cameraSwitchView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -91,6 +99,10 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
                         }
                     });
                 }
+                break;
+
+            case R.id.img_switch_camera:
+                mCamera.switchCamera();
                 break;
         }
     }
@@ -211,11 +223,25 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     }
 
     private class CameraLoader {
-        private final CameraHelper mCameraHelper = new CameraHelper(ActivityCamera.this);
+        private int mCurrentCameraId = 0;
         private Camera mCameraInstance;
 
         public void onResume() {
-            mCameraInstance = getCameraInstance();
+            setUpCamera(mCurrentCameraId);
+        }
+
+        public void onPause() {
+            releaseCamera();
+        }
+
+        public void switchCamera() {
+            releaseCamera();
+            mCurrentCameraId = (mCurrentCameraId + 1) % mCameraHelper.getNumberOfCameras();
+            setUpCamera(mCurrentCameraId);
+        }
+
+        private void setUpCamera(final int id) {
+            mCameraInstance = getCameraInstance(id);
             Parameters parameters = mCameraInstance.getParameters();
             // TODO adjust by getting supportedPreviewSizes and then choosing
             // the best one for screen size (best fill screen)
@@ -229,23 +255,21 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
             mGPUImage.setUpCamera(mCameraInstance);
         }
 
-        public void onPause() {
-            mCameraInstance.setPreviewCallback(null);
-            mCameraInstance.release();
-            mCameraInstance = null;
-        }
-
         /** A safe way to get an instance of the Camera object. */
-        private Camera getCameraInstance() {
+        private Camera getCameraInstance(final int id) {
             Camera c = null;
             try {
-                // TODO allow opening front view camera with open(int) if exists
-                // Camera.getNumberOfCameras()
-                c = mCameraHelper.openDefaultCamera();
+                c = mCameraHelper.openCamera(id);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return c;
+        }
+
+        private void releaseCamera() {
+            mCameraInstance.setPreviewCallback(null);
+            mCameraInstance.release();
+            mCameraInstance = null;
         }
     }
 }

@@ -19,11 +19,23 @@ public class CameraHelper {
     }
 
     public interface CameraHelperImpl {
+        int getNumberOfCameras();
+
+        Camera openCamera(int id);
+
         Camera openDefaultCamera();
 
-        Camera openCamera(int facing);
+        Camera openCameraFacing(int facing);
 
         boolean hasCamera(int cameraFacingFront);
+    }
+
+    public int getNumberOfCameras() {
+        return mImpl.getNumberOfCameras();
+    }
+
+    public Camera openCamera(final int id) {
+        return mImpl.openCamera(id);
     }
 
     public Camera openDefaultCamera() {
@@ -31,11 +43,11 @@ public class CameraHelper {
     }
 
     public Camera openFrontCamera() {
-        return mImpl.openCamera(CameraInfo.CAMERA_FACING_FRONT);
+        return mImpl.openCameraFacing(CameraInfo.CAMERA_FACING_FRONT);
     }
 
     public Camera openBackCamera() {
-        return mImpl.openCamera(CameraInfo.CAMERA_FACING_BACK);
+        return mImpl.openCameraFacing(CameraInfo.CAMERA_FACING_BACK);
     }
 
     public boolean hasFrontCamera() {
