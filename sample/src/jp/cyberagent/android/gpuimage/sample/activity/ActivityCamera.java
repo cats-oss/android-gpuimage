@@ -15,6 +15,7 @@ import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 import jp.cyberagent.android.gpuimage.sample.R;
+import jp.cyberagent.android.gpuimage.sample.utils.CameraHelper;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,7 +35,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         OnClickListener {
 
     private GPUImage mGPUImage;
-    private CameraHelper mCamera;
+    private CameraLoader mCamera;
     private GPUImageFilter mFilter;
     private FilterAdjuster mFilterAdjuster;
 
@@ -49,7 +50,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         mGPUImage = new GPUImage(this);
         mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
 
-        mCamera = new CameraHelper();
+        mCamera = new CameraLoader();
     }
 
     @Override
@@ -209,7 +210,8 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     public void onStopTrackingTouch(final SeekBar seekBar) {
     }
 
-    private class CameraHelper {
+    private class CameraLoader {
+        private final CameraHelper mCameraHelper = new CameraHelper(ActivityCamera.this);
         private Camera mCameraInstance;
 
         public void onResume() {
@@ -239,7 +241,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
             try {
                 // TODO allow opening front view camera with open(int) if exists
                 // Camera.getNumberOfCameras()
-                c = Camera.open();
+                c = mCameraHelper.openDefaultCamera();
             } catch (Exception e) {
                 e.printStackTrace();
             }
