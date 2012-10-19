@@ -1,10 +1,12 @@
 
 package jp.cyberagent.android.gpuimage;
 
+import static jp.cyberagent.android.gpuimage.GPUImageRenderer.CUBE;
+import static jp.cyberagent.android.gpuimage.GPUImageRenderer.TEXTURE_NO_ROTATION;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.List;
 
 import android.opengl.GLES20;
@@ -15,44 +17,33 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     private int[] mFrameBuffers;
     private int[] mFrameBufferTextures;
 
-    private final float mCube[] = {
-            -1.0f, 1.0f, 0.0f,
-            -1.0f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
-            1.0f, 1.0f, 0.0f,
-    };
-
-    private final float mTexture[] = {
-            0.0f, 1.0f,
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-    };
-
-    private final short[] mIndeces = {
-            0, 1, 2,
-            0, 2, 3
-    };
     private final FloatBuffer mGLCubeBuffer;
-    private final ShortBuffer mGLIndexBuffer;
+    private final FloatBuffer mGLCubeFlippedBuffer;
     private final FloatBuffer mGLTextureBuffer;
+
+    private final static float[] CUBE_FLIPPED_VERTICALLY = {
+            CUBE[0], -CUBE[1],
+            CUBE[2], -CUBE[3],
+            CUBE[4], -CUBE[5],
+            CUBE[6], -CUBE[7],
+    };
 
     public GPUImageFilterGroup(final List<GPUImageFilter> filters) {
         mFilters = filters;
-        mGLCubeBuffer = ByteBuffer.allocateDirect(mCube.length * 4)
+        mGLCubeBuffer = ByteBuffer.allocateDirect(CUBE.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        mGLCubeBuffer.put(mCube).position(0);
+        mGLCubeBuffer.put(CUBE).position(0);
 
-        mGLIndexBuffer = ByteBuffer.allocateDirect(mIndeces.length * 4)
-                .order(ByteOrder.nativeOrder())
-                .asShortBuffer();
-        mGLIndexBuffer.put(mIndeces).position(0);
-
-        mGLTextureBuffer = ByteBuffer.allocateDirect(mTexture.length * 4)
+        mGLCubeFlippedBuffer = ByteBuffer.allocateDirect(CUBE_FLIPPED_VERTICALLY.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        mGLTextureBuffer.put(mTexture).position(0);
+        mGLCubeFlippedBuffer.put(CUBE_FLIPPED_VERTICALLY).position(0);
+
+        mGLTextureBuffer = ByteBuffer.allocateDirect(TEXTURE_NO_ROTATION.length * 4)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
+        mGLTextureBuffer.put(TEXTURE_NO_ROTATION).position(0);
     }
 
     @Override
@@ -120,7 +111,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
 
     @Override
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
-            final FloatBuffer textureBuffer, final ShortBuffer indexBuffer) {
+            final FloatBuffer textureBuffer) {
         runPendingOnDrawTasks();
         if (!isInitialized() || mFrameBuffers == null || mFrameBufferTextures == null) {
             return;
@@ -130,12 +121,11 @@ public class GPUImageFilterGroup extends GPUImageFilter {
             GPUImageFilter filter = mFilters.get(i);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[i]);
             GLES20.glClearColor(0, 0, 0, 1);
-            filter.onDraw(previousTexture, mGLCubeBuffer, mGLTextureBuffer, mGLIndexBuffer);
+            filter.onDraw(previousTexture, mGLCubeFlippedBuffer, mGLTextureBuffer);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
             previousTexture = mFrameBufferTextures[i];
         }
-        mFilters.get(mFilters.size() - 1).onDraw(previousTexture, cubeBuffer, textureBuffer,
-                indexBuffer);
+        mFilters.get(mFilters.size() - 1).onDraw(previousTexture, cubeBuffer, textureBuffer);
     }
 
     public List<GPUImageFilter> getFilters() {

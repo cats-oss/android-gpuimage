@@ -2,6 +2,7 @@
 package jp.cyberagent.android.gpuimage.sample.utils;
 
 import jp.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraHelperImpl;
+import jp.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
 import android.annotation.TargetApi;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
@@ -32,6 +33,14 @@ public class CameraHelperGB implements CameraHelperImpl {
     @Override
     public Camera openCameraFacing(final int facing) {
         return Camera.open(getCameraId(facing));
+    }
+
+    @Override
+    public void getCameraInfo(final int cameraId, final CameraInfo2 cameraInfo) {
+        CameraInfo info = new CameraInfo();
+        Camera.getCameraInfo(cameraId, info);
+        cameraInfo.facing = info.facing;
+        cameraInfo.orientation = info.orientation;
     }
 
     private int getCameraId(final int facing) {

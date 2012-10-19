@@ -16,10 +16,12 @@ import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 import jp.cyberagent.android.gpuimage.sample.R;
 import jp.cyberagent.android.gpuimage.sample.utils.CameraHelper;
+import jp.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
@@ -252,7 +254,13 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
             }
             mCameraInstance.setParameters(parameters);
 
-            mGPUImage.setUpCamera(mCameraInstance);
+            int orientation = mCameraHelper.getCameraDisplayOrientation(
+                    ActivityCamera.this, mCurrentCameraId);
+            CameraInfo2 cameraInfo = new CameraInfo2();
+            mCameraHelper.getCameraInfo(mCurrentCameraId, cameraInfo);
+            boolean flipHorizontal = cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT
+                    ? true : false;
+            mGPUImage.setUpCamera(mCameraInstance, orientation, flipHorizontal, false);
         }
 
         /** A safe way to get an instance of the Camera object. */

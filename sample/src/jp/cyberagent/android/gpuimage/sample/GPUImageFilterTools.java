@@ -14,7 +14,6 @@ import jp.cyberagent.android.gpuimage.GPUImageGrayscaleFilter;
 import jp.cyberagent.android.gpuimage.GPUImageSepiaFilter;
 import jp.cyberagent.android.gpuimage.GPUImageSharpenFilter;
 import jp.cyberagent.android.gpuimage.GPUImageSobelEdgeDetection;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -70,6 +69,7 @@ public class GPUImageFilterTools {
                 return convolution;
             case FILTER_GROUP:
                 List<GPUImageFilter> filters = new LinkedList<GPUImageFilter>();
+                filters.add(new GPUImageContrastFilter());
                 filters.add(new GPUImageDirectionalSobelEdgeDetectionFilter());
                 filters.add(new GPUImageGrayscaleFilter());
                 return new GPUImageFilterGroup(filters);
