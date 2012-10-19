@@ -12,7 +12,7 @@ Add gpuimage as a library project.
 ### Copy paste only
 Copy the the following files/folders to your projects libs folder.
 
-* libs/armeabi (only needed if you use with camera)
+* libs/armeabi
 * bin/gpuimage.jar
 
 ### Code

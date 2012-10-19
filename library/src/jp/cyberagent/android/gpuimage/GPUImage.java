@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import jp.cyberagent.android.gpuimage.GPUImageRenderer.Rotation;
@@ -121,7 +122,11 @@ public class GPUImage {
     }
 
     public void setImage(final Uri uri) {
-        new SetImageTask(this, new File(getPath(uri))).execute();
+        setImage(new File(getPath(uri)));
+    }
+
+    public void setImage(final File file) {
+        new SetImageTask(this, file).execute();
     }
 
     private String getPath(final Uri uri) {
@@ -140,22 +145,24 @@ public class GPUImage {
     }
 
     public Bitmap getBitmapWithFilterApplied(final Bitmap bitmap) {
-        mRenderer.deleteImage();
-        final Semaphore lock = new Semaphore(0);
-        mRenderer.runOnDraw(new Runnable() {
+        if (mGlSurfaceView != null) {
+            mRenderer.deleteImage();
+            final Semaphore lock = new Semaphore(0);
+            mRenderer.runOnDraw(new Runnable() {
 
-            @Override
-            public void run() {
-                mFilter.onDestroy();
-                lock.release();
+                @Override
+                public void run() {
+                    mFilter.onDestroy();
+                    lock.release();
+                }
+            });
+            requestRender();
+
+            try {
+                lock.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
-        requestRender();
-
-        try {
-            lock.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         GPUImageRenderer renderer = new GPUImageRenderer(mFilter);
@@ -176,6 +183,25 @@ public class GPUImage {
         requestRender();
 
         return result;
+    }
+
+    public static void getBitmapForMultipleFilters(final Bitmap bitmap,
+            final List<GPUImageFilter> filters, final ResponseListener<Bitmap> listener) {
+        if (filters.isEmpty()) {
+            return;
+        }
+        GPUImageRenderer renderer = new GPUImageRenderer(filters.get(0));
+        renderer.setImageBitmap(bitmap, false);
+        PixelBuffer buffer = new PixelBuffer(bitmap.getWidth(), bitmap.getHeight());
+        buffer.setRenderer(renderer);
+
+        for (GPUImageFilter filter : filters) {
+            renderer.setFilter(filter);
+            listener.response(buffer.getBitmap());
+            filter.onDestroy();
+        }
+        renderer.deleteImage();
+        buffer.destroy();
     }
 
     public void saveToPictures(final String folderName, final String fileName,
@@ -362,5 +388,9 @@ public class GPUImage {
                     return 0;
             }
         }
+    }
+
+    public interface ResponseListener<T> {
+        void response(T item);
     }
 }
