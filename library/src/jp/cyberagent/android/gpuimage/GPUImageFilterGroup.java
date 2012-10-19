@@ -18,15 +18,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     private int[] mFrameBufferTextures;
 
     private final FloatBuffer mGLCubeBuffer;
-    private final FloatBuffer mGLCubeFlippedBuffer;
     private final FloatBuffer mGLTextureBuffer;
-
-    private final static float[] CUBE_FLIPPED_VERTICALLY = {
-            CUBE[0], -CUBE[1],
-            CUBE[2], -CUBE[3],
-            CUBE[4], -CUBE[5],
-            CUBE[6], -CUBE[7],
-    };
 
     public GPUImageFilterGroup(final List<GPUImageFilter> filters) {
         mFilters = filters;
@@ -34,11 +26,6 @@ public class GPUImageFilterGroup extends GPUImageFilter {
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
         mGLCubeBuffer.put(CUBE).position(0);
-
-        mGLCubeFlippedBuffer = ByteBuffer.allocateDirect(CUBE_FLIPPED_VERTICALLY.length * 4)
-                .order(ByteOrder.nativeOrder())
-                .asFloatBuffer();
-        mGLCubeFlippedBuffer.put(CUBE_FLIPPED_VERTICALLY).position(0);
 
         mGLTextureBuffer = ByteBuffer.allocateDirect(TEXTURE_NO_ROTATION.length * 4)
                 .order(ByteOrder.nativeOrder())
@@ -121,7 +108,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
             GPUImageFilter filter = mFilters.get(i);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[i]);
             GLES20.glClearColor(0, 0, 0, 1);
-            filter.onDraw(previousTexture, mGLCubeFlippedBuffer, mGLTextureBuffer);
+            filter.onDraw(previousTexture, mGLCubeBuffer, mGLTextureBuffer);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
             previousTexture = mFrameBufferTextures[i];
         }

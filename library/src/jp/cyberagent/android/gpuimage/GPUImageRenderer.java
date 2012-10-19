@@ -21,16 +21,15 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
 
 @TargetApi(11)
 public class GPUImageRenderer implements Renderer, PreviewCallback {
     public static final int NO_IMAGE = -1;
     static final float CUBE[] = {
-            -1.0f, -1.0f,
-            1.0f, -1.0f,
             -1.0f, 1.0f,
             1.0f, 1.0f,
+            -1.0f, -1.0f,
+            1.0f, -1.0f,
     };
 
     static final float TEXTURE_NO_ROTATION[] = {
@@ -257,11 +256,13 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             ratioHeight = mImageHeight / outputHeight;
         }
 
+        // for some reason we need to do minus on the right side. Otherwise it
+        // is always flipped vertically
         float cube[] = {
-                CUBE[0] * ratioWidth, CUBE[1] * ratioHeight,
-                CUBE[2] * ratioWidth, CUBE[3] * ratioHeight,
-                CUBE[4] * ratioWidth, CUBE[5] * ratioHeight,
-                CUBE[6] * ratioWidth, CUBE[7] * ratioHeight,
+                CUBE[0] * ratioWidth, -CUBE[1] * ratioHeight,
+                CUBE[2] * ratioWidth, -CUBE[3] * ratioHeight,
+                CUBE[4] * ratioWidth, -CUBE[5] * ratioHeight,
+                CUBE[6] * ratioWidth, -CUBE[7] * ratioHeight,
         };
         mGLCubeBuffer.clear();
         mGLCubeBuffer.put(cube).position(0);
@@ -274,24 +275,19 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     public void setRotation(final Rotation rotation, final boolean flipHorizontal,
             final boolean flipVertical) {
         mRotation = rotation;
-        Log.i("ASDF", "Rotation: " + rotation);
         float[] rotatedTex = null;
         switch (rotation) {
             case ROTATION_90:
-                Log.i("ASDF", "Rotation: 90");
                 rotatedTex = TEXTURE_ROTATED_90;
                 break;
             case ROTATION_180:
-                Log.i("ASDF", "Rotation: 180");
                 rotatedTex = TEXTURE_ROTATED_180;
                 break;
             case ROTATION_270:
-                Log.i("ASDF", "Rotation: 270");
                 rotatedTex = TEXTURE_ROTATED_270;
                 break;
             case NORMAL:
             default:
-                Log.i("ASDF", "Rotation: NORMAL");
                 rotatedTex = TEXTURE_NO_ROTATION;
                 break;
         }
