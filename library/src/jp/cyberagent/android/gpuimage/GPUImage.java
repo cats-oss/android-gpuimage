@@ -159,6 +159,8 @@ public class GPUImage {
         }
 
         GPUImageRenderer renderer = new GPUImageRenderer(mFilter);
+        renderer.setRotation(Rotation.NORMAL,
+                mRenderer.isFlippedHorizontally(), mRenderer.isFlippedVertically());
         PixelBuffer buffer = new PixelBuffer(bitmap.getWidth(), bitmap.getHeight());
         buffer.setRenderer(renderer);
         renderer.setImageBitmap(bitmap, false);

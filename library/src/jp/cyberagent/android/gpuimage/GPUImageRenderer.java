@@ -74,6 +74,8 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
     private final Queue<Runnable> mRunOnDraw;
     private Rotation mRotation;
+    private boolean mFlipHorizontal;
+    private boolean mFlipVertical;
 
     public GPUImageRenderer(final GPUImageFilter filter) {
         mFilter = filter;
@@ -87,7 +89,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         mGLTextureBuffer = ByteBuffer.allocateDirect(TEXTURE_NO_ROTATION.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        mGLTextureBuffer.put(TEXTURE_NO_ROTATION).position(0);
+        setRotation(Rotation.NORMAL, false, false);
     }
 
     @Override
@@ -275,6 +277,9 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     public void setRotation(final Rotation rotation, final boolean flipHorizontal,
             final boolean flipVertical) {
         mRotation = rotation;
+        mFlipHorizontal = flipHorizontal;
+        mFlipVertical = flipVertical;
+
         float[] rotatedTex = null;
         switch (rotation) {
             case ROTATION_90:
@@ -310,6 +315,18 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
         mGLTextureBuffer.clear();
         mGLTextureBuffer.put(rotatedTex).position(0);
+    }
+
+    public Rotation getRotation() {
+        return mRotation;
+    }
+
+    public boolean isFlippedHorizontally() {
+        return mFlipHorizontal;
+    }
+
+    public boolean isFlippedVertically() {
+        return mFlipVertical;
     }
 
     private float flip(final float i) {
