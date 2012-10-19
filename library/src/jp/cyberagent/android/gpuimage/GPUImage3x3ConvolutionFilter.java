@@ -46,12 +46,16 @@ public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilt
     private int mUniformConvolutionMatrix;
 
     public GPUImage3x3ConvolutionFilter() {
-        super(THREE_X_THREE_TEXTURE_SAMPLING_FRAGMENT_SHADER);
-        mConvolutionKernel = new float[] {
+        this(new float[] {
                 0.0f, 0.0f, 0.0f,
                 0.0f, 1.0f, 0.0f,
                 0.0f, 0.0f, 0.0f
-        };
+        });
+    }
+    
+    public GPUImage3x3ConvolutionFilter(float[] convolutionKernel) {
+        super(THREE_X_THREE_TEXTURE_SAMPLING_FRAGMENT_SHADER);
+        mConvolutionKernel = convolutionKernel;
     }
 
     @Override

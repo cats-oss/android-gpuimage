@@ -8,9 +8,11 @@ import jp.cyberagent.android.gpuimage.GPUImage3x3ConvolutionFilter;
 import jp.cyberagent.android.gpuimage.GPUImage3x3TextureSamplingFilter;
 import jp.cyberagent.android.gpuimage.GPUImageContrastFilter;
 import jp.cyberagent.android.gpuimage.GPUImageDirectionalSobelEdgeDetectionFilter;
+import jp.cyberagent.android.gpuimage.GPUImageEmbossFilter;
 import jp.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.cyberagent.android.gpuimage.GPUImageFilterGroup;
 import jp.cyberagent.android.gpuimage.GPUImageGrayscaleFilter;
+import jp.cyberagent.android.gpuimage.GPUImagePosterizeFilter;
 import jp.cyberagent.android.gpuimage.GPUImageSepiaFilter;
 import jp.cyberagent.android.gpuimage.GPUImageSharpenFilter;
 import jp.cyberagent.android.gpuimage.GPUImageSobelEdgeDetection;
@@ -28,6 +30,8 @@ public class GPUImageFilterTools {
         filters.addFilter("Sharpness", FilterType.SHARPEN);
         filters.addFilter("Sobel Edge Detection", FilterType.SOBEL_EDGE_DETECTION);
         filters.addFilter("3x3 Convolution", FilterType.THREE_X_THREE_CONVOLUTION);
+        filters.addFilter("Emboss", FilterType.EMBOSS);
+        filters.addFilter("Posterize", FilterType.POSTERIZE);
         filters.addFilter("Grouped filters", FilterType.FILTER_GROUP);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -67,6 +71,10 @@ public class GPUImageFilterTools {
                         -1.0f, 0.0f, 1.0f
                 });
                 return convolution;
+            case EMBOSS:
+                return new GPUImageEmbossFilter();
+            case POSTERIZE:
+                return new GPUImagePosterizeFilter();
             case FILTER_GROUP:
                 List<GPUImageFilter> filters = new LinkedList<GPUImageFilter>();
                 filters.add(new GPUImageContrastFilter());
@@ -84,7 +92,7 @@ public class GPUImageFilterTools {
     }
 
     private enum FilterType {
-        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP,
+        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE,
     }
 
     private static class FilterList {
@@ -111,6 +119,10 @@ public class GPUImageFilterTools {
                 adjuster = new SobelAdjuster().filter(filter);
             } else if (filter instanceof GPUImage3x3TextureSamplingFilter) {
                 adjuster = new GPU3x3TextureAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageEmbossFilter) {
+                adjuster = new EmbossAdjuster().filter(filter);
+            } else if (filter instanceof GPUImagePosterizeFilter) {
+                adjuster = new PosterizeAdjuster().filter(filter);
             } else {
                 adjuster = null;
             }
@@ -140,6 +152,10 @@ public class GPUImageFilterTools {
             protected float range(final int percentage, final float start, final float end) {
                 return (end - start) * percentage / 100.0f + start;
             }
+
+            protected int range(final int percentage, final int start, final int end) {
+                return (end - start) * percentage / 100 + start;
+            }
         }
 
         private class SharpnessAdjuster extends Adjuster<GPUImageSharpenFilter> {
@@ -167,6 +183,21 @@ public class GPUImageFilterTools {
             @Override
             public void adjust(final int percentage) {
                 getFilter().setLineSize(range(percentage, 0.0f, 5.0f));
+            }
+        }
+
+        private class EmbossAdjuster extends Adjuster<GPUImageEmbossFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setIntensity(range(percentage, 0.0f, 4.0f));
+            }
+        }
+
+        private class PosterizeAdjuster extends Adjuster<GPUImagePosterizeFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                // In theorie to 256, but only first 50 are interesting
+                getFilter().setColorLevels(range(percentage, 1, 50));
             }
         }
 
