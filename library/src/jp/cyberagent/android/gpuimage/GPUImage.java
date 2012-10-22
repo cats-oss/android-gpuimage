@@ -126,7 +126,7 @@ public class GPUImage {
     }
 
     public void setImage(final File file) {
-        new SetImageTask(this, file).execute();
+        new LoadImageTask(this, file).run();
     }
 
     private String getPath(final Uri uri) {
@@ -273,7 +273,7 @@ public class GPUImage {
         void onPictureSaved(Uri uri);
     }
 
-    private class SetImageTask extends AsyncTask<Void, Void, Bitmap> {
+    private class LoadImageTask implements Runnable {
 
         private final GPUImage mGPUImage;
         private final File mImageFile;
@@ -281,7 +281,7 @@ public class GPUImage {
         private final int mMaxHeight;
 
         @SuppressWarnings("deprecation")
-        public SetImageTask(final GPUImage gpuImage, final File file) {
+        public LoadImageTask(final GPUImage gpuImage, final File file) {
             mImageFile = file;
             mGPUImage = gpuImage;
 
@@ -293,14 +293,9 @@ public class GPUImage {
         }
 
         @Override
-        protected Bitmap doInBackground(final Void... params) {
-            return loadResizedImage(mImageFile);
-        }
-
-        @Override
-        protected void onPostExecute(final Bitmap result) {
-            super.onPostExecute(result);
-            mGPUImage.setImage(result);
+        public void run() {
+            Bitmap bitmap = loadResizedImage(mImageFile);
+            mGPUImage.setImage(bitmap);
         }
 
         private Bitmap loadResizedImage(final File imageFile) {
