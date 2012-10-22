@@ -64,12 +64,17 @@ public class GPUImageSharpenFilter extends GPUImageFilter {
             "}";
 
     private int mSharpnessLocation;
-    private float mSharpness = 0.0f;
+    private float mSharpness;
     private int mImageWidthFactorLocation;
     private int mImageHeightFactorLocation;
 
     public GPUImageSharpenFilter() {
+        this(0.0f);
+    }
+    
+    public GPUImageSharpenFilter(final float sharpness) {
         super(SHARPEN_VERTEX_SHADER, SHARPEN_FRAGMENT_SHADER);
+        mSharpness = sharpness;
     }
 
     @Override

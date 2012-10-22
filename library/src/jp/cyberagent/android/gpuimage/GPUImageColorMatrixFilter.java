@@ -27,14 +27,18 @@ public class GPUImageColorMatrixFilter extends GPUImageFilter {
     private boolean mIsInitialized = false;
 
     public GPUImageColorMatrixFilter() {
-        super(NO_FILTER_VERTEX_SHADER, COLOR_MATRIX_FRAGMENT_SHADER);
-        mIntensity = 1.0f;
-        mColorMatrix = new float[] {
+        this(1.0f, new float[] {
                 1.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 1.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f
-        };
+        });
+    }
+
+    public GPUImageColorMatrixFilter(final float intensity, final float[] colorMatrix) {
+        super(NO_FILTER_VERTEX_SHADER, COLOR_MATRIX_FRAGMENT_SHADER);
+        mIntensity = intensity;
+        mColorMatrix = colorMatrix;
     }
 
     @Override

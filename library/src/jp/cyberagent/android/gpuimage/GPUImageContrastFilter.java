@@ -18,11 +18,16 @@ public class GPUImageContrastFilter extends GPUImageFilter {
             " }";
 
     private int mContrastLocation;
-    private float mContrast = 1.2f;
+    private float mContrast;
     private boolean mIsInitialized = false;
 
     public GPUImageContrastFilter() {
+        this(1.2f);
+    }
+    
+    public GPUImageContrastFilter(float contrast) {
         super(NO_FILTER_VERTEX_SHADER, CONTRAST_FRAGMENT_SHADER);
+        mContrast = contrast;
     }
 
     @Override
