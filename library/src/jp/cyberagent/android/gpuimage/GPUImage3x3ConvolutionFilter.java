@@ -3,6 +3,9 @@ package jp.cyberagent.android.gpuimage;
 
 import android.opengl.GLES20;
 
+/**
+ * Runs a 3x3 convolution kernel against the image
+ */
 public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilter {
     public static final String THREE_X_THREE_TEXTURE_SAMPLING_FRAGMENT_SHADER = "" +
             "precision highp float;\n" + 
@@ -45,6 +48,10 @@ public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilt
     private float[] mConvolutionKernel;
     private int mUniformConvolutionMatrix;
 
+    /**
+     * Instantiates a new GPUimage3x3ConvolutionFilter with default values, that
+     * will look like the original image. 
+     */
     public GPUImage3x3ConvolutionFilter() {
         this(new float[] {
                 0.0f, 0.0f, 0.0f,
@@ -53,7 +60,12 @@ public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilt
         });
     }
     
-    public GPUImage3x3ConvolutionFilter(float[] convolutionKernel) {
+    /**
+     * Instantiates a new GPUimage3x3ConvolutionFilter with given convolution kernel.
+     *
+     * @param convolutionKernel the convolution kernel
+     */
+    public GPUImage3x3ConvolutionFilter(final float[] convolutionKernel) {
         super(THREE_X_THREE_TEXTURE_SAMPLING_FRAGMENT_SHADER);
         mConvolutionKernel = convolutionKernel;
     }
@@ -65,6 +77,11 @@ public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilt
         setConvolutionKernel(mConvolutionKernel);
     }
 
+    /**
+     * Sets the convolution kernel.
+     *
+     * @param convolutionKernel the new convolution kernel
+     */
     public void setConvolutionKernel(final float[] convolutionKernel) {
         mConvolutionKernel = convolutionKernel;
         setUniformMatrix3f(mUniformConvolutionMatrix, mConvolutionKernel);

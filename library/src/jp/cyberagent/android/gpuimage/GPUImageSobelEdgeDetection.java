@@ -4,6 +4,9 @@ package jp.cyberagent.android.gpuimage;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Applies sobel edge detection on the image.
+ */
 public class GPUImageSobelEdgeDetection extends GPUImageFilterGroup {
 
     public static final String SOBEL_EDGE_DETECTION = "" +

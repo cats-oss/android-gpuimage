@@ -1,6 +1,9 @@
 
 package jp.cyberagent.android.gpuimage;
 
+/**
+ * Applies a simple sepia effect.
+ */
 public class GPUImageSepiaFilter extends GPUImageColorMatrixFilter {
 
     public GPUImageSepiaFilter() {

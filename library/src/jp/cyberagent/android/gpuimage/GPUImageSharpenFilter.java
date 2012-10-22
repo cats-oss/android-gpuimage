@@ -3,6 +3,11 @@ package jp.cyberagent.android.gpuimage;
 
 import android.opengl.GLES20;
 
+/**
+ * Sharpens the picture. <br />
+ * <br />
+ * sharpness: from -4.0 to 4.0, with 0.0 as the normal level
+ */
 public class GPUImageSharpenFilter extends GPUImageFilter {
     public static final String SHARPEN_VERTEX_SHADER = "" +
             "attribute vec4 position;\n" +

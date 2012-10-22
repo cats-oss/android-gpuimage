@@ -11,6 +11,10 @@ import java.util.List;
 
 import android.opengl.GLES20;
 
+/**
+ * Resembles a filter that consists of multiple filters applied after each
+ * other.
+ */
 public class GPUImageFilterGroup extends GPUImageFilter {
 
     private final List<GPUImageFilter> mFilters;
@@ -20,6 +24,11 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     private final FloatBuffer mGLCubeBuffer;
     private final FloatBuffer mGLTextureBuffer;
 
+    /**
+     * Instantiates a new GPUImageFilterGroup with the given filters.
+     * 
+     * @param filters the filters which represent this filter
+     */
     public GPUImageFilterGroup(final List<GPUImageFilter> filters) {
         mFilters = filters;
         mGLCubeBuffer = ByteBuffer.allocateDirect(CUBE.length * 4)
@@ -33,6 +42,10 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         mGLTextureBuffer.put(TEXTURE_NO_ROTATION).position(0);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see jp.cyberagent.android.gpuimage.GPUImageFilter#onInit()
+     */
     @Override
     public void onInit() {
         super.onInit();
@@ -41,6 +54,10 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see jp.cyberagent.android.gpuimage.GPUImageFilter#onDestroy()
+     */
     @Override
     public void onDestroy() {
         destroyFramebuffers();
@@ -61,6 +78,12 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see
+     * jp.cyberagent.android.gpuimage.GPUImageFilter#onOutputSizeChanged(int,
+     * int)
+     */
     @Override
     public void onOutputSizeChanged(final int width, final int height) {
         super.onOutputSizeChanged(width, height);
@@ -96,6 +119,11 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         mFilters.get(mFilters.size() - 1).onOutputSizeChanged(width, height);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see jp.cyberagent.android.gpuimage.GPUImageFilter#onDraw(int,
+     * java.nio.FloatBuffer, java.nio.FloatBuffer)
+     */
     @Override
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
             final FloatBuffer textureBuffer) {
@@ -115,6 +143,11 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         mFilters.get(mFilters.size() - 1).onDraw(previousTexture, cubeBuffer, textureBuffer);
     }
 
+    /**
+     * Gets the filters.
+     * 
+     * @return the filters
+     */
     public List<GPUImageFilter> getFilters() {
         return mFilters;
     }

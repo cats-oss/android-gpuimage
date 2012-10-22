@@ -49,7 +49,7 @@ public class GPUImage3x3TextureSamplingFilter extends GPUImageFilter {
     private int mUniformTexelHeightLocation;
 
     private boolean mHasOverriddenImageSizeFactor = false;
-    private float mTexelWidth;
+    private float mTexelWidth; 
     private float mTexelHeight;
     private float mLineSize = 1.0f;
 

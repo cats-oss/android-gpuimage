@@ -31,6 +31,10 @@ import android.provider.MediaStore;
 import android.view.Display;
 import android.view.WindowManager;
 
+/**
+ * The main accessor for GPUImage functionality. This class helps to do common
+ * tasks through a simple interface.
+ */
 public class GPUImage {
     private final Context mContext;
     private final GPUImageRenderer mRenderer;
@@ -38,6 +42,11 @@ public class GPUImage {
     private GPUImageFilter mFilter;
     private Bitmap mCurrentBitmap;
 
+    /**
+     * Instantiates a new GPUImage object.
+     * 
+     * @param context the context
+     */
     public GPUImage(final Context context) {
         if (!supportsOpenGLES2(context)) {
             throw new IllegalStateException("OpenGL ES 2.0 is not supported on this phone.");
@@ -48,6 +57,12 @@ public class GPUImage {
         mRenderer = new GPUImageRenderer(mFilter);
     }
 
+    /**
+     * Checks if OpenGL ES 2.0 is supported on the current device.
+     * 
+     * @param context the context
+     * @return true, if successful
+     */
     private boolean supportsOpenGLES2(final Context context) {
         final ActivityManager activityManager = (ActivityManager)
                 context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -58,6 +73,11 @@ public class GPUImage {
         return supportsEs2;
     }
 
+    /**
+     * Sets the GLSurfaceView which will display the preview.
+     * 
+     * @param view the GLSurfaceView
+     */
     public void setGLSurfaceView(final GLSurfaceView view) {
         mGlSurfaceView = view;
         mGlSurfaceView.setEGLContextClientVersion(2);
@@ -66,16 +86,32 @@ public class GPUImage {
         mGlSurfaceView.requestRender();
     }
 
+    /**
+     * Request the preview to be rendered again.
+     */
     public void requestRender() {
         if (mGlSurfaceView != null) {
             mGlSurfaceView.requestRender();
         }
     }
 
+    /**
+     * Sets the up camera to be connected to GPUImage to get a filtered preview.
+     * 
+     * @param camera the camera
+     */
     public void setUpCamera(final Camera camera) {
         setUpCamera(camera, 0, false, false);
     }
 
+    /**
+     * Sets the up camera to be connected to GPUImage to get a filtered preview.
+     * 
+     * @param camera the camera
+     * @param degrees by how many degrees the image should be rotated
+     * @param flipHorizontal if the image should be flipped horizontally
+     * @param flipVertical if the image should be flipped vertically
+     */
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
             final boolean flipVertical) {
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -105,12 +141,23 @@ public class GPUImage {
         mRenderer.setUpSurfaceTexture(camera);
     }
 
+    /**
+     * Sets the filter which should be applied to the image which was (or will
+     * be) set by setImage(...).
+     * 
+     * @param filter the new filter
+     */
     public void setFilter(final GPUImageFilter filter) {
         mFilter = filter;
         mRenderer.setFilter(mFilter);
         requestRender();
     }
 
+    /**
+     * Sets the image on which the filter should be applied.
+     * 
+     * @param bitmap the new image
+     */
     public void setImage(final Bitmap bitmap) {
         setImage(bitmap, false);
         mCurrentBitmap = bitmap;
@@ -121,10 +168,20 @@ public class GPUImage {
         requestRender();
     }
 
+    /**
+     * Sets the image on which the filter should be applied from a Uri.
+     * 
+     * @param uri the uri of the new image
+     */
     public void setImage(final Uri uri) {
         setImage(new File(getPath(uri)));
     }
 
+    /**
+     * Sets the image on which the filter should be applied from a File.
+     * 
+     * @param file the file of the new image
+     */
     public void setImage(final File file) {
         new LoadImageTask(this, file).run();
     }
@@ -144,6 +201,21 @@ public class GPUImage {
         return path;
     }
 
+    /**
+     * Gets the current displayed image with applied filter as a Bitmap.
+     * 
+     * @return the current image with filter applied
+     */
+    public Bitmap getBitmapWithFilterApplied() {
+        return getBitmapWithFilterApplied(mCurrentBitmap);
+    }
+
+    /**
+     * Gets the given bitmap with current filter applied as a Bitmap.
+     * 
+     * @param bitmap the bitmap on which the current filter should be applied
+     * @return the bitmap with filter applied
+     */
     public Bitmap getBitmapWithFilterApplied(final Bitmap bitmap) {
         if (mGlSurfaceView != null) {
             mRenderer.deleteImage();
@@ -185,6 +257,17 @@ public class GPUImage {
         return result;
     }
 
+    /**
+     * Gets the images for multiple filters on a image. This can be used to
+     * quickly get thumbnail images for filters. <br />
+     * Whenever a new Bitmap is ready, the listener will be called with the
+     * bitmap. The order of the calls to the listener will be the same as the
+     * filter order.
+     * 
+     * @param bitmap the bitmap on which the filters will be applied
+     * @param filters the filters which will be applied on the bitmap
+     * @param listener the listener on which the results will be notified
+     */
     public static void getBitmapForMultipleFilters(final Bitmap bitmap,
             final List<GPUImageFilter> filters, final ResponseListener<Bitmap> listener) {
         if (filters.isEmpty()) {
@@ -204,11 +287,34 @@ public class GPUImage {
         buffer.destroy();
     }
 
+    /**
+     * Save current image with applied filter to Pictures. It will be stored on
+     * the default Picture folder on the phone below the given folerName and
+     * fileName. <br />
+     * This method is async and will notify when the image was saved through the
+     * listener.
+     * 
+     * @param folderName the folder name
+     * @param fileName the file name
+     * @param listener the listener
+     */
     public void saveToPictures(final String folderName, final String fileName,
             final OnPictureSavedListener listener) {
         saveToPictures(mCurrentBitmap, folderName, fileName, listener);
     }
 
+    /**
+     * Apply and save the given bitmap with applied filter to Pictures. It will
+     * be stored on the default Picture folder on the phone below the given
+     * folerName and fileName. <br />
+     * This method is async and will notify when the image was saved through the
+     * listener.
+     * 
+     * @param bitmap the bitmap
+     * @param folderName the folder name
+     * @param fileName the file name
+     * @param listener the listener
+     */
     public void saveToPictures(final Bitmap bitmap, final String folderName, final String fileName,
             final OnPictureSavedListener listener) {
         new SaveTask(bitmap, folderName, fileName, listener).execute();

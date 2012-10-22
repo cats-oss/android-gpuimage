@@ -1,7 +1,9 @@
 
 package jp.cyberagent.android.gpuimage;
 
-
+/**
+ * Applies a grayscale effect to the image.
+ */
 public class GPUImageGrayscaleFilter extends GPUImageFilter {
     public static final String GRAYSCALE_FRAGMENT_SHADER = "" +
             "precision highp float;\n" +

@@ -4,18 +4,18 @@ Idea from: [iOS GPUImage framework](https://github.com/BradLarson/GPUImage)
 
 Goal is to have something as similar to GPUImage as possible. Vertex and fragment shaders are exactly the same. That way it makes it easier to port filters from GPUImage iOS to Android.
 
+## Requirements
+* Android 2.2 or higher (OpenGL ES 2.0)
+
 ## Usage
 
-### Library project
-Add gpuimage as a library project.
-
-### Copy paste only
-Copy the the following files/folders to your projects libs folder.
+### Include in own project
+GPUImage can be used as a library project or by copying the following files/folders to your libs folder.
 
 * libs/armeabi
 * bin/gpuimage.jar
 
-### Code
+### Sample Code
 With preview:
 
     @Override
@@ -26,7 +26,7 @@ With preview:
         Uri imageUri = ...;
         mGPUImage = new GPUImage(this);
         mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
-        mGPUImage.setImage(imageUri);
+        mGPUImage.setImage(imageUri); // this loads image on the current thread, should be run in a thread
         mGPUImage.setFilter(new GPUImageSepiaFilter());
         
         // Later when image should be saved saved:

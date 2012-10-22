@@ -3,6 +3,11 @@ package jp.cyberagent.android.gpuimage;
 
 import android.opengl.GLES20;
 
+/**
+ * Reduces the color range of the image. <br/>
+ * <br/>
+ * colorLevels: ranges from 1 to 256, with a default of 10
+ */
 public class GPUImagePosterizeFilter extends GPUImageFilter {
     public static final String POSTERIZE_FRAGMENT_SHADER = "" +
             "varying highp vec2 textureCoordinate;\n" +
