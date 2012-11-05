@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2012 CyberAgent
+ * Copyright (C) 2010 jsemler 
+ * 
+ * Original publication without License
+ * http://www.anddev.org/android-2d-3d-graphics-opengl-tutorials-f2/possible-to-do-opengl-off-screen-rendering-in-android-t13232.html#p41662
+ */
 
 package jp.cyberagent.android.gpuimage;
 
