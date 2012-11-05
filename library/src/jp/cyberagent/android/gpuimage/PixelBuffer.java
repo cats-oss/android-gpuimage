@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2012 CyberAgent
+ * Copyright (C) 2010 jsemler 
+ * 
+ * Original publication without License
+ * http://www.anddev.org/android-2d-3d-graphics-opengl-tutorials-f2/possible-to-do-opengl-off-screen-rendering-in-android-t13232.html#p41662
+ */
 
 package jp.cyberagent.android.gpuimage;
 
@@ -109,10 +116,23 @@ public class PixelBuffer {
             return null;
         }
 
-        // Call the renderer draw routine
+        // Call the renderer draw routine (it seems that some filters do not
+        // work if this is only called once)
+        mRenderer.onDrawFrame(mGL);
         mRenderer.onDrawFrame(mGL);
         convertToBitmap();
         return mBitmap;
+    }
+
+    public void destroy() {
+        mRenderer.onDrawFrame(mGL);
+        mRenderer.onDrawFrame(mGL);
+        mEGL.eglMakeCurrent(mEGLDisplay, EGL10.EGL_NO_SURFACE,
+                EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+
+        mEGL.eglDestroySurface(mEGLDisplay, mEGLSurface);
+        mEGL.eglDestroyContext(mEGLDisplay, mEGLContext);
+        mEGL.eglTerminate(mEGLDisplay);
     }
 
     private EGLConfig chooseConfig() {

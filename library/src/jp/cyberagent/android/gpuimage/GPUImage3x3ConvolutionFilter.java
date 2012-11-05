@@ -1,8 +1,26 @@
+/*
+ * Copyright (C) 2012 CyberAgent
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package jp.cyberagent.android.gpuimage;
 
 import android.opengl.GLES20;
 
+/**
+ * Runs a 3x3 convolution kernel against the image
+ */
 public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilter {
     public static final String THREE_X_THREE_TEXTURE_SAMPLING_FRAGMENT_SHADER = "" +
             "precision highp float;\n" + 
@@ -45,13 +63,26 @@ public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilt
     private float[] mConvolutionKernel;
     private int mUniformConvolutionMatrix;
 
+    /**
+     * Instantiates a new GPUimage3x3ConvolutionFilter with default values, that
+     * will look like the original image. 
+     */
     public GPUImage3x3ConvolutionFilter() {
-        super(THREE_X_THREE_TEXTURE_SAMPLING_FRAGMENT_SHADER);
-        mConvolutionKernel = new float[] {
+        this(new float[] {
                 0.0f, 0.0f, 0.0f,
                 0.0f, 1.0f, 0.0f,
                 0.0f, 0.0f, 0.0f
-        };
+        });
+    }
+    
+    /**
+     * Instantiates a new GPUimage3x3ConvolutionFilter with given convolution kernel.
+     *
+     * @param convolutionKernel the convolution kernel
+     */
+    public GPUImage3x3ConvolutionFilter(final float[] convolutionKernel) {
+        super(THREE_X_THREE_TEXTURE_SAMPLING_FRAGMENT_SHADER);
+        mConvolutionKernel = convolutionKernel;
     }
 
     @Override
@@ -61,6 +92,11 @@ public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilt
         setConvolutionKernel(mConvolutionKernel);
     }
 
+    /**
+     * Sets the convolution kernel.
+     *
+     * @param convolutionKernel the new convolution kernel
+     */
     public void setConvolutionKernel(final float[] convolutionKernel) {
         mConvolutionKernel = convolutionKernel;
         setUniformMatrix3f(mUniformConvolutionMatrix, mConvolutionKernel);

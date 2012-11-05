@@ -1,60 +1,66 @@
+/*
+ * Copyright (C) 2012 CyberAgent
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package jp.cyberagent.android.gpuimage;
+
+import static jp.cyberagent.android.gpuimage.GPUImageRenderer.CUBE;
+import static jp.cyberagent.android.gpuimage.GPUImageRenderer.TEXTURE_NO_ROTATION;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.List;
 
 import android.opengl.GLES20;
 
+/**
+ * Resembles a filter that consists of multiple filters applied after each
+ * other.
+ */
 public class GPUImageFilterGroup extends GPUImageFilter {
 
     private final List<GPUImageFilter> mFilters;
     private int[] mFrameBuffers;
     private int[] mFrameBufferTextures;
 
-    private final float mCube[] = {
-            -1.0f, 1.0f, 0.0f,
-            -1.0f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
-            1.0f, 1.0f, 0.0f,
-    };
-
-    private final float mTexture[] = {
-            0.0f, 1.0f,
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-    };
-
-    private final short[] mIndeces = {
-            0, 1, 2,
-            0, 2, 3
-    };
     private final FloatBuffer mGLCubeBuffer;
-    private final ShortBuffer mGLIndexBuffer;
     private final FloatBuffer mGLTextureBuffer;
 
+    /**
+     * Instantiates a new GPUImageFilterGroup with the given filters.
+     * 
+     * @param filters the filters which represent this filter
+     */
     public GPUImageFilterGroup(final List<GPUImageFilter> filters) {
         mFilters = filters;
-        mGLCubeBuffer = ByteBuffer.allocateDirect(mCube.length * 4)
+        mGLCubeBuffer = ByteBuffer.allocateDirect(CUBE.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        mGLCubeBuffer.put(mCube).position(0);
+        mGLCubeBuffer.put(CUBE).position(0);
 
-        mGLIndexBuffer = ByteBuffer.allocateDirect(mIndeces.length * 4)
-                .order(ByteOrder.nativeOrder())
-                .asShortBuffer();
-        mGLIndexBuffer.put(mIndeces).position(0);
-
-        mGLTextureBuffer = ByteBuffer.allocateDirect(mTexture.length * 4)
+        mGLTextureBuffer = ByteBuffer.allocateDirect(TEXTURE_NO_ROTATION.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        mGLTextureBuffer.put(mTexture).position(0);
+        mGLTextureBuffer.put(TEXTURE_NO_ROTATION).position(0);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see jp.cyberagent.android.gpuimage.GPUImageFilter#onInit()
+     */
     @Override
     public void onInit() {
         super.onInit();
@@ -63,22 +69,36 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see jp.cyberagent.android.gpuimage.GPUImageFilter#onDestroy()
+     */
     @Override
     public void onDestroy() {
-        super.onDestroy();
         destroyFramebuffers();
         for (GPUImageFilter filter : mFilters) {
             filter.onDestroy();
         }
+        super.onDestroy();
     }
 
     private void destroyFramebuffers() {
-        GLES20.glDeleteTextures(mFrameBufferTextures.length, mFrameBufferTextures, 0);
-        mFrameBufferTextures = null;
-        GLES20.glDeleteFramebuffers(mFrameBuffers.length, mFrameBuffers, 0);
-        mFrameBuffers = null;
+        if (mFrameBufferTextures != null) {
+            GLES20.glDeleteTextures(mFrameBufferTextures.length, mFrameBufferTextures, 0);
+            mFrameBufferTextures = null;
+        }
+        if (mFrameBuffers != null) {
+            GLES20.glDeleteFramebuffers(mFrameBuffers.length, mFrameBuffers, 0);
+            mFrameBuffers = null;
+        }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see
+     * jp.cyberagent.android.gpuimage.GPUImageFilter#onOutputSizeChanged(int,
+     * int)
+     */
     @Override
     public void onOutputSizeChanged(final int width, final int height) {
         super.onOutputSizeChanged(width, height);
@@ -114,10 +134,16 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         mFilters.get(mFilters.size() - 1).onOutputSizeChanged(width, height);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see jp.cyberagent.android.gpuimage.GPUImageFilter#onDraw(int,
+     * java.nio.FloatBuffer, java.nio.FloatBuffer)
+     */
     @Override
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
-            final FloatBuffer textureBuffer, final ShortBuffer indexBuffer) {
-        if (mFrameBuffers == null) {
+            final FloatBuffer textureBuffer) {
+        runPendingOnDrawTasks();
+        if (!isInitialized() || mFrameBuffers == null || mFrameBufferTextures == null) {
             return;
         }
         int previousTexture = textureId;
@@ -125,14 +151,18 @@ public class GPUImageFilterGroup extends GPUImageFilter {
             GPUImageFilter filter = mFilters.get(i);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[i]);
             GLES20.glClearColor(0, 0, 0, 1);
-            filter.onDraw(previousTexture, mGLCubeBuffer, mGLTextureBuffer, mGLIndexBuffer);
+            filter.onDraw(previousTexture, mGLCubeBuffer, mGLTextureBuffer);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
             previousTexture = mFrameBufferTextures[i];
         }
-        mFilters.get(mFilters.size() - 1).onDraw(previousTexture, cubeBuffer, textureBuffer,
-                indexBuffer);
+        mFilters.get(mFilters.size() - 1).onDraw(previousTexture, cubeBuffer, textureBuffer);
     }
 
+    /**
+     * Gets the filters.
+     * 
+     * @return the filters
+     */
     public List<GPUImageFilter> getFilters() {
         return mFilters;
     }

@@ -1,27 +1,32 @@
 
 package jp.cyberagent.android.gpuimage.sample.activity;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import jp.cyberagent.android.gpuimage.GPUImage;
+import jp.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.cyberagent.android.gpuimage.GPUImageFilter;
-import jp.cyberagent.android.gpuimage.GPUImageRenderer;
-import jp.cyberagent.android.gpuimage.GPUImageRenderer.Rotation;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
 import jp.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 import jp.cyberagent.android.gpuimage.sample.R;
-import android.annotation.TargetApi;
+import jp.cyberagent.android.gpuimage.sample.utils.CameraHelper;
+import jp.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.pm.ConfigurationInfo;
-import android.graphics.SurfaceTexture;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,86 +36,175 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         OnClickListener {
 
-    private GLSurfaceView mGLSurfaceView;
-    private CameraHelper mCamera;
+    private GPUImage mGPUImage;
+    private CameraHelper mCameraHelper;
+    private CameraLoader mCamera;
     private GPUImageFilter mFilter;
     private FilterAdjuster mFilterAdjuster;
-    private GPUImageRenderer mRenderer;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-        mGLSurfaceView = (GLSurfaceView) findViewById(R.id.surfaceView);
         ((SeekBar) findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
-
-        // Check if the system supports OpenGL ES 2.0.
-        final ActivityManager activityManager = (ActivityManager)
-                getSystemService(Context.ACTIVITY_SERVICE);
-        final ConfigurationInfo configurationInfo =
-                activityManager.getDeviceConfigurationInfo();
-        final boolean supportsEs2 = configurationInfo.reqGlEsVersion >=
-                0x20000;
-        if (supportsEs2) {
-            // Handle if not supported?
-        }
-
-        mFilter = new GPUImageFilter();
-        mRenderer = new GPUImageRenderer(mFilter);
-        mGLSurfaceView.setEGLContextClientVersion(2);
-        mGLSurfaceView.setRenderer(mRenderer);
-        mGLSurfaceView.requestRender();
-
-        // Camera camera = Camera.open();
-        // // get the pixel format of the camera
-        // // the default is YCbCr_420_SP (NV21), see:
-        // int pixelFormat = camera.getParameters().getPreviewFormat();
-        // try {
-        // renderer = new OpenGLCamRenderer(pixelFormat, res);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // finish();
-        // }
-
-        // Render the view only when there is a change in the drawing data
-        // TODO uncomment this if not camera
-        // mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-
-        mCamera = new CameraHelper();
-
         findViewById(R.id.button_choose_filter).setOnClickListener(this);
+        findViewById(R.id.button_capture).setOnClickListener(this);
+
+        mGPUImage = new GPUImage(this);
+        mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
+
+        mCameraHelper = new CameraHelper(this);
+        mCamera = new CameraLoader();
+
+        View cameraSwitchView = findViewById(R.id.img_switch_camera);
+        cameraSwitchView.setOnClickListener(this);
+        if (!mCameraHelper.hasFrontCamera() || !mCameraHelper.hasBackCamera()) {
+            cameraSwitchView.setVisibility(View.GONE);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mCamera.onResume();
-        mGLSurfaceView.onResume();
     }
 
     @Override
     protected void onPause() {
-        mGLSurfaceView.onPause();
         mCamera.onPause();
         super.onPause();
     }
 
     @Override
     public void onClick(final View v) {
-        GPUImageFilterTools.showDialog(this, new OnGpuImageFilterChosenListener() {
+        switch (v.getId()) {
+            case R.id.button_choose_filter:
+                GPUImageFilterTools.showDialog(this, new OnGpuImageFilterChosenListener() {
 
-            @Override
-            public void onGpuImageFilterChosenListener(final GPUImageFilter filter) {
-                switchFilterTo(filter);
+                    @Override
+                    public void onGpuImageFilterChosenListener(final GPUImageFilter filter) {
+                        switchFilterTo(filter);
+                    }
+                });
+                break;
+
+            case R.id.button_capture:
+                if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
+                        Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                    takePicture();
+                } else {
+                    mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
+
+                        @Override
+                        public void onAutoFocus(final boolean success, final Camera camera) {
+                            takePicture();
+                        }
+                    });
+                }
+                break;
+
+            case R.id.img_switch_camera:
+                mCamera.switchCamera();
+                break;
+        }
+    }
+
+    private void takePicture() {
+        // TODO get a size that is about the size of the screen
+        Camera.Parameters params = mCamera.mCameraInstance.getParameters();
+        params.setPictureSize(1280, 960);
+        params.setRotation(90);
+        mCamera.mCameraInstance.setParameters(params);
+        for (Camera.Size size2 : mCamera.mCameraInstance.getParameters()
+                .getSupportedPictureSizes()) {
+            Log.i("ASDF", "Supported: " + size2.width + "x" + size2.height);
+        }
+        mCamera.mCameraInstance.takePicture(null, null,
+                new Camera.PictureCallback() {
+
+                    @Override
+                    public void onPictureTaken(byte[] data, final Camera camera) {
+
+                        final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+                        if (pictureFile == null) {
+                            Log.d("ASDF",
+                                    "Error creating media file, check storage permissions");
+                            return;
+                        }
+
+                        try {
+                            FileOutputStream fos = new FileOutputStream(pictureFile);
+                            fos.write(data);
+                            fos.close();
+                        } catch (FileNotFoundException e) {
+                            Log.d("ASDF", "File not found: " + e.getMessage());
+                        } catch (IOException e) {
+                            Log.d("ASDF", "Error accessing file: " + e.getMessage());
+                        }
+
+                        data = null;
+                        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile
+                                .getAbsolutePath());
+                        // mGPUImage.setImage(bitmap);
+                        final GLSurfaceView view = (GLSurfaceView) findViewById(R.id.surfaceView);
+                        view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+                        mGPUImage.saveToPictures(bitmap, "GPUImage",
+                                System.currentTimeMillis() + ".jpg",
+                                new OnPictureSavedListener() {
+
+                                    @Override
+                                    public void onPictureSaved(final Uri
+                                            uri) {
+                                        pictureFile.delete();
+                                        camera.startPreview();
+                                        view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+                                    }
+                                });
+                    }
+                });
+    }
+
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final int MEDIA_TYPE_VIDEO = 2;
+
+    private static File getOutputMediaFile(final int type) {
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d("MyCameraApp", "failed to create directory");
+                return null;
             }
-        });
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_" + timeStamp + ".jpg");
+        } else if (type == MEDIA_TYPE_VIDEO) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "VID_" + timeStamp + ".mp4");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
     }
 
     private void switchFilterTo(final GPUImageFilter filter) {
         if (mFilter == null
                 || (filter != null && !mFilter.getClass().equals(filter.getClass()))) {
             mFilter = filter;
-            mRenderer.setFilter(mFilter);
+            mGPUImage.setFilter(mFilter);
             mFilterAdjuster = new FilterAdjuster(mFilter);
         }
     }
@@ -130,58 +224,60 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     public void onStopTrackingTouch(final SeekBar seekBar) {
     }
 
-    private class CameraHelper {
+    private class CameraLoader {
+        private int mCurrentCameraId = 0;
         private Camera mCameraInstance;
 
         public void onResume() {
-            mCameraInstance = getCameraInstance();
+            setUpCamera(mCurrentCameraId);
+        }
+
+        public void onPause() {
+            releaseCamera();
+        }
+
+        public void switchCamera() {
+            releaseCamera();
+            mCurrentCameraId = (mCurrentCameraId + 1) % mCameraHelper.getNumberOfCameras();
+            setUpCamera(mCurrentCameraId);
+        }
+
+        private void setUpCamera(final int id) {
+            mCameraInstance = getCameraInstance(id);
             Parameters parameters = mCameraInstance.getParameters();
             // TODO adjust by getting supportedPreviewSizes and then choosing
             // the best one for screen size (best fill screen)
             parameters.setPreviewSize(720, 480);
-            for (Size size : parameters.getSupportedPreviewSizes()) {
-                Log.i("ASDF", "Size: " + size.width + "x" + size.height);
+            if (parameters.getSupportedFocusModes().contains(
+                    Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
             }
-
-            Log.i("ASDF", "Preview Format: " + parameters.getPreviewFormat());
             mCameraInstance.setParameters(parameters);
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-                setUpGingerbreadTexture();
-            } else {
-                mCameraInstance.setPreviewCallback(mRenderer);
-                mCameraInstance.startPreview();
-            }
-            mRenderer.setRotation(Rotation.RIGHT);
-        }
 
-        @TargetApi(11)
-        private void setUpGingerbreadTexture() {
-            try {
-                mRenderer.setUpSurfaceTexture(mCameraInstance);
-                mCameraInstance.setPreviewTexture(new SurfaceTexture(0));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void onPause() {
-            // mCameraInstance.stopPreview();
-            mCameraInstance.setPreviewCallback(null);
-            mCameraInstance.release();
-            mCameraInstance = null;
+            int orientation = mCameraHelper.getCameraDisplayOrientation(
+                    ActivityCamera.this, mCurrentCameraId);
+            CameraInfo2 cameraInfo = new CameraInfo2();
+            mCameraHelper.getCameraInfo(mCurrentCameraId, cameraInfo);
+            boolean flipHorizontal = cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT
+                    ? true : false;
+            mGPUImage.setUpCamera(mCameraInstance, orientation, flipHorizontal, false);
         }
 
         /** A safe way to get an instance of the Camera object. */
-        private Camera getCameraInstance() {
+        private Camera getCameraInstance(final int id) {
             Camera c = null;
             try {
-                // TODO allow opening front view camera with open(int) if exists
-                // Camera.getNumberOfCameras()
-                c = Camera.open();
+                c = mCameraHelper.openCamera(id);
             } catch (Exception e) {
-                // Camera is not available (in use or does not exist)
+                e.printStackTrace();
             }
-            return c; // returns null if camera is unavailable
+            return c;
+        }
+
+        private void releaseCamera() {
+            mCameraInstance.setPreviewCallback(null);
+            mCameraInstance.release();
+            mCameraInstance = null;
         }
     }
 }

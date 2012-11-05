@@ -1,10 +1,23 @@
+/*
+ * Copyright (C) 2012 CyberAgent
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package jp.cyberagent.android.gpuimage;
 
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.LinkedList;
-import java.util.Queue;
 
 import android.opengl.GLES20;
 
@@ -30,7 +43,7 @@ public class GPUImageFilter {
             "     gl_FragColor = texture2D(inputImageTexture, textureCoordinate);\n" +
             "}";
 
-    private final Queue<Runnable> mRunOnDraw;
+    private final LinkedList<Runnable> mRunOnDraw;
     private final String mVertexShader;
     private final String mFragmentShader;
     private int mGLProgId;
@@ -39,6 +52,7 @@ public class GPUImageFilter {
     private int mGLAttribTextureCoordinate;
     private int mOutputWidth;
     private int mOutputHeight;
+    private boolean mIsInitialized;
 
     public GPUImageFilter() {
         this(NO_FILTER_VERTEX_SHADER, NO_FILTER_FRAGMENT_SHADER);
@@ -56,10 +70,12 @@ public class GPUImageFilter {
         mGLUniformTexture = GLES20.glGetUniformLocation(mGLProgId, "inputImageTexture");
         mGLAttribTextureCoordinate = GLES20.glGetAttribLocation(mGLProgId,
                 "inputTextureCoordinate");
+        mIsInitialized = true;
     }
 
     public void onDestroy() {
         GLES20.glDeleteProgram(mGLProgId);
+        mIsInitialized = false;
     }
 
     public void onOutputSizeChanged(final int width, final int height) {
@@ -68,14 +84,15 @@ public class GPUImageFilter {
     }
 
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
-            final FloatBuffer textureBuffer, final ShortBuffer indexBuffer) {
+            final FloatBuffer textureBuffer) {
         GLES20.glUseProgram(mGLProgId);
-        while (!mRunOnDraw.isEmpty()) {
-            mRunOnDraw.poll().run();
+        runPendingOnDrawTasks();
+        if (!mIsInitialized) {
+            return;
         }
 
         cubeBuffer.position(0);
-        GLES20.glVertexAttribPointer(mGLAttribPosition, 3, GLES20.GL_FLOAT, false, 0, cubeBuffer);
+        GLES20.glVertexAttribPointer(mGLAttribPosition, 2, GLES20.GL_FLOAT, false, 0, cubeBuffer);
         GLES20.glEnableVertexAttribArray(mGLAttribPosition);
         textureBuffer.position(0);
         GLES20.glVertexAttribPointer(mGLAttribTextureCoordinate, 2, GLES20.GL_FLOAT, false, 0,
@@ -86,10 +103,20 @@ public class GPUImageFilter {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
             GLES20.glUniform1i(mGLUniformTexture, 0);
         }
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, 6, GLES20.GL_UNSIGNED_SHORT, indexBuffer);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glDisableVertexAttribArray(mGLAttribPosition);
         GLES20.glDisableVertexAttribArray(mGLAttribTextureCoordinate);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+    }
+
+    protected void runPendingOnDrawTasks() {
+        while (!mRunOnDraw.isEmpty()) {
+            mRunOnDraw.removeFirst().run();
+        }
+    }
+
+    public boolean isInitialized() {
+        return mIsInitialized;
     }
 
     public int getOutputWidth() {
@@ -148,7 +175,7 @@ public class GPUImageFilter {
 
     protected void runOnDraw(final Runnable runnable) {
         synchronized (mRunOnDraw) {
-            mRunOnDraw.add(runnable);
+            mRunOnDraw.addLast(runnable);
         }
     }
 }
