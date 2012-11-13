@@ -26,6 +26,7 @@ import jp.cyberagent.android.gpuimage.GPUImageDirectionalSobelEdgeDetectionFilte
 import jp.cyberagent.android.gpuimage.GPUImageEmbossFilter;
 import jp.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.cyberagent.android.gpuimage.GPUImageFilterGroup;
+import jp.cyberagent.android.gpuimage.GPUImageGammaFilter;
 import jp.cyberagent.android.gpuimage.GPUImageGrayscaleFilter;
 import jp.cyberagent.android.gpuimage.GPUImagePosterizeFilter;
 import jp.cyberagent.android.gpuimage.GPUImageSepiaFilter;
@@ -40,6 +41,7 @@ public class GPUImageFilterTools {
             final OnGpuImageFilterChosenListener listener) {
         final FilterList filters = new FilterList();
         filters.addFilter("Contrast", FilterType.CONTRAST);
+        filters.addFilter("Gamma", FilterType.GAMMA);
         filters.addFilter("Sepia", FilterType.SEPIA);
         filters.addFilter("Grayscale", FilterType.GRAYSCALE);
         filters.addFilter("Sharpness", FilterType.SHARPEN);
@@ -68,6 +70,10 @@ public class GPUImageFilterTools {
                 GPUImageContrastFilter filter = new GPUImageContrastFilter();
                 filter.setContrast(2.0f);
                 return filter;
+            case GAMMA:
+                GPUImageGammaFilter gamma = new GPUImageGammaFilter();
+                gamma.setGamma(2.0f);
+                return gamma;
             case GRAYSCALE:
                 return new GPUImageGrayscaleFilter();
             case SEPIA:
@@ -107,7 +113,7 @@ public class GPUImageFilterTools {
     }
 
     private enum FilterType {
-        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE,
+        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA,
     }
 
     private static class FilterList {
@@ -130,6 +136,8 @@ public class GPUImageFilterTools {
                 adjuster = new SepiaAdjuster().filter(filter);
             } else if (filter instanceof GPUImageContrastFilter) {
                 adjuster = new ContrastAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageGammaFilter) {
+                adjuster = new GammaAdjuster().filter(filter);
             } else if (filter instanceof GPUImageSobelEdgeDetection) {
                 adjuster = new SobelAdjuster().filter(filter);
             } else if (filter instanceof GPUImage3x3TextureSamplingFilter) {
@@ -184,6 +192,13 @@ public class GPUImageFilterTools {
             @Override
             public void adjust(final int percentage) {
                 getFilter().setContrast(range(percentage, 0.0f, 2.0f));
+            }
+        }
+
+        private class GammaAdjuster extends Adjuster<GPUImageGammaFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setGamma(range(percentage, 0.0f, 3.0f));
             }
         }
 
