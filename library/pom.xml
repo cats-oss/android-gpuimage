@@ -6,7 +6,6 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jp.cyberagent.android.gpuimage</groupId>
     <artifactId>gpuimage-library</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <name>GPUImage for Android Library</name>
     <packaging>apklib</packaging>
 
@@ -36,6 +35,18 @@
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>libs/armeabi</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>

@@ -15,8 +15,6 @@ GPUImage can be used as a library project or by copying the following files/fold
 * library/libs/armeabi
 * library/bin/gpuimage.jar
 
-***NOTE:** Run ndk-build and copy the files as described further below before linking as library project or copying files.*
-
 ### Maven dependency
 
     
@@ -60,6 +58,11 @@ Run the following command in the library folder. Make sure you have android-ndk 
     cd native
     ndk-build
     cp -R libs/armeabi ../library/libs/
+
+### Maven
+Make sure that you run the clean target when using maven.
+
+    mvn clean install
 
 ## License
     Copyright 2012 CyberAgent

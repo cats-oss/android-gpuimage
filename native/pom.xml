@@ -7,7 +7,6 @@
     <groupId>jp.cyberagent.android.gpuimage</groupId>
     <artifactId>gpuimage-native</artifactId>
     <name>GPUImage for Android Native Tools</name>
-    <version>1.0.0-SNAPSHOT</version>
 
     <!--
     Packaging is defined as 'apklib'
