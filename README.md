@@ -12,8 +12,21 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 ### Include in own project
 GPUImage can be used as a library project or by copying the following files/folders to your libs folder.
 
-* libs/armeabi
-* bin/gpuimage.jar
+* library/libs/armeabi
+* library/bin/gpuimage.jar
+
+***NOTE:** Run ndk-build and copy the files as described further below before linking as library project or copying files.*
+
+### Maven dependency
+
+    
+    <dependency>
+      <groupId>jp.cyberagent.android.gpuimage</groupId>
+      <artifactId>gpuimage-library</artifactId>
+      <type>apklib</type>
+      <version>(use current version here)</version>
+    </dependency>
+
 
 ### Sample Code
 With preview:
@@ -44,7 +57,9 @@ Without preview:
 ## Create libs/armeabi
 Run the following command in the library folder. Make sure you have android-ndk in your PATH.
 
+    cd native
     ndk-build
+    cp -R libs/armeabi ../library/libs/
 
 ## License
     Copyright 2012 CyberAgent

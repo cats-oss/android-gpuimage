@@ -23,6 +23,9 @@ target
 release.properties
 pom.xml.*
 
+#Needed for maven to work with native
+libs/armeabi
+
 #Ant
 build.xml
 local.properties

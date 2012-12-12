@@ -29,7 +29,7 @@ public class OpenGlUtils {
     public static final int NO_TEXTURE = -1;
 
     static {
-        System.loadLibrary("yuv-decoder");
+        System.loadLibrary("gpuimage-native");
     }
 
     public static int loadTexture(final Bitmap img, final int usedTexId) {
