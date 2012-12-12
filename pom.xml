@@ -9,18 +9,11 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>GPUImage for Android</name>
-<parent>
-    <groupId>jp.cyberagent.android.base</groupId>
-    <artifactId>maven-private-parent</artifactId>
-    <version>1</version>
-</parent>
-<!--
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>7</version>
   </parent>
--->
   <modules>
     <module>native</module>
     <module>library</module>
