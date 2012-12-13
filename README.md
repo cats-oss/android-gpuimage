@@ -17,9 +17,9 @@ GPUImage can be used as a library project or by copying the following files/fold
 
 ### Maven dependency
 
-    
+
     <dependency>
-      <groupId>jp.cyberagent.android.gpuimage</groupId>
+      <groupId>jp.co.cyberagent.android.gpuimage</groupId>
       <artifactId>gpuimage-library</artifactId>
       <type>apklib</type>
       <version>(use current version here)</version>
@@ -33,13 +33,13 @@ With preview:
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity);
-        
+
         Uri imageUri = ...;
         mGPUImage = new GPUImage(this);
         mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
         mGPUImage.setImage(imageUri); // this loads image on the current thread, should be run in a thread
         mGPUImage.setFilter(new GPUImageSepiaFilter());
-        
+
         // Later when image should be saved saved:
         mGPUImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
     }

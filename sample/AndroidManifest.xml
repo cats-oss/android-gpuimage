@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="jp.cyberagent.android.gpuimage.sample"
+    package="jp.co.cyberagent.android.gpuimage.sample"
     android:versionCode="2"
     android:versionName="1.0.1" >
 
@@ -26,7 +26,7 @@
         </activity>
         <activity android:name=".activity.ActivityGallery" />
         <activity
-            android:name=".activity.ActivityCamera"
+            android:name="jp.co.cyberagent.android.gpuimage.sample.activity.ActivityCamera"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
