@@ -55,9 +55,8 @@ Without preview:
 ## Create libs/armeabi
 Run the following command in the library folder. Make sure you have android-ndk in your PATH.
 
-    cd native
+    cd library
     ndk-build
-    cp -R libs/armeabi ../library/libs/
 
 ### Maven
 Make sure that you run the clean target when using maven.
