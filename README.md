@@ -12,8 +12,19 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 ### Include in own project
 GPUImage can be used as a library project or by copying the following files/folders to your libs folder.
 
-* libs/armeabi
-* bin/gpuimage.jar
+* library/libs/armeabi
+* library/bin/gpuimage.jar
+
+### Maven dependency
+
+
+    <dependency>
+      <groupId>jp.co.cyberagent.android.gpuimage</groupId>
+      <artifactId>gpuimage-library</artifactId>
+      <type>apklib</type>
+      <version>(use current version here)</version>
+    </dependency>
+
 
 ### Sample Code
 With preview:
@@ -22,13 +33,13 @@ With preview:
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity);
-        
+
         Uri imageUri = ...;
         mGPUImage = new GPUImage(this);
         mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
         mGPUImage.setImage(imageUri); // this loads image on the current thread, should be run in a thread
         mGPUImage.setFilter(new GPUImageSepiaFilter());
-        
+
         // Later when image should be saved saved:
         mGPUImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
     }
@@ -44,7 +55,14 @@ Without preview:
 ## Create libs/armeabi
 Run the following command in the library folder. Make sure you have android-ndk in your PATH.
 
+    cd native
     ndk-build
+    cp -R libs/armeabi ../library/libs/
+
+### Maven
+Make sure that you run the clean target when using maven.
+
+    mvn clean install
 
 ## License
     Copyright 2012 CyberAgent
