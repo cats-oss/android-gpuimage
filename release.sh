@@ -22,26 +22,10 @@ function updateManifest {
 updateManifest "sample/AndroidManifest.xml"
 updateManifest "library/AndroidManifest.xml"
 
-git status
-git diff
-
-echo -n "Commit changes and continue? "
-while true
-do
-  echo -n " (y or n) : "
-  read CONFIRM
-  case $CONFIRM in
-    y|Y|YES|yes|Yes) break ;;
-    n|N|no|NO|No)
-    echo "Aborting..."
-    exit
-    ;;
-    *) echo Please enter only y or n
-  esac
-done
-
-git commit -a -m "Update version to v$VERSION"
-
-mvn release:clean
-mvn release:prepare
-mvn release:perform
+echo ""
+echo "# Now run:"
+echo ""
+echo git commit -a -m \"Update version to v$VERSION\"
+echo mvn release:clean
+echo mvn release:prepare
+echo mvn release:perform
