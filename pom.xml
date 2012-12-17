@@ -4,21 +4,51 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                               http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>jp.co.cyberagent.android.gpuimage</groupId>
-  <artifactId>gpuimage-parent</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>GPUImage for Android</name>
+
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>7</version>
   </parent>
+
+  <groupId>jp.co.cyberagent.android.gpuimage</groupId>
+  <artifactId>gpuimage-parent</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>GPUImage for Android</name>
+  <description>Image filters for Android with OpenGL (based on GPUImage for iOS)</description>
+  <url>https://github.com/cyberagent-jp/android-gpuimage/</url>
+
   <modules>
     <module>native</module>
     <module>library</module>
     <module>sample</module>
   </modules>
+
+  <scm>
+    <url>git@github.com:cyberagent-jp/android-gpuimage.git</url>
+    <connection>scm:git:git@github.com:cyberagent-jp/android-gpuimage.git</connection>
+    <developerConnection>scm:git:git@github.com:cyberagent-jp/android-gpuimage.git</developerConnection>
+  </scm>
+  <developers>
+    <developer>
+      <name>Patrick Boos</name>
+      <email>patrickboos85@gmail.com</email>
+      <id>pboos</id>
+      <url>http://pboos.ch</url>
+      <timezone>+9</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <licenses>
+    <license>
+      <name>Apache License Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <properties>
     <!-- build settings -->
