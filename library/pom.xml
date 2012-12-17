@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                              http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                               http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>jp.co.cyberagent.android.gpuimage</groupId>
     <artifactId>gpuimage-library</artifactId>
@@ -12,7 +9,7 @@
     <parent>
         <groupId>jp.co.cyberagent.android.gpuimage</groupId>
         <artifactId>gpuimage-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.2</version>
     </parent>
 
     <dependencies>
@@ -22,30 +19,39 @@
             <version>${android.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Pull in the dependency on the native library already compiled in the native-code module -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>gpuimage-native</artifactId>
-            <version>${project.version}</version>
-            <classifier>armeabi</classifier>
-            <type>so</type>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>libs/armeabi</directory>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
-                    </filesets>
-                </configuration>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <executions>
+                    <!--
+                    Add the execution of the ndk-build goal - this will compile the native code in addition
+                    to building the Java & APK
+                    -->
+                    <execution>
+                        <goals>
+                            <goal>ndk-build</goal>
+                        </goals>
+                        <configuration>
+                            <!--
+                            Configure the plugin to remove all built artifacts from the libs/armeabi folder
+                            when the native build is complete
+                            -->
+                            <clearNativeArtifacts>false</clearNativeArtifacts>
+                            <!--
+                            Configure the plugin to also attach the built, native, artifact from the libs/armeabi folder
+                            when the native build is complete.  This puts the artifact into the Maven repository
+                            -->
+                            <attachNativeArtifacts>true</attachNativeArtifacts>
+                            <target>gpuimage-library</target>
+                        </configuration>
+                    </execution>
+                </executions>
+                <extensions>true</extensions>
+
             </plugin>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
