@@ -2,7 +2,7 @@
 #include <android/log.h>
 
 
-JNIEXPORT void JNICALL Java_jp_co_cyberagent_android_gpuimage_OpenGlUtils_YUVtoRBGA(JNIEnv * env, jobject obj, jbyteArray yuv420sp, jint width, jint height, jintArray rgbOut)
+JNIEXPORT void JNICALL Java_jp_co_cyberagent_android_gpuimage_GPUImageNativeLibrary_YUVtoRBGA(JNIEnv * env, jobject obj, jbyteArray yuv420sp, jint width, jint height, jintArray rgbOut)
 {
     int             sz;
     int             i;
@@ -50,7 +50,7 @@ JNIEXPORT void JNICALL Java_jp_co_cyberagent_android_gpuimage_OpenGlUtils_YUVtoR
     (*env)->ReleasePrimitiveArrayCritical(env, yuv420sp, yuv, 0);
 }
 
-JNIEXPORT void JNICALL Java_jp_cyberagent_android_base_media_filter_opengl_OpenGlUtils_YUVtoARBG(JNIEnv * env, jobject obj, jbyteArray yuv420sp, jint width, jint height, jintArray rgbOut)
+JNIEXPORT void JNICALL Java_jp_co_cyberagent_android_gpuimage_GPUImageNativeLibrary_YUVtoARBG(JNIEnv * env, jobject obj, jbyteArray yuv420sp, jint width, jint height, jintArray rgbOut)
 {
     int             sz;
     int             i;

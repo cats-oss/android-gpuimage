@@ -10,7 +10,7 @@
   <parent>
     <groupId>jp.co.cyberagent.android.gpuimage</groupId>
     <artifactId>gpuimage-parent</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
   </parent>
 
   <dependencies>
@@ -39,6 +39,13 @@
           <proguard>
             <skip>true</skip>
           </proguard>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>
