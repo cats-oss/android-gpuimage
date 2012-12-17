@@ -20,7 +20,6 @@
   <url>https://github.com/cyberagent-jp/android-gpuimage/</url>
 
   <modules>
-    <module>native</module>
     <module>library</module>
     <module>sample</module>
   </modules>
