@@ -12,16 +12,25 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 ### Include in own project
 GPUImage can be used as a library project or by copying the following files/folders to your libs folder.
 
-* library/libs/armeabi
+* library/libs/armeabi (only needed for camera live preview)
 * library/bin/gpuimage.jar
 
 ### Maven dependency
-
 
     <dependency>
       <groupId>jp.co.cyberagent.android.gpuimage</groupId>
       <artifactId>gpuimage-library</artifactId>
       <type>apklib</type>
+      <version>(use current version here)</version>
+    </dependency>
+
+If you want to use it with live camera preview, than you will need to add the following as well:
+
+    <dependency>
+      <groupId>jp.co.cyberagent.android.gpuimage</groupId>
+      <artifactId>gpuimage-library</artifactId>
+      <classifier>armeabi</classifier>
+      <type>so</type>
       <version>(use current version here)</version>
     </dependency>
 
