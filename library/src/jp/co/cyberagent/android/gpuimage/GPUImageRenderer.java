@@ -16,17 +16,6 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.LinkedList;
-import java.util.Queue;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -36,6 +25,16 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.LinkedList;
+import java.util.Queue;
 
 @TargetApi(11)
 public class GPUImageRenderer implements Renderer, PreviewCallback {
@@ -111,7 +110,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     public void onSurfaceCreated(final GL10 unused, final EGLConfig config) {
         GLES20.glClearColor(0, 0, 0, 1);
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-        mFilter.onInit();
+        mFilter.init();
     }
 
     @Override
@@ -188,9 +187,9 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 final GPUImageFilter oldFilter = mFilter;
                 mFilter = filter;
                 if (oldFilter != null) {
-                    oldFilter.onDestroy();
+                    oldFilter.destroy();
                 }
-                mFilter.onInit();
+                mFilter.init();
                 GLES20.glUseProgram(mFilter.getProgram());
                 mFilter.onOutputSizeChanged(mOutputWidth, mOutputHeight);
             }

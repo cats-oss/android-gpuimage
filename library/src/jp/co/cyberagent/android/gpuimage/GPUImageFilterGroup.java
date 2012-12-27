@@ -16,15 +16,15 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import static jp.co.cyberagent.android.gpuimage.GPUImageRenderer.CUBE;
-import static jp.co.cyberagent.android.gpuimage.GPUImageRenderer.TEXTURE_NO_ROTATION;
+import android.opengl.GLES20;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.List;
 
-import android.opengl.GLES20;
+import static jp.co.cyberagent.android.gpuimage.GPUImageRenderer.CUBE;
+import static jp.co.cyberagent.android.gpuimage.GPUImageRenderer.TEXTURE_NO_ROTATION;
 
 /**
  * Resembles a filter that consists of multiple filters applied after each
@@ -65,7 +65,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     public void onInit() {
         super.onInit();
         for (GPUImageFilter filter : mFilters) {
-            filter.onInit();
+            filter.init();
         }
     }
 
@@ -77,7 +77,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     public void onDestroy() {
         destroyFramebuffers();
         for (GPUImageFilter filter : mFilters) {
-            filter.onDestroy();
+            filter.destroy();
         }
         super.onDestroy();
     }

@@ -16,14 +16,6 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.Semaphore;
-
-import jp.co.cyberagent.android.gpuimage.GPUImageRenderer.Rotation;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -45,6 +37,14 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.Display;
 import android.view.WindowManager;
+import jp.co.cyberagent.android.gpuimage.GPUImageRenderer.Rotation;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * The main accessor for GPUImage functionality. This class helps to do common
@@ -239,7 +239,7 @@ public class GPUImage {
 
                 @Override
                 public void run() {
-                    mFilter.onDestroy();
+                    mFilter.destroy();
                     lock.release();
                 }
             });
@@ -259,7 +259,7 @@ public class GPUImage {
         buffer.setRenderer(renderer);
         renderer.setImageBitmap(bitmap, false);
         Bitmap result = buffer.getBitmap();
-        mFilter.onDestroy();
+        mFilter.destroy();
         renderer.deleteImage();
         buffer.destroy();
 
@@ -296,7 +296,7 @@ public class GPUImage {
         for (GPUImageFilter filter : filters) {
             renderer.setFilter(filter);
             listener.response(buffer.getBitmap());
-            filter.onDestroy();
+            filter.destroy();
         }
         renderer.deleteImage();
         buffer.destroy();

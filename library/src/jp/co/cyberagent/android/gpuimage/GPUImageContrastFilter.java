@@ -39,7 +39,6 @@ public class GPUImageContrastFilter extends GPUImageFilter {
 
     private int mContrastLocation;
     private float mContrast;
-    private boolean mIsInitialized = false;
 
     public GPUImageContrastFilter() {
         this(1.2f);
@@ -54,14 +53,16 @@ public class GPUImageContrastFilter extends GPUImageFilter {
     public void onInit() {
         super.onInit();
         mContrastLocation = GLES20.glGetUniformLocation(getProgram(), "contrast");
-        mIsInitialized = true;
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setContrast(mContrast);
     }
 
     public void setContrast(final float contrast) {
         mContrast = contrast;
-        if (mIsInitialized) {
-            setFloat(mContrastLocation, mContrast);
-        }
+        setFloat(mContrastLocation, mContrast);
     }
 }

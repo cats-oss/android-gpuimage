@@ -16,10 +16,10 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
+import android.opengl.GLES20;
+
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
-
-import android.opengl.GLES20;
 
 public class GPUImageFilter {
     public static final String NO_FILTER_VERTEX_SHADER = "" +
@@ -64,13 +64,26 @@ public class GPUImageFilter {
         mFragmentShader = fragmentShader;
     }
 
+    public final void init() {
+        onInit();
+        mIsInitialized = true;
+        onInitialized();
+    }
+
     public void onInit() {
         mGLProgId = OpenGlUtils.loadProgram(mVertexShader, mFragmentShader);
         mGLAttribPosition = GLES20.glGetAttribLocation(mGLProgId, "position");
         mGLUniformTexture = GLES20.glGetUniformLocation(mGLProgId, "inputImageTexture");
         mGLAttribTextureCoordinate = GLES20.glGetAttribLocation(mGLProgId,
                 "inputTextureCoordinate");
-        mIsInitialized = true;
+    }
+
+    public void onInitialized() {
+    }
+
+    public final void destroy() {
+        mIsInitialized = false;
+        onDestroy();
     }
 
     public void onDestroy() {
