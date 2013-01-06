@@ -34,6 +34,7 @@ import jp.co.cyberagent.android.gpuimage.GPUImageSepiaFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSharpenFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSobelEdgeDetection;
 import jp.co.cyberagent.android.gpuimage.GPUImageColorInvertFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageHueFilter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,6 +45,7 @@ public class GPUImageFilterTools {
         final FilterList filters = new FilterList();
         filters.addFilter("Contrast", FilterType.CONTRAST);
         filters.addFilter("Invert", FilterType.INVERT);
+        filters.addFilter("Hue", FilterType.HUE);
         filters.addFilter("Gamma", FilterType.GAMMA);
         filters.addFilter("Brightness", FilterType.BRIGHTNESS);
         filters.addFilter("Sepia", FilterType.SEPIA);
@@ -76,6 +78,8 @@ public class GPUImageFilterTools {
                 return new GPUImageGammaFilter(2.0f);
             case INVERT:
                 return new GPUImageColorInvertFilter();
+            case HUE:
+                return new GPUImageHueFilter(90.0f);
             case BRIGHTNESS:
                 return new GPUImageBrightnessFilter(1.5f);
             case GRAYSCALE:
@@ -117,7 +121,7 @@ public class GPUImageFilterTools {
     }
 
     private enum FilterType {
-        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT,
+        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, 
     }
 
     private static class FilterList {
@@ -150,6 +154,8 @@ public class GPUImageFilterTools {
                 adjuster = new GPU3x3TextureAdjuster().filter(filter);
             } else if (filter instanceof GPUImageEmbossFilter) {
                 adjuster = new EmbossAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageHueFilter) {
+                adjuster = new HueAdjuster().filter(filter);
             } else if (filter instanceof GPUImagePosterizeFilter) {
                 adjuster = new PosterizeAdjuster().filter(filter);
             } else {
@@ -192,6 +198,13 @@ public class GPUImageFilterTools {
             public void adjust(final int percentage) {
                 getFilter().setSharpness(range(percentage, -4.0f, 4.0f));
             }
+        }
+
+        private class HueAdjuster extends Adjuster<GPUImageHueFilter> {
+          @Override
+          public void adjust(final int percentage) {
+            getFilter().setHue(range(percentage, 0.0f, 360.0f));
+          }
         }
 
         private class ContrastAdjuster extends Adjuster<GPUImageContrastFilter> {
