@@ -33,6 +33,7 @@ import jp.co.cyberagent.android.gpuimage.GPUImagePosterizeFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSepiaFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSharpenFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSobelEdgeDetection;
+import jp.co.cyberagent.android.gpuimage.GPUImageColorInvertFilter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,6 +43,7 @@ public class GPUImageFilterTools {
             final OnGpuImageFilterChosenListener listener) {
         final FilterList filters = new FilterList();
         filters.addFilter("Contrast", FilterType.CONTRAST);
+        filters.addFilter("Invert", FilterType.INVERT);
         filters.addFilter("Gamma", FilterType.GAMMA);
         filters.addFilter("Brightness", FilterType.BRIGHTNESS);
         filters.addFilter("Sepia", FilterType.SEPIA);
@@ -72,6 +74,8 @@ public class GPUImageFilterTools {
                 return new GPUImageContrastFilter(2.0f);
             case GAMMA:
                 return new GPUImageGammaFilter(2.0f);
+            case INVERT:
+                return new GPUImageColorInvertFilter();
             case BRIGHTNESS:
                 return new GPUImageBrightnessFilter(1.5f);
             case GRAYSCALE:
@@ -113,7 +117,7 @@ public class GPUImageFilterTools {
     }
 
     private enum FilterType {
-        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS,
+        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT,
     }
 
     private static class FilterList {
