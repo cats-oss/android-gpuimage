@@ -97,7 +97,7 @@ public class GPUImageFilter {
     }
 
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
-            final FloatBuffer textureBuffer) {
+                       final FloatBuffer textureBuffer) {
         GLES20.glUseProgram(mGLProgId);
         runPendingOnDrawTasks();
         if (!mIsInitialized) {
@@ -158,7 +158,8 @@ public class GPUImageFilter {
 
     protected void setInteger(final int location, final int intValue) {
         runOnDraw(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 GLES20.glUniform1i(location, intValue);
             }
         });
@@ -175,32 +176,36 @@ public class GPUImageFilter {
 
     protected void setFloatVec2(final int location, final float[] arrayValue) {
         runOnDraw(new Runnable() {
-            @Override public void run() {
-              GLES20.glUniform2fv(location, 1, arrayValue);
+            @Override
+            public void run() {
+                GLES20.glUniform2fv(location, 1, FloatBuffer.wrap(arrayValue));
             }
         });
     }
 
     protected void setFloatVec3(final int location, final float[] arrayValue) {
         runOnDraw(new Runnable() {
-            @Override public void run() {
-                GLES20.glUniform3fv(location, 1, arrayValue);
+            @Override
+            public void run() {
+                GLES20.glUniform3fv(location, 1, FloatBuffer.wrap(arrayValue));
             }
         });
     }
 
     protected void setFloatVec4(final int location, final float[] arrayValue) {
         runOnDraw(new Runnable() {
-            @Override public void run() {
-                GLES20.glUniform4fv(location, 1, arrayValue);
+            @Override
+            public void run() {
+                GLES20.glUniform4fv(location, 1, FloatBuffer.wrap(arrayValue));
             }
         });
     }
 
     protected void setFloatArray(final int location, final float[] arrayValue) {
         runOnDraw(new Runnable() {
-            @Override public void run() {
-                GLES20.glUniform1fv(location, sizeof(arrayValue), arrayValue);
+            @Override
+            public void run() {
+                GLES20.glUniform1fv(location, arrayValue.length, FloatBuffer.wrap(arrayValue));
             }
         });
     }
