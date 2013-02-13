@@ -25,17 +25,17 @@ import jp.co.cyberagent.android.gpuimage.GPUImageBrightnessFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageContrastFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageDirectionalSobelEdgeDetectionFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageEmbossFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageExposureFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilterGroup;
 import jp.co.cyberagent.android.gpuimage.GPUImageGammaFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageGrayscaleFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageHueFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImagePosterizeFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageSaturationFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSepiaFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSharpenFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSobelEdgeDetection;
-import jp.co.cyberagent.android.gpuimage.GPUImageColorInvertFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageHueFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImagePixelationFilter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -45,9 +45,6 @@ public class GPUImageFilterTools {
             final OnGpuImageFilterChosenListener listener) {
         final FilterList filters = new FilterList();
         filters.addFilter("Contrast", FilterType.CONTRAST);
-        filters.addFilter("Invert", FilterType.INVERT);
-        filters.addFilter("Pixelation", FilterType.PIXELATION);
-        filters.addFilter("Hue", FilterType.HUE);
         filters.addFilter("Gamma", FilterType.GAMMA);
         filters.addFilter("Brightness", FilterType.BRIGHTNESS);
         filters.addFilter("Sepia", FilterType.SEPIA);
@@ -58,7 +55,10 @@ public class GPUImageFilterTools {
         filters.addFilter("Emboss", FilterType.EMBOSS);
         filters.addFilter("Posterize", FilterType.POSTERIZE);
         filters.addFilter("Grouped filters", FilterType.FILTER_GROUP);
-
+        filters.addFilter("Hue", FilterType.HUE);
+        filters.addFilter("Saturation", FilterType.SATURATION);
+        filters.addFilter("Exposure", FilterType.EXPOSURE);
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
         builder.setItems(filters.names.toArray(new String[filters.names.size()]),
@@ -78,12 +78,6 @@ public class GPUImageFilterTools {
                 return new GPUImageContrastFilter(2.0f);
             case GAMMA:
                 return new GPUImageGammaFilter(2.0f);
-            case INVERT:
-                return new GPUImageColorInvertFilter();
-            case PIXELATION:
-                return new GPUImagePixelationFilter();
-            case HUE:
-                return new GPUImageHueFilter(90.0f);
             case BRIGHTNESS:
                 return new GPUImageBrightnessFilter(1.5f);
             case GRAYSCALE:
@@ -114,6 +108,12 @@ public class GPUImageFilterTools {
                 filters.add(new GPUImageDirectionalSobelEdgeDetectionFilter());
                 filters.add(new GPUImageGrayscaleFilter());
                 return new GPUImageFilterGroup(filters);
+            case HUE:
+                return new GPUImageHueFilter(90.0f);
+            case SATURATION:
+                return new GPUImageSaturationFilter(1.0f);
+            case EXPOSURE:
+                return new GPUImageExposureFilter(0.0f);
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
@@ -125,7 +125,8 @@ public class GPUImageFilterTools {
     }
 
     private enum FilterType {
-        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION,
+        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, 
+        EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, HUE, SATURATION, EXPOSURE
     }
 
     private static class FilterList {
@@ -158,12 +159,14 @@ public class GPUImageFilterTools {
                 adjuster = new GPU3x3TextureAdjuster().filter(filter);
             } else if (filter instanceof GPUImageEmbossFilter) {
                 adjuster = new EmbossAdjuster().filter(filter);
-            } else if (filter instanceof GPUImageHueFilter) {
-                adjuster = new HueAdjuster().filter(filter);
             } else if (filter instanceof GPUImagePosterizeFilter) {
                 adjuster = new PosterizeAdjuster().filter(filter);
-            } else if (filter instanceof GPUImagePixelationFilter) {
-                adjuster = new PixelationAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageHueFilter) {
+                adjuster = new HueAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageSaturationFilter) {
+                adjuster = new SaturationAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageExposureFilter) {
+                adjuster = new ExposureAdjuster().filter(filter);
             } else {
                 adjuster = null;
             }
@@ -204,20 +207,6 @@ public class GPUImageFilterTools {
             public void adjust(final int percentage) {
                 getFilter().setSharpness(range(percentage, -4.0f, 4.0f));
             }
-        }
-
-        private class PixelationAdjuster extends Adjuster<GPUImagePixelationFilter> {
-          @Override
-          public void adjust(final int percentage) {
-              getFilter().setPixel(range(percentage, 1.0f, 100.0f));
-          }
-        }
-
-        private class HueAdjuster extends Adjuster<GPUImageHueFilter> {
-          @Override
-          public void adjust(final int percentage) {
-            getFilter().setHue(range(percentage, 0.0f, 360.0f));
-          }
         }
 
         private class ContrastAdjuster extends Adjuster<GPUImageContrastFilter> {
@@ -274,6 +263,27 @@ public class GPUImageFilterTools {
             @Override
             public void adjust(final int percentage) {
                 getFilter().setLineSize(range(percentage, 0.0f, 5.0f));
+            }
+        }
+        
+        private class HueAdjuster extends Adjuster<GPUImageHueFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setHue(range(percentage, -180.0f, 180.0f));
+            }
+        }
+        
+        private class SaturationAdjuster extends Adjuster<GPUImageSaturationFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setSaturation(range(percentage, 0.0f, 2.0f));
+            }
+        }
+        
+        private class ExposureAdjuster extends Adjuster<GPUImageExposureFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setExposure(range(percentage, -10.0f, 10.0f));
             }
         }
     }
