@@ -19,6 +19,7 @@ package jp.co.cyberagent.android.gpuimage;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 
+import android.graphics.PointF;
 import android.opengl.GLES20;
 
 public class GPUImageFilter {
@@ -163,6 +164,19 @@ public class GPUImageFilter {
         });
     }
     
+    protected void setPoint(final int location, final PointF point) {
+        runOnDraw(new Runnable() {
+
+            @Override
+            public void run() {
+            	float[] vec2 = new float[2];
+            	vec2[0] = point.x;
+            	vec2[1] = point.y;
+                GLES20.glUniform2fv(location, 1, vec2, 0);
+            }
+        });
+    }
+     
     protected void setUniformMatrix3f(final int location, final float[] matrix) {
         runOnDraw(new Runnable() {
 

@@ -40,9 +40,13 @@ import jp.co.cyberagent.android.gpuimage.GPUImageSaturationFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSepiaFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSharpenFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSobelEdgeDetection;
+import jp.co.cyberagent.android.gpuimage.GPUImageVignetteFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageWhiteBalanceFilter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Point;
+import android.graphics.PointF;
 
 public class GPUImageFilterTools {
     public static void showDialog(final Context context,
@@ -66,6 +70,8 @@ public class GPUImageFilterTools {
         filters.addFilter("Monochrome", FilterType.MONOCHROME);
         filters.addFilter("Opacity", FilterType.OPACITY);
         filters.addFilter("RGB", FilterType.RGB);
+        filters.addFilter("White Balance", FilterType.WHITE_BALANCE);
+        filters.addFilter("Vignette", FilterType.VIGNETTE);
         
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
@@ -130,6 +136,15 @@ public class GPUImageFilterTools {
                 return new GPUImageOpacityFilter(1.0f);  
             case RGB:
                 return new GPUImageRGBFilter(1.0f, 1.0f, 1.0f);  
+            case WHITE_BALANCE:
+                return new GPUImageWhiteBalanceFilter(5000.0f, 0.0f);    
+            case VIGNETTE:
+
+            	PointF centerPoint = new PointF();
+            	centerPoint.x = 0.5f;
+            	centerPoint.y = 0.5f;
+                return new GPUImageVignetteFilter(centerPoint, new float[] {0.0f, 0.0f, 0.0f}, 0.3f, 0.75f);              
+                
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
@@ -142,7 +157,8 @@ public class GPUImageFilterTools {
 
     private enum FilterType {
         CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, 
-        EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, HUE, SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB
+        EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, HUE, SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB,
+        WHITE_BALANCE, VIGNETTE
     }
 
     private static class FilterList {
@@ -191,6 +207,10 @@ public class GPUImageFilterTools {
                 adjuster = new OpacityAdjuster().filter(filter);
             } else if (filter instanceof GPUImageRGBFilter) {
                 adjuster = new RGBAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageWhiteBalanceFilter) {
+                adjuster = new WhiteBalanceAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageVignetteFilter) {
+                adjuster = new VignetteAdjuster().filter(filter);
             } else {
                 adjuster = null;
             }
@@ -340,6 +360,21 @@ public class GPUImageFilterTools {
                 getFilter().setRed(range(percentage, 0.0f, 1.0f));
                 //getFilter().setGreen(range(percentage, 0.0f, 1.0f));
                 //getFilter().setBlue(range(percentage, 0.0f, 1.0f));
+            }
+        }   
+        
+        private class WhiteBalanceAdjuster extends Adjuster<GPUImageWhiteBalanceFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setTemperature(range(percentage, 2000.0f, 8000.0f));
+                //getFilter().setTint(range(percentage, -100.0f, 100.0f));
+            }
+        }   
+        
+        private class VignetteAdjuster extends Adjuster<GPUImageVignetteFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setVignetteStart(range(percentage, 0.0f, 1.0f));
             }
         }   
     }
