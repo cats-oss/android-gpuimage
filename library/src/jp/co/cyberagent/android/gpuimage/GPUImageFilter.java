@@ -16,6 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
+import android.graphics.PointF;
 import android.opengl.GLES20;
 
 import java.nio.FloatBuffer;
@@ -76,6 +77,7 @@ public class GPUImageFilter {
         mGLUniformTexture = GLES20.glGetUniformLocation(mGLProgId, "inputImageTexture");
         mGLAttribTextureCoordinate = GLES20.glGetAttribLocation(mGLProgId,
                 "inputTextureCoordinate");
+        mIsInitialized = true;
     }
 
     public void onInitialized() {
@@ -206,6 +208,19 @@ public class GPUImageFilter {
             @Override
             public void run() {
                 GLES20.glUniform1fv(location, arrayValue.length, FloatBuffer.wrap(arrayValue));
+            }
+        });
+    }
+    
+    protected void setPoint(final int location, final PointF point) {
+        runOnDraw(new Runnable() {
+
+            @Override
+            public void run() {
+            	float[] vec2 = new float[2];
+            	vec2[0] = point.x;
+            	vec2[1] = point.y;
+                GLES20.glUniform2fv(location, 1, vec2, 0);
             }
         });
     }

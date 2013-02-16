@@ -25,20 +25,29 @@ import jp.co.cyberagent.android.gpuimage.GPUImageBrightnessFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageContrastFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageDirectionalSobelEdgeDetectionFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageEmbossFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageExposureFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilterGroup;
 import jp.co.cyberagent.android.gpuimage.GPUImageGammaFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageGrayscaleFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageHighlightShadowFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageMonochromeFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageOpacityFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImagePosterizeFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageRGBFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageSaturationFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSepiaFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSharpenFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSobelEdgeDetection;
 import jp.co.cyberagent.android.gpuimage.GPUImageColorInvertFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageHueFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImagePixelationFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageVignetteFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageWhiteBalanceFilter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.PointF;
 
 public class GPUImageFilterTools {
     public static void showDialog(final Context context,
@@ -58,7 +67,15 @@ public class GPUImageFilterTools {
         filters.addFilter("Emboss", FilterType.EMBOSS);
         filters.addFilter("Posterize", FilterType.POSTERIZE);
         filters.addFilter("Grouped filters", FilterType.FILTER_GROUP);
-
+        filters.addFilter("Saturation", FilterType.SATURATION);
+        filters.addFilter("Exposure", FilterType.EXPOSURE);
+        filters.addFilter("Highlight Shadow", FilterType.HIGHLIGHT_SHADOW);
+        filters.addFilter("Monochrome", FilterType.MONOCHROME);
+        filters.addFilter("Opacity", FilterType.OPACITY);
+        filters.addFilter("RGB", FilterType.RGB);
+        filters.addFilter("White Balance", FilterType.WHITE_BALANCE);
+        filters.addFilter("Vignette", FilterType.VIGNETTE);
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
         builder.setItems(filters.names.toArray(new String[filters.names.size()]),
@@ -114,6 +131,25 @@ public class GPUImageFilterTools {
                 filters.add(new GPUImageDirectionalSobelEdgeDetectionFilter());
                 filters.add(new GPUImageGrayscaleFilter());
                 return new GPUImageFilterGroup(filters);
+            case SATURATION:
+                return new GPUImageSaturationFilter(1.0f);
+            case EXPOSURE:
+                return new GPUImageExposureFilter(0.0f);
+            case HIGHLIGHT_SHADOW:
+            	return new GPUImageHighlightShadowFilter(0.0f, 1.0f);
+            case MONOCHROME:
+            	return new GPUImageMonochromeFilter(1.0f, new float[]{0.6f, 0.45f, 0.3f, 1.0f});
+            case OPACITY:
+                return new GPUImageOpacityFilter(1.0f);  
+            case RGB:
+                return new GPUImageRGBFilter(1.0f, 1.0f, 1.0f);  
+            case WHITE_BALANCE:
+                return new GPUImageWhiteBalanceFilter(5000.0f, 0.0f);    
+            case VIGNETTE:
+            	PointF centerPoint = new PointF();
+            	centerPoint.x = 0.5f;
+            	centerPoint.y = 0.5f;
+                return new GPUImageVignetteFilter(centerPoint, new float[] {0.0f, 0.0f, 0.0f}, 0.3f, 0.75f);    
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
@@ -126,6 +162,7 @@ public class GPUImageFilterTools {
 
     private enum FilterType {
         CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION,
+        SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE
     }
 
     private static class FilterList {
@@ -164,6 +201,22 @@ public class GPUImageFilterTools {
                 adjuster = new PosterizeAdjuster().filter(filter);
             } else if (filter instanceof GPUImagePixelationFilter) {
                 adjuster = new PixelationAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageSaturationFilter) {
+                adjuster = new SaturationAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageExposureFilter) {
+                adjuster = new ExposureAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageHighlightShadowFilter) {
+                adjuster = new HighlightShadowAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageMonochromeFilter) {
+                adjuster = new MonochromeAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageOpacityFilter) {
+                adjuster = new OpacityAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageRGBFilter) {
+                adjuster = new RGBAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageWhiteBalanceFilter) {
+                adjuster = new WhiteBalanceAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageVignetteFilter) {
+                adjuster = new VignetteAdjuster().filter(filter);
             } else {
                 adjuster = null;
             }
@@ -276,5 +329,66 @@ public class GPUImageFilterTools {
                 getFilter().setLineSize(range(percentage, 0.0f, 5.0f));
             }
         }
+
+        private class SaturationAdjuster extends Adjuster<GPUImageSaturationFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setSaturation(range(percentage, 0.0f, 2.0f));
+            }
+        }
+        
+        private class ExposureAdjuster extends Adjuster<GPUImageExposureFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setExposure(range(percentage, -10.0f, 10.0f));
+            }
+        }   
+        
+        private class HighlightShadowAdjuster extends Adjuster<GPUImageHighlightShadowFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setShadows(range(percentage, 0.0f, 1.0f));
+                getFilter().setHighlights(range(percentage, 0.0f, 1.0f));
+            }
+        }
+        
+        private class MonochromeAdjuster extends Adjuster<GPUImageMonochromeFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setIntensity(range(percentage, 0.0f, 1.0f));
+                //getFilter().setColor(new float[]{0.6f, 0.45f, 0.3f, 1.0f});
+            }
+        }
+        
+        private class OpacityAdjuster extends Adjuster<GPUImageOpacityFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setOpacity(range(percentage, 0.0f, 1.0f));
+            }
+        }   
+        
+        private class RGBAdjuster extends Adjuster<GPUImageRGBFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setRed(range(percentage, 0.0f, 1.0f));
+                //getFilter().setGreen(range(percentage, 0.0f, 1.0f));
+                //getFilter().setBlue(range(percentage, 0.0f, 1.0f));
+            }
+        }   
+        
+        private class WhiteBalanceAdjuster extends Adjuster<GPUImageWhiteBalanceFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setTemperature(range(percentage, 2000.0f, 8000.0f));
+                //getFilter().setTint(range(percentage, -100.0f, 100.0f));
+            }
+        }   
+        
+        private class VignetteAdjuster extends Adjuster<GPUImageVignetteFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setVignetteStart(range(percentage, 0.0f, 1.0f));
+            }
+        }   
     }
 }
