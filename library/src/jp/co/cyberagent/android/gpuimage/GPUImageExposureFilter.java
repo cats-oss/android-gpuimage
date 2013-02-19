@@ -23,21 +23,20 @@ import android.opengl.GLES20;
  */
 public class GPUImageExposureFilter extends GPUImageFilter {
     public static final String EXPOSURE_FRAGMENT_SHADER = "" +
-    		" varying highp vec2 textureCoordinate;\n" +
-    		" \n" +
-    		" uniform sampler2D inputImageTexture;\n" +
-    		" uniform highp float exposure;\n" +
-    		" \n" +
-    		" void main()\n" +
-    		" {\n" +
-    		"     highp vec4 textureColor = texture2D(inputImageTexture, textureCoordinate);\n" +
-    		"     \n" +
-    		"     gl_FragColor = vec4(textureColor.rgb * pow(2.0, exposure), textureColor.w);\n" +
-    		" } ";
+            " varying highp vec2 textureCoordinate;\n" +
+            " \n" +
+            " uniform sampler2D inputImageTexture;\n" +
+            " uniform highp float exposure;\n" +
+            " \n" +
+            " void main()\n" +
+            " {\n" +
+            "     highp vec4 textureColor = texture2D(inputImageTexture, textureCoordinate);\n" +
+            "     \n" +
+            "     gl_FragColor = vec4(textureColor.rgb * pow(2.0, exposure), textureColor.w);\n" +
+            " } ";
 
     private int mExposureLocation;
     private float mExposure;
-    private boolean mIsInitialized = false;
 
     public GPUImageExposureFilter() {
         this(1.0f);
@@ -52,14 +51,16 @@ public class GPUImageExposureFilter extends GPUImageFilter {
     public void onInit() {
         super.onInit();
         mExposureLocation = GLES20.glGetUniformLocation(getProgram(), "exposure");
-        mIsInitialized = true;
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setExposure(mExposure);
     }
 
     public void setExposure(final float exposure) {
         mExposure = exposure;
-        if (mIsInitialized) {
-            setFloat(mExposureLocation, mExposure);
-        }
+        setFloat(mExposureLocation, mExposure);
     }
 }

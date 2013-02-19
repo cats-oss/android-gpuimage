@@ -24,21 +24,20 @@ import android.opengl.GLES20;
 */
 public class GPUImageOpacityFilter extends GPUImageFilter {
     public static final String OPACITY_FRAGMENT_SHADER = "" +
-    		"  varying highp vec2 textureCoordinate;\n" +
-    		"  \n" +
-    		"  uniform sampler2D inputImageTexture;\n" +
-    		"  uniform lowp float opacity;\n" +
-    		"  \n" +
-    		"  void main()\n" +
-    		"  {\n" +
-    		"      lowp vec4 textureColor = texture2D(inputImageTexture, textureCoordinate);\n" +
-    		"      \n" +
-    		"      gl_FragColor = vec4(textureColor.rgb, textureColor.a * opacity);\n" +
-    		"  }\n";
+            "  varying highp vec2 textureCoordinate;\n" +
+            "  \n" +
+            "  uniform sampler2D inputImageTexture;\n" +
+            "  uniform lowp float opacity;\n" +
+            "  \n" +
+            "  void main()\n" +
+            "  {\n" +
+            "      lowp vec4 textureColor = texture2D(inputImageTexture, textureCoordinate);\n" +
+            "      \n" +
+            "      gl_FragColor = vec4(textureColor.rgb, textureColor.a * opacity);\n" +
+            "  }\n";
 
     private int mOpacityLocation;
     private float mOpacity;
-    private boolean mIsInitialized = false;
 
     public GPUImageOpacityFilter() {
         this(1.0f);
@@ -53,14 +52,16 @@ public class GPUImageOpacityFilter extends GPUImageFilter {
     public void onInit() {
         super.onInit();
         mOpacityLocation = GLES20.glGetUniformLocation(getProgram(), "opacity");
-        mIsInitialized = true;
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setOpacity(mOpacity);
     }
 
     public void setOpacity(final float opacity) {
         mOpacity = opacity;
-        if (mIsInitialized) {
-            setFloat(mOpacityLocation, mOpacity);
-        }
+        setFloat(mOpacityLocation, mOpacity);
     }
 }
