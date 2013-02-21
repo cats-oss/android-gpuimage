@@ -19,31 +19,7 @@ package jp.co.cyberagent.android.gpuimage.sample;
 import java.util.LinkedList;
 import java.util.List;
 
-import jp.co.cyberagent.android.gpuimage.GPUImage3x3ConvolutionFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImage3x3TextureSamplingFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageBrightnessFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageContrastFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageDirectionalSobelEdgeDetectionFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageEmbossFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageExposureFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageFilterGroup;
-import jp.co.cyberagent.android.gpuimage.GPUImageGammaFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageGrayscaleFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageHighlightShadowFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageMonochromeFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageOpacityFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImagePosterizeFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageRGBFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageSaturationFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageSepiaFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageSharpenFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageSobelEdgeDetection;
-import jp.co.cyberagent.android.gpuimage.GPUImageColorInvertFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageHueFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImagePixelationFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageVignetteFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageWhiteBalanceFilter;
+import jp.co.cyberagent.android.gpuimage.*;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -75,6 +51,7 @@ public class GPUImageFilterTools {
         filters.addFilter("RGB", FilterType.RGB);
         filters.addFilter("White Balance", FilterType.WHITE_BALANCE);
         filters.addFilter("Vignette", FilterType.VIGNETTE);
+        filters.addFilter("ToneCurve", FilterType.TONE_CURVE);
         
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
@@ -149,7 +126,12 @@ public class GPUImageFilterTools {
             	PointF centerPoint = new PointF();
             	centerPoint.x = 0.5f;
             	centerPoint.y = 0.5f;
-                return new GPUImageVignetteFilter(centerPoint, new float[] {0.0f, 0.0f, 0.0f}, 0.3f, 0.75f);    
+                return new GPUImageVignetteFilter(centerPoint, new float[] {0.0f, 0.0f, 0.0f}, 0.3f, 0.75f);
+            case TONE_CURVE:
+                GPUImageToneCurveFilter toneCurveFilter = new GPUImageToneCurveFilter();
+                toneCurveFilter.setFromCurveFileInputStream(
+                        context.getResources().openRawResource(R.raw.tone_cuver_sample));
+                return toneCurveFilter;
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
@@ -162,7 +144,7 @@ public class GPUImageFilterTools {
 
     private enum FilterType {
         CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION,
-        SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE
+        SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE, TONE_CURVE
     }
 
     private static class FilterList {
