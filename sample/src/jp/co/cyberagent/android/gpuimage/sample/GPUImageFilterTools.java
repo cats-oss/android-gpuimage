@@ -23,9 +23,11 @@ import jp.co.cyberagent.android.gpuimage.*;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 
-public class GPUImageFilterTools {
+public class GPUImageFilterTools {  
     public static void showDialog(final Context context,
             final OnGpuImageFilterChosenListener listener) {
         final FilterList filters = new FilterList();
@@ -52,7 +54,9 @@ public class GPUImageFilterTools {
         filters.addFilter("White Balance", FilterType.WHITE_BALANCE);
         filters.addFilter("Vignette", FilterType.VIGNETTE);
         filters.addFilter("ToneCurve", FilterType.TONE_CURVE);
-        
+        filters.addFilter("Blend", FilterType.BLEND);
+        filters.addFilter("Lookup (Amatorka)", FilterType.LOOKUP_AMATORKA);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
         builder.setItems(filters.names.toArray(new String[filters.names.size()]),
@@ -132,6 +136,14 @@ public class GPUImageFilterTools {
                 toneCurveFilter.setFromCurveFileInputStream(
                         context.getResources().openRawResource(R.raw.tone_cuver_sample));
                 return toneCurveFilter;
+            case BLEND:
+            	GPUImageBlendFilter blendFilter = new GPUImageBlendFilter( GPUImageBlendFilter.BLEND_MODE_DIFFERENCE, context );
+            	blendFilter.setBitmap( BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher) );
+            	return blendFilter;
+            case LOOKUP_AMATORKA:
+            	GPUImageLookupFilter amatorka = new GPUImageLookupFilter( context );
+            	amatorka.setBitmap( BitmapFactory.decodeResource(context.getResources(), R.drawable.lookup_amatorka) );
+            	return amatorka;
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
@@ -144,7 +156,7 @@ public class GPUImageFilterTools {
 
     private enum FilterType {
         CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION,
-        SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE, TONE_CURVE
+        SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE, TONE_CURVE, BLEND, LOOKUP_AMATORKA
     }
 
     private static class FilterList {

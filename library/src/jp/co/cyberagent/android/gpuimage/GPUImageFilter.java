@@ -16,9 +16,12 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.PointF;
 import android.opengl.GLES20;
 
+import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 
@@ -47,10 +50,10 @@ public class GPUImageFilter {
     private final LinkedList<Runnable> mRunOnDraw;
     private final String mVertexShader;
     private final String mFragmentShader;
-    private int mGLProgId;
-    private int mGLAttribPosition;
-    private int mGLUniformTexture;
-    private int mGLAttribTextureCoordinate;
+    protected int mGLProgId;
+    protected int mGLAttribPosition;
+    protected int mGLUniformTexture;
+    protected int mGLAttribTextureCoordinate;
     private int mOutputWidth;
     private int mOutputHeight;
     private boolean mIsInitialized;
@@ -252,5 +255,25 @@ public class GPUImageFilter {
         synchronized (mRunOnDraw) {
             mRunOnDraw.addLast(runnable);
         }
+    }
+    
+    public static String loadShader(String file, Context context){
+    	try{
+	        AssetManager assetManager = context.getAssets();
+	        InputStream ims = assetManager.open( file );
+	        
+	        String re = convertStreamToString( ims );
+	        ims.close();
+	        return re;
+        }catch(Exception e){
+        	e.printStackTrace();
+        }
+    	
+    	return "";
+    }
+    
+    public static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 }
