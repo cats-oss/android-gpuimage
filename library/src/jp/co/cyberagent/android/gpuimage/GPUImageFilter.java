@@ -217,7 +217,7 @@ public class GPUImageFilter {
             }
         });
     }
-    
+
     protected void setPoint(final int location, final PointF point) {
         runOnDraw(new Runnable() {
 
@@ -256,22 +256,22 @@ public class GPUImageFilter {
             mRunOnDraw.addLast(runnable);
         }
     }
-    
-    public static String loadShader(String file, Context context){
-    	try{
-	        AssetManager assetManager = context.getAssets();
-	        InputStream ims = assetManager.open( file );
-	        
-	        String re = convertStreamToString( ims );
-	        ims.close();
-	        return re;
-        }catch(Exception e){
-        	e.printStackTrace();
+
+    public static String loadShader(String file, Context context) {
+        try {
+            AssetManager assetManager = context.getAssets();
+            InputStream ims = assetManager.open(file);
+
+            String re = convertStreamToString(ims);
+            ims.close();
+            return re;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    	
-    	return "";
+
+        return "";
     }
-    
+
     public static String convertStreamToString(java.io.InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";

@@ -23,7 +23,6 @@ import jp.co.cyberagent.android.gpuimage.*;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 
