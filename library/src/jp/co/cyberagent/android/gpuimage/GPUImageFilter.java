@@ -16,10 +16,14 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.PointF;
+import android.opengl.GLES20;
+
+import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
-
-import android.opengl.GLES20;
 
 public class GPUImageFilter {
     public static final String NO_FILTER_VERTEX_SHADER = "" +
@@ -46,10 +50,10 @@ public class GPUImageFilter {
     private final LinkedList<Runnable> mRunOnDraw;
     private final String mVertexShader;
     private final String mFragmentShader;
-    private int mGLProgId;
-    private int mGLAttribPosition;
-    private int mGLUniformTexture;
-    private int mGLAttribTextureCoordinate;
+    protected int mGLProgId;
+    protected int mGLAttribPosition;
+    protected int mGLUniformTexture;
+    protected int mGLAttribTextureCoordinate;
     private int mOutputWidth;
     private int mOutputHeight;
     private boolean mIsInitialized;
@@ -64,6 +68,12 @@ public class GPUImageFilter {
         mFragmentShader = fragmentShader;
     }
 
+    public final void init() {
+        onInit();
+        mIsInitialized = true;
+        onInitialized();
+    }
+
     public void onInit() {
         mGLProgId = OpenGlUtils.loadProgram(mVertexShader, mFragmentShader);
         mGLAttribPosition = GLES20.glGetAttribLocation(mGLProgId, "position");
@@ -71,6 +81,14 @@ public class GPUImageFilter {
         mGLAttribTextureCoordinate = GLES20.glGetAttribLocation(mGLProgId,
                 "inputTextureCoordinate");
         mIsInitialized = true;
+    }
+
+    public void onInitialized() {
+    }
+
+    public final void destroy() {
+        mIsInitialized = false;
+        onDestroy();
     }
 
     public void onDestroy() {
@@ -84,7 +102,7 @@ public class GPUImageFilter {
     }
 
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
-            final FloatBuffer textureBuffer) {
+                       final FloatBuffer textureBuffer) {
         GLES20.glUseProgram(mGLProgId);
         runPendingOnDrawTasks();
         if (!mIsInitialized) {
@@ -103,11 +121,14 @@ public class GPUImageFilter {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
             GLES20.glUniform1i(mGLUniformTexture, 0);
         }
+        onDrawArraysPre();
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glDisableVertexAttribArray(mGLAttribPosition);
         GLES20.glDisableVertexAttribArray(mGLAttribTextureCoordinate);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
+
+    protected void onDrawArraysPre() { }
 
     protected void runPendingOnDrawTasks() {
         while (!mRunOnDraw.isEmpty()) {
@@ -143,12 +164,69 @@ public class GPUImageFilter {
         return mGLUniformTexture;
     }
 
+    protected void setInteger(final int location, final int intValue) {
+        runOnDraw(new Runnable() {
+            @Override
+            public void run() {
+                GLES20.glUniform1i(location, intValue);
+            }
+        });
+    }
+
     protected void setFloat(final int location, final float floatValue) {
+        runOnDraw(new Runnable() {
+            @Override
+            public void run() {
+                GLES20.glUniform1f(location, floatValue);
+            }
+        });
+    }
+
+    protected void setFloatVec2(final int location, final float[] arrayValue) {
+        runOnDraw(new Runnable() {
+            @Override
+            public void run() {
+                GLES20.glUniform2fv(location, 1, FloatBuffer.wrap(arrayValue));
+            }
+        });
+    }
+
+    protected void setFloatVec3(final int location, final float[] arrayValue) {
+        runOnDraw(new Runnable() {
+            @Override
+            public void run() {
+                GLES20.glUniform3fv(location, 1, FloatBuffer.wrap(arrayValue));
+            }
+        });
+    }
+
+    protected void setFloatVec4(final int location, final float[] arrayValue) {
+        runOnDraw(new Runnable() {
+            @Override
+            public void run() {
+                GLES20.glUniform4fv(location, 1, FloatBuffer.wrap(arrayValue));
+            }
+        });
+    }
+
+    protected void setFloatArray(final int location, final float[] arrayValue) {
+        runOnDraw(new Runnable() {
+            @Override
+            public void run() {
+                GLES20.glUniform1fv(location, arrayValue.length, FloatBuffer.wrap(arrayValue));
+            }
+        });
+    }
+    
+    protected void setPoint(final int location, final PointF point) {
         runOnDraw(new Runnable() {
 
             @Override
             public void run() {
-                GLES20.glUniform1f(location, floatValue);
+            	float[] vec2 = new float[2];
+            	vec2[0] = point.x;
+            	vec2[1] = point.y;
+                GLES20.glUniform2fv(location, 1, vec2, 0);
             }
         });
     }
@@ -177,5 +255,25 @@ public class GPUImageFilter {
         synchronized (mRunOnDraw) {
             mRunOnDraw.addLast(runnable);
         }
+    }
+    
+    public static String loadShader(String file, Context context){
+    	try{
+	        AssetManager assetManager = context.getAssets();
+	        InputStream ims = assetManager.open( file );
+	        
+	        String re = convertStreamToString( ims );
+	        ims.close();
+	        return re;
+        }catch(Exception e){
+        	e.printStackTrace();
+        }
+    	
+    	return "";
+    }
+    
+    public static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 }
