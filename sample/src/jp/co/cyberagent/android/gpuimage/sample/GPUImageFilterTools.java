@@ -23,9 +23,10 @@ import jp.co.cyberagent.android.gpuimage.*;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 
-public class GPUImageFilterTools {
+public class GPUImageFilterTools {  
     public static void showDialog(final Context context,
             final OnGpuImageFilterChosenListener listener) {
         final FilterList filters = new FilterList();
@@ -52,7 +53,34 @@ public class GPUImageFilterTools {
         filters.addFilter("White Balance", FilterType.WHITE_BALANCE);
         filters.addFilter("Vignette", FilterType.VIGNETTE);
         filters.addFilter("ToneCurve", FilterType.TONE_CURVE);
-        
+
+        filters.addFilter("Blend (Difference)", FilterType.BLEND_DIFFERENCE);
+        filters.addFilter("Blend (Source Over)", FilterType.BLEND_SOURCE_OVER);
+        filters.addFilter("Blend (Color Burn)", FilterType.BLEND_COLOR_BURN);
+        filters.addFilter("Blend (Color Dodge)", FilterType.BLEND_COLOR_DODGE);
+        filters.addFilter("Blend (Darken)", FilterType.BLEND_DARKEN);
+        filters.addFilter("Blend (Dissolve)", FilterType.BLEND_DISSOLVE);
+        filters.addFilter("Blend (Exclusion)", FilterType.BLEND_EXCLUSION);
+        filters.addFilter("Blend (Hard Light)", FilterType.BLEND_HARD_LIGHT);
+        filters.addFilter("Blend (Lighten)", FilterType.BLEND_LIGHTEN);
+        filters.addFilter("Blend (Add)", FilterType.BLEND_ADD);
+        filters.addFilter("Blend (Divide)", FilterType.BLEND_DIVIDE);
+        filters.addFilter("Blend (Multiply)", FilterType.BLEND_MULTIPLY);
+        filters.addFilter("Blend (Overlay)", FilterType.BLEND_OVERLAY);
+        filters.addFilter("Blend (Screen)", FilterType.BLEND_SCREEN);
+        filters.addFilter("Blend (Alpha)", FilterType.BLEND_ALPHA);
+        filters.addFilter("Blend (Color)", FilterType.BLEND_COLOR);
+        filters.addFilter("Blend (Hue)", FilterType.BLEND_HUE);
+        filters.addFilter("Blend (Saturation)", FilterType.BLEND_SATURATION);
+        filters.addFilter("Blend (Luminosity)", FilterType.BLEND_LUMINOSITY);
+        filters.addFilter("Blend (Linear Burn)", FilterType.BLEND_LINEAR_BURN);
+        filters.addFilter("Blend (Soft Light)", FilterType.BLEND_SOFT_LIGHT);
+        filters.addFilter("Blend (Subtract)", FilterType.BLEND_SUBTRACT);
+        filters.addFilter("Blend (Chroma Key)", FilterType.BLEND_CHROMA_KEY);
+        filters.addFilter("Blend (Normal)", FilterType.BLEND_NORMAL);
+
+        filters.addFilter("Lookup (Amatorka)", FilterType.LOOKUP_AMATORKA);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
         builder.setItems(filters.names.toArray(new String[filters.names.size()]),
@@ -123,19 +151,85 @@ public class GPUImageFilterTools {
             case WHITE_BALANCE:
                 return new GPUImageWhiteBalanceFilter(5000.0f, 0.0f);    
             case VIGNETTE:
-            	PointF centerPoint = new PointF();
-            	centerPoint.x = 0.5f;
-            	centerPoint.y = 0.5f;
+                PointF centerPoint = new PointF();
+                centerPoint.x = 0.5f;
+                centerPoint.y = 0.5f;
                 return new GPUImageVignetteFilter(centerPoint, new float[] {0.0f, 0.0f, 0.0f}, 0.3f, 0.75f);
             case TONE_CURVE:
                 GPUImageToneCurveFilter toneCurveFilter = new GPUImageToneCurveFilter();
                 toneCurveFilter.setFromCurveFileInputStream(
                         context.getResources().openRawResource(R.raw.tone_cuver_sample));
                 return toneCurveFilter;
+            case BLEND_DIFFERENCE:
+                return createBlendFilter(context, GPUImageDifferenceBlendFilter.class);
+            case BLEND_SOURCE_OVER:
+                return createBlendFilter(context, GPUImageSourceOverBlendFilter.class);
+            case BLEND_COLOR_BURN:
+                return createBlendFilter(context, GPUImageColorBurnBlendFilter.class);
+            case BLEND_COLOR_DODGE:
+                return createBlendFilter(context, GPUImageColorDodgeBlendFilter.class);
+            case BLEND_DARKEN:
+                return createBlendFilter(context, GPUImageDarkenBlendFilter.class);
+            case BLEND_DISSOLVE:
+                return createBlendFilter(context, GPUImageDissolveBlendFilter.class);
+            case BLEND_EXCLUSION:
+                return createBlendFilter(context, GPUImageExclusionBlendFilter.class);
+
+
+            case BLEND_HARD_LIGHT:
+                return createBlendFilter(context, GPUImageHardLightBlendFilter.class);
+            case BLEND_LIGHTEN:
+                return createBlendFilter(context, GPUImageLightenBlendFilter.class);
+            case BLEND_ADD:
+                return createBlendFilter(context, GPUImageAddBlendFilter.class);
+            case BLEND_DIVIDE:
+                return createBlendFilter(context, GPUImageDivideBlendFilter.class);
+            case BLEND_MULTIPLY:
+                return createBlendFilter(context, GPUImageMultiplyBlendFilter.class);
+            case BLEND_OVERLAY:
+                return createBlendFilter(context, GPUImageOverlayBlendFilter.class);
+            case BLEND_SCREEN:
+                return createBlendFilter(context, GPUImageScreenBlendFilter.class);
+            case BLEND_ALPHA:
+                return createBlendFilter(context, GPUImageAlphaBlendFilter.class);
+            case BLEND_COLOR:
+                return createBlendFilter(context, GPUImageColorBlendFilter.class);
+            case BLEND_HUE:
+                return createBlendFilter(context, GPUImageHueBlendFilter.class);
+            case BLEND_SATURATION:
+                return createBlendFilter(context, GPUImageSaturationBlendFilter.class);
+            case BLEND_LUMINOSITY:
+                return createBlendFilter(context, GPUImageLuminosityBlendFilter.class);
+            case BLEND_LINEAR_BURN:
+                return createBlendFilter(context, GPUImageLinearBurnBlendFilter.class);
+            case BLEND_SOFT_LIGHT:
+                return createBlendFilter(context, GPUImageSoftLightBlendFilter.class);
+            case BLEND_SUBTRACT:
+                return createBlendFilter(context, GPUImageSubtractBlendFilter.class);
+            case BLEND_CHROMA_KEY:
+                return createBlendFilter(context, GPUImageChromaKeyBlendFilter.class);
+            case BLEND_NORMAL:
+                return createBlendFilter(context, GPUImageNormalBlendFilter.class);
+
+            case LOOKUP_AMATORKA:
+                GPUImageLookupFilter amatorka = new GPUImageLookupFilter();
+                amatorka.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.lookup_amatorka));
+                return amatorka;
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
 
+    }
+
+    private static GPUImageFilter createBlendFilter(Context context, Class<? extends GPUImageTwoInputFilter> filterClass) {
+        try {
+            GPUImageTwoInputFilter filter = filterClass.newInstance();
+            filter.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
+            return filter;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public interface OnGpuImageFilterChosenListener {
@@ -144,7 +238,9 @@ public class GPUImageFilterTools {
 
     private enum FilterType {
         CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION,
-        SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE, TONE_CURVE
+        SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE, TONE_CURVE, BLEND_COLOR_BURN, BLEND_COLOR_DODGE, BLEND_DARKEN, BLEND_DIFFERENCE,
+        BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
+        BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA
     }
 
     private static class FilterList {
@@ -199,6 +295,8 @@ public class GPUImageFilterTools {
                 adjuster = new WhiteBalanceAdjuster().filter(filter);
             } else if (filter instanceof GPUImageVignetteFilter) {
                 adjuster = new VignetteAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageDissolveBlendFilter) {
+                adjuster = new DissolveBlendAdjuster().filter(filter);
             } else {
                 adjuster = null;
             }
@@ -364,13 +462,20 @@ public class GPUImageFilterTools {
                 getFilter().setTemperature(range(percentage, 2000.0f, 8000.0f));
                 //getFilter().setTint(range(percentage, -100.0f, 100.0f));
             }
-        }   
-        
+        }
+
         private class VignetteAdjuster extends Adjuster<GPUImageVignetteFilter> {
             @Override
             public void adjust(final int percentage) {
                 getFilter().setVignetteStart(range(percentage, 0.0f, 1.0f));
             }
-        }   
+        }
+
+        private class DissolveBlendAdjuster extends Adjuster<GPUImageDissolveBlendFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setMix(range(percentage, 0.0f, 1.0f));
+            }
+        }
     }
 }

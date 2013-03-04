@@ -50,24 +50,24 @@ import java.util.concurrent.Semaphore;
  * The main accessor for GPUImage functionality. This class helps to do common
  * tasks through a simple interface.
  */
-public class GPUImage {
+public class GPUImage {  
     private final Context mContext;
     private final GPUImageRenderer mRenderer;
     private GLSurfaceView mGlSurfaceView;
     private GPUImageFilter mFilter;
     private Bitmap mCurrentBitmap;
 
-    /**
-     * Instantiates a new GPUImage object.
+    /**    
+     * Instantiates a new GPUImage object.   
      * 
      * @param context the context
      */
-    public GPUImage(final Context context) {
+    public GPUImage(final Context context) {  
         if (!supportsOpenGLES2(context)) {
             throw new IllegalStateException("OpenGL ES 2.0 is not supported on this phone.");
         }
-
-        mContext = context;
+ 
+        mContext = context; 
         mFilter = new GPUImageFilter();
         mRenderer = new GPUImageRenderer(mFilter);
     }
@@ -83,9 +83,7 @@ public class GPUImage {
                 context.getSystemService(Context.ACTIVITY_SERVICE);
         final ConfigurationInfo configurationInfo =
                 activityManager.getDeviceConfigurationInfo();
-        final boolean supportsEs2 = configurationInfo.reqGlEsVersion >=
-                0x20000;
-        return supportsEs2;
+        return configurationInfo.reqGlEsVersion >= 0x20000;
     }
 
     /**

@@ -131,7 +131,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             }
         }
         mFilter.onDraw(mGLTextureId, mGLCubeBuffer, mGLTextureBuffer);
-        if (false || mSurfaceTexture != null) {
+        if (mSurfaceTexture != null) {
             mSurfaceTexture.updateTexImage();
         }
     }
