@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2012 CyberAgent
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jp.co.cyberagent.android.gpuimage;
 
 import android.opengl.GLES20;
@@ -5,6 +21,7 @@ import android.opengl.GLES20;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
+// TODO split this up into several classes/files as in GPUImage for iOS
 public class GPUImageBlendFilter extends GPUImageTwoInputFilter {
 
     private int mixUniform = -1; //for alpha blending
@@ -34,8 +51,9 @@ public class GPUImageBlendFilter extends GPUImageTwoInputFilter {
         }
     }
 
+    // TODO this function needs to be made nicer
     public void setAlphaBlendOpacity(float mix) {
-        if (mCurrentBlendMode != BLEND_MODE_ALPHA) {
+        if (!BLEND_MODE_ALPHA.equals(mCurrentBlendMode)) {
             return;
         }
         alpha = mix;
@@ -54,7 +72,7 @@ public class GPUImageBlendFilter extends GPUImageTwoInputFilter {
                         (byte) r, (byte) g, (byte) b, (byte) alpha
                 };
 
-                ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(1 * 4);
+                ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(4);
                 pixelBuffer.put(pixels).position(0);
 
                 GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
@@ -841,6 +859,5 @@ public class GPUImageBlendFilter extends GPUImageTwoInputFilter {
             "     vec3 gradColor = (meanColor + diffColor2);\n" +
             "     \n" +
             "	 gl_FragColor = vec4(mix(centerColor.rgb, gradColor, centerColor2.a * mixturePercent), centerColor.a);\n" +
-            " }"; //TODO implement methods and uniforms
-
+            " }";
 }
