@@ -83,9 +83,7 @@ public class GPUImage {
                 context.getSystemService(Context.ACTIVITY_SERVICE);
         final ConfigurationInfo configurationInfo =
                 activityManager.getDeviceConfigurationInfo();
-        final boolean supportsEs2 = configurationInfo.reqGlEsVersion >=
-                0x20000;
-        return supportsEs2;
+        return configurationInfo.reqGlEsVersion >= 0x20000;
     }
 
     /**

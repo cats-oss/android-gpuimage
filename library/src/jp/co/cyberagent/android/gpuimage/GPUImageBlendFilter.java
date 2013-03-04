@@ -1,6 +1,5 @@
 package jp.co.cyberagent.android.gpuimage;
 
-import android.content.Context;
 import android.opengl.GLES20;
 
 import java.nio.ByteBuffer;
@@ -15,8 +14,8 @@ public class GPUImageBlendFilter extends GPUImageTwoInputFilter {
 
     private String mCurrentBlendMode = null;
 
-    public GPUImageBlendFilter(String blendMode, Context context) {
-        super(context, blendMode);
+    public GPUImageBlendFilter(String blendMode) {
+        super(blendMode);
         mCurrentBlendMode = blendMode;
     }
 

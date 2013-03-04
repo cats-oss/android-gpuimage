@@ -126,9 +126,9 @@ public class GPUImageFilterTools {
             case WHITE_BALANCE:
                 return new GPUImageWhiteBalanceFilter(5000.0f, 0.0f);    
             case VIGNETTE:
-            	PointF centerPoint = new PointF();
-            	centerPoint.x = 0.5f;
-            	centerPoint.y = 0.5f;
+                PointF centerPoint = new PointF();
+                centerPoint.x = 0.5f;
+                centerPoint.y = 0.5f;
                 return new GPUImageVignetteFilter(centerPoint, new float[] {0.0f, 0.0f, 0.0f}, 0.3f, 0.75f);
             case TONE_CURVE:
                 GPUImageToneCurveFilter toneCurveFilter = new GPUImageToneCurveFilter();
@@ -136,13 +136,13 @@ public class GPUImageFilterTools {
                         context.getResources().openRawResource(R.raw.tone_cuver_sample));
                 return toneCurveFilter;
             case BLEND:
-            	GPUImageBlendFilter blendFilter = new GPUImageBlendFilter( GPUImageBlendFilter.BLEND_MODE_DIFFERENCE, context );
-            	blendFilter.setBitmap( BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher) );
-            	return blendFilter;
+                GPUImageBlendFilter blendFilter = new GPUImageBlendFilter(GPUImageBlendFilter.BLEND_MODE_DIFFERENCE);
+                blendFilter.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
+                return blendFilter;
             case LOOKUP_AMATORKA:
-            	GPUImageLookupFilter amatorka = new GPUImageLookupFilter( context );
-            	amatorka.setBitmap( BitmapFactory.decodeResource(context.getResources(), R.drawable.lookup_amatorka) );
-            	return amatorka;
+                GPUImageLookupFilter amatorka = new GPUImageLookupFilter();
+                amatorka.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.lookup_amatorka));
+                return amatorka;
             default:
                 throw new IllegalStateException("No filter of that type!");
         }

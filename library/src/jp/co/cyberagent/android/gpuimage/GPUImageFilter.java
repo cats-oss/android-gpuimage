@@ -88,12 +88,11 @@ public class GPUImageFilter {
 
     public final void destroy() {
         mIsInitialized = false;
+        GLES20.glDeleteProgram(mGLProgId);
         onDestroy();
     }
 
     public void onDestroy() {
-        GLES20.glDeleteProgram(mGLProgId);
-        mIsInitialized = false;
     }
 
     public void onOutputSizeChanged(final int width, final int height) {
@@ -128,7 +127,7 @@ public class GPUImageFilter {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
 
-    protected void onDrawArraysPre() { }
+    protected void onDrawArraysPre() {}
 
     protected void runPendingOnDrawTasks() {
         while (!mRunOnDraw.isEmpty()) {

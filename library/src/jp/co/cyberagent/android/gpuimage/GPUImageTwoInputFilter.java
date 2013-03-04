@@ -1,6 +1,5 @@
 package jp.co.cyberagent.android.gpuimage;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 
@@ -23,34 +22,27 @@ public class GPUImageTwoInputFilter extends GPUImageFilter {
             "    textureCoordinate2 = inputTextureCoordinate2.xy;\n" +
             "}";
 
-
     public int filterSecondTextureCoordinateAttribute;
     public int filterInputTextureUniform2;
-    public int inputRotation2;
     public int filterSourceTexture2 = OpenGlUtils.NO_TEXTURE;
-    public boolean mIsInitialized = false;
-    private Bitmap mBitmap = null;
+    private ByteBuffer mTexture2CoordinatesBuffer;
 
-    private Context mContext;
-
-    public GPUImageTwoInputFilter(Context context, String vertexShader, String fragmentShader) {
-        super(vertexShader, fragmentShader);
+    public GPUImageTwoInputFilter(String fragmentShader) {
+        this(VERTEX_SHADER, fragmentShader);
     }
 
-    public GPUImageTwoInputFilter(Context context, String fragmentShader) {
-        super(VERTEX_SHADER, fragmentShader);
+    public GPUImageTwoInputFilter(String vertexShader, String fragmentShader) {
+        super(vertexShader, fragmentShader);
+        setRotation(ROTATION_NONE);
     }
 
     @Override
     public void onInit() {
         super.onInit();
 
-        filterSecondTextureCoordinateAttribute = GLES20.glGetAttribLocation(mGLProgId, "inputTextureCoordinate2");
-        filterInputTextureUniform2 = GLES20.glGetUniformLocation(mGLProgId, "inputImageTexture2"); // This does assume a name of "inputImageTexture2" for second input texture in the fragment shader
+        filterSecondTextureCoordinateAttribute = GLES20.glGetAttribLocation(getProgram(), "inputTextureCoordinate2");
+        filterInputTextureUniform2 = GLES20.glGetUniformLocation(getProgram(), "inputImageTexture2"); // This does assume a name of "inputImageTexture2" for second input texture in the fragment shader
         GLES20.glEnableVertexAttribArray(filterSecondTextureCoordinateAttribute);
-
-        mIsInitialized = true;
-
     }
 
     public void setBitmap(final Bitmap bm) {
@@ -65,47 +57,18 @@ public class GPUImageTwoInputFilter extends GPUImageFilter {
     }
 
     public void onDestroy() {
-        GLES20.glDeleteProgram(mGLProgId);
-        mIsInitialized = false;
+        super.onDestroy();
     }
 
-
     @Override
-    public void onDraw(final int textureId, final FloatBuffer cubeBuffer, final FloatBuffer textureBuffer) {
-        GLES20.glUseProgram(mGLProgId);
-        runPendingOnDrawTasks();
-        if (!mIsInitialized) {
-            return;
-        }
-
-        if (mBitmap != null && !mBitmap.isRecycled()) {
-            setBitmap(mBitmap);
-        }
-
-        cubeBuffer.position(0);
-        GLES20.glVertexAttribPointer(mGLAttribPosition, 2, GLES20.GL_FLOAT, false, 0, cubeBuffer);
-        GLES20.glEnableVertexAttribArray(mGLAttribPosition);
-        textureBuffer.position(0);
-        GLES20.glVertexAttribPointer(mGLAttribTextureCoordinate, 2, GLES20.GL_FLOAT, false, 0,
-                textureBuffer);
-        GLES20.glEnableVertexAttribArray(mGLAttribTextureCoordinate);
-        if (textureId != OpenGlUtils.NO_TEXTURE) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
-            GLES20.glUniform1i(mGLUniformTexture, 0);
-        }
-
+    protected void onDrawArraysPre() {
         GLES20.glEnableVertexAttribArray(filterSecondTextureCoordinateAttribute);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, filterSourceTexture2);
         GLES20.glUniform1i(filterInputTextureUniform2, 3);
 
-        GLES20.glVertexAttribPointer(filterSecondTextureCoordinateAttribute, 2, GLES20.GL_FLOAT, false, 0, textureCoordinatesForRotation(kGPUImageNoRotation));
-
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-        GLES20.glDisableVertexAttribArray(mGLAttribPosition);
-        GLES20.glDisableVertexAttribArray(mGLAttribTextureCoordinate);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        mTexture2CoordinatesBuffer.position(0);
+        GLES20.glVertexAttribPointer(filterSecondTextureCoordinateAttribute, 2, GLES20.GL_FLOAT, false, 0, mTexture2CoordinatesBuffer);
     }
 
     public static float[] noRotationTextureCoordinates = {
@@ -157,40 +120,48 @@ public class GPUImageTwoInputFilter extends GPUImageFilter {
             0.0f, 0.0f,
     };
 
-    private static final int kGPUImageNoRotation = 1;
-    private static final int kGPUImageRotateLeft = 2;
-    private static final int kGPUImageRotateRight = 3;
-    private static final int kGPUImageFlipVertical = 4;
-    private static final int kGPUImageFlipHorizonal = 5;
-    private static final int kGPUImageRotateRightFlipVertical = 6;
-    private static final int kGPUImageRotate180 = 7;
+    public static final int ROTATION_NONE = 1;
+    public static final int ROTATION_LEFT = 2;
+    public static final int ROTATION_RIGHT = 3;
+    public static final int ROTATION_FLIP_VERTICAL = 4;
+    public static final int ROTATION_FLIP_HORIZONTAL = 5;
+    public static final int ROTATION_RIGHT_FLIP_VERTICAL = 6;
+    public static final int ROTATION_180 = 7;
 
-
-    public ByteBuffer textureCoordinatesForRotation(int rotationMode) {
-        float[] buffer = null;
+    public void setRotation(int rotationMode) {
+        float[] buffer;
         switch (rotationMode) {
-            case kGPUImageNoRotation:
+            case ROTATION_NONE:
                 buffer = noRotationTextureCoordinates;
-            case kGPUImageRotateLeft:
+                break;
+            case ROTATION_LEFT:
                 buffer = rotateLeftTextureCoordinates;
-            case kGPUImageRotateRight:
+                break;
+            case ROTATION_RIGHT:
                 buffer = rotateRightTextureCoordinates;
-            case kGPUImageFlipVertical:
+                break;
+            case ROTATION_FLIP_VERTICAL:
                 buffer = verticalFlipTextureCoordinates;
-            case kGPUImageFlipHorizonal:
+                break;
+            case ROTATION_FLIP_HORIZONTAL:
                 buffer = horizontalFlipTextureCoordinates;
-            case kGPUImageRotateRightFlipVertical:
+                break;
+            case ROTATION_RIGHT_FLIP_VERTICAL:
                 buffer = rotateRightVerticalFlipTextureCoordinates;
-            case kGPUImageRotate180:
+                break;
+            case ROTATION_180:
                 buffer = rotate180TextureCoordinates;
+                break;
+            default:
+                buffer = noRotationTextureCoordinates;
+                break;
         }
 
-        buffer = noRotationTextureCoordinates;
         ByteBuffer bBuffer = ByteBuffer.allocateDirect(32).order(ByteOrder.nativeOrder());
         FloatBuffer fBuffer = bBuffer.asFloatBuffer();
         fBuffer.put(buffer);
         fBuffer.flip();
 
-        return bBuffer;
+        mTexture2CoordinatesBuffer = bBuffer;
     }
 }

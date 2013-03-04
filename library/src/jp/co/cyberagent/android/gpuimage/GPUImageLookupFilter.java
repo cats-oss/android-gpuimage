@@ -1,7 +1,5 @@
 package jp.co.cyberagent.android.gpuimage;
 
-import android.content.Context;
-
 public class GPUImageLookupFilter extends GPUImageTwoInputFilter {
 
     public static final String LOOKUP_FRAGMENT_SHADER = "varying highp vec2 textureCoordinate;\n" +
@@ -40,7 +38,7 @@ public class GPUImageLookupFilter extends GPUImageTwoInputFilter {
             " }";
 
 
-    public GPUImageLookupFilter(Context context) {
-        super(context, LOOKUP_FRAGMENT_SHADER);
+    public GPUImageLookupFilter() {
+        super(LOOKUP_FRAGMENT_SHADER);
     }
 }
