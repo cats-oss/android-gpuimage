@@ -37,7 +37,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.Display;
 import android.view.WindowManager;
-import jp.co.cyberagent.android.gpuimage.GPUImageRenderer.Rotation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -425,8 +424,7 @@ public class GPUImage {
             while (options.outWidth / scale > mMaxWidth || options.outHeight / scale > mMaxHeight) {
                 scale++;
             }
-            Bitmap bitmap = null;
-            Bitmap scaledBitmap = null;
+            Bitmap bitmap;
             if (scale > 1) {
                 scale--;
                 options = new BitmapFactory.Options();
@@ -452,7 +450,7 @@ public class GPUImage {
                     newHeight = (newWidth / width) * height;
                 }
 
-                scaledBitmap = Bitmap.createScaledBitmap(bitmap, Math.round((float) newWidth),
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, Math.round((float) newWidth),
                         Math.round((float) newHeight), true);
                 bitmap.recycle();
                 bitmap = scaledBitmap;
@@ -470,9 +468,8 @@ public class GPUImage {
                 return null;
             }
             Bitmap rotatedBitmap = bitmap;
-            int orientation = 0;
             try {
-                orientation = getImageOrientation(fileWithExifInfo.getAbsolutePath());
+                int orientation = getImageOrientation(fileWithExifInfo.getAbsolutePath());
                 if (orientation != 0) {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(orientation);

@@ -24,7 +24,7 @@ import java.nio.FloatBuffer;
 import java.util.List;
 
 import static jp.co.cyberagent.android.gpuimage.GPUImageRenderer.CUBE;
-import static jp.co.cyberagent.android.gpuimage.GPUImageRenderer.TEXTURE_NO_ROTATION;
+import static jp.co.cyberagent.android.gpuimage.utils.TextureRotationUtils.TEXTURE_NO_ROTATION;
 
 /**
  * Resembles a filter that consists of multiple filters applied after each

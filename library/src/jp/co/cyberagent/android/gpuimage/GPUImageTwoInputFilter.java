@@ -18,6 +18,7 @@ package jp.co.cyberagent.android.gpuimage;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
+import jp.co.cyberagent.android.gpuimage.utils.TextureRotationUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -50,7 +51,7 @@ public class GPUImageTwoInputFilter extends GPUImageFilter {
 
     public GPUImageTwoInputFilter(String vertexShader, String fragmentShader) {
         super(vertexShader, fragmentShader);
-        setRotation(ROTATION_NONE);
+        setRotation(Rotation.NORMAL, false, false);
     }
 
     @Override
@@ -97,91 +98,8 @@ public class GPUImageTwoInputFilter extends GPUImageFilter {
         GLES20.glVertexAttribPointer(filterSecondTextureCoordinateAttribute, 2, GLES20.GL_FLOAT, false, 0, mTexture2CoordinatesBuffer);
     }
 
-    public static float[] noRotationTextureCoordinates = {
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 1.0f,
-    };
-
-    static float[] rotateLeftTextureCoordinates = {
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 0.0f,
-            0.0f, 1.0f,
-    };
-
-    static float[] rotateRightTextureCoordinates = {
-            0.0f, 1.0f,
-            0.0f, 0.0f,
-            1.0f, 1.0f,
-            1.0f, 0.0f,
-    };
-
-    static float[] verticalFlipTextureCoordinates = {
-            0.0f, 1.0f,
-            1.0f, 1.0f,
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-    };
-
-    static float[] horizontalFlipTextureCoordinates = {
-            1.0f, 0.0f,
-            0.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f,
-    };
-
-    static float[] rotateRightVerticalFlipTextureCoordinates = {
-            0.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-    };
-
-    static float[] rotate180TextureCoordinates = {
-            1.0f, 1.0f,
-            0.0f, 1.0f,
-            1.0f, 0.0f,
-            0.0f, 0.0f,
-    };
-
-    public static final int ROTATION_NONE = 1;
-    public static final int ROTATION_LEFT = 2;
-    public static final int ROTATION_RIGHT = 3;
-    public static final int ROTATION_FLIP_VERTICAL = 4;
-    public static final int ROTATION_FLIP_HORIZONTAL = 5;
-    public static final int ROTATION_RIGHT_FLIP_VERTICAL = 6;
-    public static final int ROTATION_180 = 7;
-
-    public void setRotation(int rotationMode) {
-        float[] buffer;
-        switch (rotationMode) {
-            case ROTATION_NONE:
-                buffer = noRotationTextureCoordinates;
-                break;
-            case ROTATION_LEFT:
-                buffer = rotateLeftTextureCoordinates;
-                break;
-            case ROTATION_RIGHT:
-                buffer = rotateRightTextureCoordinates;
-                break;
-            case ROTATION_FLIP_VERTICAL:
-                buffer = verticalFlipTextureCoordinates;
-                break;
-            case ROTATION_FLIP_HORIZONTAL:
-                buffer = horizontalFlipTextureCoordinates;
-                break;
-            case ROTATION_RIGHT_FLIP_VERTICAL:
-                buffer = rotateRightVerticalFlipTextureCoordinates;
-                break;
-            case ROTATION_180:
-                buffer = rotate180TextureCoordinates;
-                break;
-            default:
-                buffer = noRotationTextureCoordinates;
-                break;
-        }
+    public void setRotation(final Rotation rotation, final boolean flipHorizontal, final boolean flipVertical) {
+        float[] buffer = TextureRotationUtils.getRotation(rotation, flipHorizontal, flipVertical);
 
         ByteBuffer bBuffer = ByteBuffer.allocateDirect(32).order(ByteOrder.nativeOrder());
         FloatBuffer fBuffer = bBuffer.asFloatBuffer();

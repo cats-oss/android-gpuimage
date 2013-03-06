@@ -25,6 +25,7 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
+import jp.co.cyberagent.android.gpuimage.utils.TextureRotationUtils;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -36,6 +37,8 @@ import java.nio.IntBuffer;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import static jp.co.cyberagent.android.gpuimage.utils.TextureRotationUtils.TEXTURE_NO_ROTATION;
+
 @TargetApi(11)
 public class GPUImageRenderer implements Renderer, PreviewCallback {
     public static final int NO_IMAGE = -1;
@@ -44,32 +47,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             1.0f, 1.0f,
             -1.0f, -1.0f,
             1.0f, -1.0f,
-    };
-
-    static final float TEXTURE_NO_ROTATION[] = {
-            0.0f, 1.0f,
-            1.0f, 1.0f,
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-    };
-
-    private static final float TEXTURE_ROTATED_90[] = {
-            1.0f, 1.0f,
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            0.0f, 0.0f,
-    };
-    private static final float TEXTURE_ROTATED_180[] = {
-            1.0f, 0.0f,
-            0.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f,
-    };
-    private static final float TEXTURE_ROTATED_270[] = {
-            0.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
     };
 
     private GPUImageFilter mFilter;
@@ -201,7 +178,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
             @Override
             public void run() {
-                GLES20.glDeleteTextures(1, new int[] {
+                GLES20.glDeleteTextures(1, new int[]{
                         mGLTextureId
                 }, 0);
                 mGLTextureId = NO_IMAGE;
@@ -284,48 +261,13 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         mGLCubeBuffer.put(cube).position(0);
     }
 
-    public enum Rotation {
-        NORMAL, ROTATION_90, ROTATION_180, ROTATION_270
-    }
-
     public void setRotation(final Rotation rotation, final boolean flipHorizontal,
             final boolean flipVertical) {
         mRotation = rotation;
         mFlipHorizontal = flipHorizontal;
         mFlipVertical = flipVertical;
 
-        float[] rotatedTex = null;
-        switch (rotation) {
-            case ROTATION_90:
-                rotatedTex = TEXTURE_ROTATED_90;
-                break;
-            case ROTATION_180:
-                rotatedTex = TEXTURE_ROTATED_180;
-                break;
-            case ROTATION_270:
-                rotatedTex = TEXTURE_ROTATED_270;
-                break;
-            case NORMAL:
-            default:
-                rotatedTex = TEXTURE_NO_ROTATION;
-                break;
-        }
-        if (flipHorizontal) {
-            rotatedTex = new float[] {
-                    rotatedTex[0], flip(rotatedTex[1]),
-                    rotatedTex[2], flip(rotatedTex[3]),
-                    rotatedTex[4], flip(rotatedTex[5]),
-                    rotatedTex[6], flip(rotatedTex[7]),
-            };
-        }
-        if (flipVertical) {
-            rotatedTex = new float[] {
-                    flip(rotatedTex[0]), rotatedTex[1],
-                    flip(rotatedTex[2]), rotatedTex[3],
-                    flip(rotatedTex[4]), rotatedTex[5],
-                    flip(rotatedTex[6]), rotatedTex[7],
-            };
-        }
+        float[] rotatedTex = TextureRotationUtils.getRotationCamera(rotation, flipHorizontal, flipVertical);
 
         mGLTextureBuffer.clear();
         mGLTextureBuffer.put(rotatedTex).position(0);
@@ -341,13 +283,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
     public boolean isFlippedVertically() {
         return mFlipVertical;
-    }
-
-    private float flip(final float i) {
-        if (i == 0.0f) {
-            return 1.0f;
-        }
-        return 0.0f;
     }
 
     protected void runOnDraw(final Runnable runnable) {
