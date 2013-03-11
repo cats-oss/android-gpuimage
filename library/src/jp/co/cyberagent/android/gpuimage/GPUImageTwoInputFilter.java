@@ -18,7 +18,7 @@ package jp.co.cyberagent.android.gpuimage;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import jp.co.cyberagent.android.gpuimage.utils.TextureRotationUtils;
+import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -99,7 +99,7 @@ public class GPUImageTwoInputFilter extends GPUImageFilter {
     }
 
     public void setRotation(final Rotation rotation, final boolean flipHorizontal, final boolean flipVertical) {
-        float[] buffer = TextureRotationUtils.getRotation(rotation, flipHorizontal, flipVertical);
+        float[] buffer = TextureRotationUtil.getRotation(rotation, flipHorizontal, flipVertical);
 
         ByteBuffer bBuffer = ByteBuffer.allocateDirect(32).order(ByteOrder.nativeOrder());
         FloatBuffer fBuffer = bBuffer.asFloatBuffer();

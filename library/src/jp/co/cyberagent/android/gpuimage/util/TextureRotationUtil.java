@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package jp.co.cyberagent.android.gpuimage.utils;
+package jp.co.cyberagent.android.gpuimage.util;
 
 import jp.co.cyberagent.android.gpuimage.Rotation;
 
-public class TextureRotationUtils {
+public class TextureRotationUtil {
 
     public static final float TEXTURE_NO_ROTATION[] = {
             0.0f, 1.0f,
@@ -46,12 +46,7 @@ public class TextureRotationUtils {
             1.0f, 1.0f,
     };
 
-    private TextureRotationUtils() {
-    }
-
-    public static float[] getRotationCamera(final Rotation rotation, final boolean flipHorizontal,
-                                            final boolean flipVertical) {
-        return getRotation(rotation, flipVertical, flipHorizontal);
+    private TextureRotationUtil() {
     }
 
     public static float[] getRotation(final Rotation rotation, final boolean flipHorizontal,
