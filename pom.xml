@@ -14,7 +14,7 @@
   <packaging>pom</packaging>
   <name>GPUImage for Android</name>
   <description>Image filters for Android with OpenGL (based on GPUImage for iOS)</description>
-  <url>https://github.com/cyberagent-jp/android-gpuimage/</url>
+  <url>https://github.com/cyberagent/android-gpuimage/</url>
 
   <modules>
     <module>library</module>
@@ -22,9 +22,9 @@
   </modules>
 
   <scm>
-    <url>git@github.com:cyberagent-jp/android-gpuimage.git</url>
-    <connection>scm:git:git@github.com:cyberagent-jp/android-gpuimage.git</connection>
-    <developerConnection>scm:git:git@github.com:cyberagent-jp/android-gpuimage.git</developerConnection>
+    <url>git@github.com:cyberagent/android-gpuimage.git</url>
+    <connection>scm:git:git@github.com:cyberagent/android-gpuimage.git</connection>
+    <developerConnection>scm:git:git@github.com:cyberagent/android-gpuimage.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
   <developers>
