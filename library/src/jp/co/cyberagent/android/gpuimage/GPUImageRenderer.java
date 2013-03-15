@@ -197,6 +197,10 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     }
 
     public void setImageBitmap(final Bitmap bitmap, final boolean recycle) {
+        if (bitmap == null) {
+            return;
+        }
+
         runOnDraw(new Runnable() {
 
             @Override

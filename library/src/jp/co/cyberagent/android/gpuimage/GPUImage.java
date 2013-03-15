@@ -38,10 +38,7 @@ import android.provider.MediaStore;
 import android.view.Display;
 import android.view.WindowManager;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -210,7 +207,7 @@ public class GPUImage {
      * @param uri the uri of the new image
      */
     public void setImage(final Uri uri) {
-        setImage(new File(getPath(uri)));
+        new LoadImageUriTask(this, uri).execute();
     }
 
     /**
@@ -219,7 +216,7 @@ public class GPUImage {
      * @param file the file of the new image
      */
     public void setImage(final File file) {
-        new LoadImageTask(this, file).execute();
+        new LoadImageFileTask(this, file).execute();
     }
 
     private String getPath(final Uri uri) {
@@ -442,16 +439,80 @@ public class GPUImage {
         void onPictureSaved(Uri uri);
     }
 
-    private class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
+    private class LoadImageUriTask extends LoadImageTask {
+
+        private final Uri mUri;
+
+        public LoadImageUriTask(GPUImage gpuImage, Uri uri) {
+            super(gpuImage);
+            mUri = uri;
+        }
+
+        @Override
+        protected Bitmap decode(BitmapFactory.Options options) {
+            try {
+                InputStream inputStream = mContext.getContentResolver().openInputStream(mUri);
+                return BitmapFactory.decodeStream(inputStream, null, options);
+            } catch (FileNotFoundException e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected int getImageOrientation() throws IOException {
+            Cursor cursor = mContext.getContentResolver().query(mUri,
+                    new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null, null, null);
+
+            if (cursor.getCount() != 1) {
+                return -1;
+            }
+
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+    }
+
+    private class LoadImageFileTask extends LoadImageTask {
+
+        private final File mImageFile;
+
+        public LoadImageFileTask(GPUImage gpuImage, File file) {
+            super(gpuImage);
+            mImageFile = file;
+        }
+
+        @Override
+        protected Bitmap decode(BitmapFactory.Options options) {
+            return BitmapFactory.decodeFile(mImageFile.getAbsolutePath(), options);
+        }
+
+        @Override
+        protected int getImageOrientation() throws IOException {
+            ExifInterface exif = new ExifInterface(mImageFile.getAbsolutePath());
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_NORMAL:
+                    return 0;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return 270;
+                default:
+                    return 0;
+            }
+        }
+    }
+
+    private abstract class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
         private final GPUImage mGPUImage;
-        private final File mImageFile;
         private int mOutputWidth;
         private int mOutputHeight;
 
         @SuppressWarnings("deprecation")
-        public LoadImageTask(final GPUImage gpuImage, final File file) {
-            mImageFile = file;
+        public LoadImageTask(final GPUImage gpuImage) {
             mGPUImage = gpuImage;
         }
 
@@ -468,7 +529,7 @@ public class GPUImage {
             }
             mOutputWidth = getOutputWidth();
             mOutputHeight = getOutputHeight();
-            return loadResizedImage(mImageFile);
+            return loadResizedImage();
         }
 
         @Override
@@ -477,10 +538,12 @@ public class GPUImage {
             mGPUImage.setImage(bitmap);
         }
 
-        private Bitmap loadResizedImage(final File imageFile) {
+        protected abstract Bitmap decode(BitmapFactory.Options options);
+
+        private Bitmap loadResizedImage() {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+            decode(options);
             int scale = 1;
             while (checkSize(options.outWidth / scale > mOutputWidth, options.outHeight / scale > mOutputHeight)) {
                 scale++;
@@ -495,11 +558,11 @@ public class GPUImage {
             options.inPreferredConfig = Bitmap.Config.RGB_565;
             options.inPurgeable = true;
             options.inTempStorage = new byte[32 * 1024];
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+            Bitmap bitmap = decode(options);
             if (bitmap == null) {
                 return null;
             }
-            bitmap = rotateImage(bitmap, imageFile);
+            bitmap = rotateImage(bitmap);
             bitmap = scaleBitmap(bitmap);
             return bitmap;
         }
@@ -561,13 +624,13 @@ public class GPUImage {
             }
         }
 
-        private Bitmap rotateImage(final Bitmap bitmap, final File fileWithExifInfo) {
+        private Bitmap rotateImage(final Bitmap bitmap) {
             if (bitmap == null) {
                 return null;
             }
             Bitmap rotatedBitmap = bitmap;
             try {
-                int orientation = getImageOrientation(fileWithExifInfo.getAbsolutePath());
+                int orientation = getImageOrientation();
                 if (orientation != 0) {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(orientation);
@@ -581,22 +644,7 @@ public class GPUImage {
             return rotatedBitmap;
         }
 
-        private int getImageOrientation(final String file) throws IOException {
-            ExifInterface exif = new ExifInterface(file);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_NORMAL:
-                    return 0;
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    return 90;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    return 180;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    return 270;
-                default:
-                    return 0;
-            }
-        }
+        protected abstract int getImageOrientation() throws IOException;
     }
 
     public interface ResponseListener<T> {
