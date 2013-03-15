@@ -22,9 +22,9 @@
   </modules>
 
   <scm>
-    <url>git@github.com:cyberagent/android-gpuimage.git</url>
-    <connection>scm:git:git@github.com:cyberagent/android-gpuimage.git</connection>
-    <developerConnection>scm:git:git@github.com:cyberagent/android-gpuimage.git</developerConnection>
+    <url>git@github.com:CyberAgent/android-gpuimage.git</url>
+    <connection>scm:git:git@github.com:CyberAgent/android-gpuimage.git</connection>
+    <developerConnection>scm:git:git@github.com:CyberAgent/android-gpuimage.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
   <developers>
