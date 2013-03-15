@@ -39,6 +39,8 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -451,11 +453,17 @@ public class GPUImage {
         @Override
         protected Bitmap decode(BitmapFactory.Options options) {
             try {
-                InputStream inputStream = mContext.getContentResolver().openInputStream(mUri);
+                InputStream inputStream;
+                if (mUri.getScheme().startsWith("http") || mUri.getScheme().startsWith("https")) {
+                    inputStream = new URL(mUri.toString()).openStream();
+                } else {
+                    inputStream = mContext.getContentResolver().openInputStream(mUri);
+                }
                 return BitmapFactory.decodeStream(inputStream, null, options);
-            } catch (FileNotFoundException e) {
-                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            return null;
         }
 
         @Override
@@ -463,8 +471,8 @@ public class GPUImage {
             Cursor cursor = mContext.getContentResolver().query(mUri,
                     new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null, null, null);
 
-            if (cursor.getCount() != 1) {
-                return -1;
+            if (cursor == null || cursor.getCount() != 1) {
+                return 0;
             }
 
             cursor.moveToFirst();
