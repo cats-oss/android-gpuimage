@@ -9,7 +9,7 @@
     <parent>
         <groupId>jp.co.cyberagent.android.gpuimage</groupId>
         <artifactId>gpuimage-parent</artifactId>
-        <version>1.0.3</version>
+        <version>1.1.0</version>
     </parent>
 
     <dependencies>
@@ -36,17 +36,9 @@
                             <goal>ndk-build</goal>
                         </goals>
                         <configuration>
-                            <!--
-                            Configure the plugin to remove all built artifacts from the libs/armeabi folder
-                            when the native build is complete
-                            -->
                             <clearNativeArtifacts>false</clearNativeArtifacts>
-                            <!--
-                            Configure the plugin to also attach the built, native, artifact from the libs/armeabi folder
-                            when the native build is complete.  This puts the artifact into the Maven repository
-                            -->
                             <attachNativeArtifacts>true</attachNativeArtifacts>
-                            <target>gpuimage-library</target>
+                            <target>all</target>
                         </configuration>
                     </execution>
                 </executions>

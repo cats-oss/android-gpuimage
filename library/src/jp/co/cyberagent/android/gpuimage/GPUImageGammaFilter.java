@@ -37,7 +37,6 @@ public class GPUImageGammaFilter extends GPUImageFilter {
 
     private int mGammaLocation;
     private float mGamma;
-    private boolean mIsInitialized = false;
 
     public GPUImageGammaFilter() {
         this(1.2f);
@@ -52,14 +51,16 @@ public class GPUImageGammaFilter extends GPUImageFilter {
     public void onInit() {
         super.onInit();
         mGammaLocation = GLES20.glGetUniformLocation(getProgram(), "gamma");
-        mIsInitialized = true;
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setGamma(mGamma);
     }
 
     public void setGamma(final float gamma) {
         mGamma = gamma;
-        if (mIsInitialized) {
-            setFloat(mGammaLocation, mGamma);
-        }
+        setFloat(mGammaLocation, mGamma);
     }
 }

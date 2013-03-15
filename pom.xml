@@ -10,11 +10,11 @@
 
   <groupId>jp.co.cyberagent.android.gpuimage</groupId>
   <artifactId>gpuimage-parent</artifactId>
-  <version>1.0.3</version>
+  <version>1.1.0</version>
   <packaging>pom</packaging>
   <name>GPUImage for Android</name>
   <description>Image filters for Android with OpenGL (based on GPUImage for iOS)</description>
-  <url>https://github.com/cyberagent-jp/android-gpuimage/</url>
+  <url>https://github.com/cyberagent/android-gpuimage/</url>
 
   <modules>
     <module>library</module>
@@ -22,10 +22,10 @@
   </modules>
 
   <scm>
-    <url>git@github.com:cyberagent-jp/android-gpuimage.git</url>
-    <connection>scm:git:git@github.com:cyberagent-jp/android-gpuimage.git</connection>
-    <developerConnection>scm:git:git@github.com:cyberagent-jp/android-gpuimage.git</developerConnection>
-    <tag>v1.0.3</tag>
+    <url>git@github.com:CyberAgent/android-gpuimage.git</url>
+    <connection>scm:git:git@github.com:CyberAgent/android-gpuimage.git</connection>
+    <developerConnection>scm:git:git@github.com:CyberAgent/android-gpuimage.git</developerConnection>
+    <tag>v1.1.0</tag>
   </scm>
   <developers>
     <developer>
@@ -54,7 +54,7 @@
     <java.version>1.6</java.version>
     <android.version>4.1.1.4</android.version>
     <android.platform>16</android.platform>
-    <android-maven.version>3.2.0</android-maven.version>
+    <android-maven.version>3.5.0</android-maven.version>
   </properties>
 
   <build>

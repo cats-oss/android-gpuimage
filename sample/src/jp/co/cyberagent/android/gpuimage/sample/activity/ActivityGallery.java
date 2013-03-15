@@ -19,6 +19,7 @@ package jp.co.cyberagent.android.gpuimage.sample.activity;
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageView;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFilterChosenListener;
@@ -40,7 +41,7 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
     private static final int REQUEST_PICK_IMAGE = 1;
     private GPUImageFilter mFilter;
     private FilterAdjuster mFilterAdjuster;
-    private GPUImage mGPUImage;
+    private GPUImageView mGPUImageView;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -50,8 +51,7 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
         findViewById(R.id.button_choose_filter).setOnClickListener(this);
         findViewById(R.id.button_save).setOnClickListener(this);
 
-        mGPUImage = new GPUImage(this);
-        mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
+        mGPUImageView = (GPUImageView) findViewById(R.id.gpuimage);
 
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
@@ -84,7 +84,7 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
                     @Override
                     public void onGpuImageFilterChosenListener(final GPUImageFilter filter) {
                         switchFilterTo(filter);
-                        mGPUImage.requestRender();
+                        mGPUImageView.requestRender();
                     }
 
                 });
@@ -106,14 +106,14 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
 
     private void saveImage() {
         String fileName = System.currentTimeMillis() + ".jpg";
-        mGPUImage.saveToPictures("GPUImage", fileName, this);
+        mGPUImageView.saveToPictures("GPUImage", fileName, this);
     }
 
     private void switchFilterTo(final GPUImageFilter filter) {
         if (mFilter == null
                 || (filter != null && !mFilter.getClass().equals(filter.getClass()))) {
             mFilter = filter;
-            mGPUImage.setFilter(mFilter);
+            mGPUImageView.setFilter(mFilter);
             mFilterAdjuster = new FilterAdjuster(mFilter);
         }
     }
@@ -123,7 +123,7 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
         if (mFilterAdjuster != null) {
             mFilterAdjuster.adjust(progress);
         }
-        mGPUImage.requestRender();
+        mGPUImageView.requestRender();
     }
 
     @Override
@@ -135,6 +135,6 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
     }
 
     private void handleImage(final Uri selectedImage) {
-        mGPUImage.setImage(selectedImage);
+        mGPUImageView.setImage(selectedImage);
     }
 }

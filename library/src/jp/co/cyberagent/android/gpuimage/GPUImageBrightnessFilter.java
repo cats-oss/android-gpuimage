@@ -37,7 +37,6 @@ public class GPUImageBrightnessFilter extends GPUImageFilter {
 
     private int mBrightnessLocation;
     private float mBrightness;
-    private boolean mIsInitialized = false;
 
     public GPUImageBrightnessFilter() {
         this(0.0f);
@@ -52,14 +51,16 @@ public class GPUImageBrightnessFilter extends GPUImageFilter {
     public void onInit() {
         super.onInit();
         mBrightnessLocation = GLES20.glGetUniformLocation(getProgram(), "brightness");
-        mIsInitialized = true;
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setBrightness(mBrightness);
     }
 
     public void setBrightness(final float brightness) {
         mBrightness = brightness;
-        if (mIsInitialized) {
-            setFloat(mBrightnessLocation, mBrightness);
-        }
+        setFloat(mBrightnessLocation, mBrightness);
     }
 }

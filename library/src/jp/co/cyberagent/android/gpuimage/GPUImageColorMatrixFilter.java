@@ -42,7 +42,6 @@ public class GPUImageColorMatrixFilter extends GPUImageFilter {
     private float[] mColorMatrix;
     private int mColorMatrixLocation;
     private int mIntensityLocation;
-    private boolean mIsInitialized = false;
 
     public GPUImageColorMatrixFilter() {
         this(1.0f, new float[] {
@@ -64,22 +63,22 @@ public class GPUImageColorMatrixFilter extends GPUImageFilter {
         super.onInit();
         mColorMatrixLocation = GLES20.glGetUniformLocation(getProgram(), "colorMatrix");
         mIntensityLocation = GLES20.glGetUniformLocation(getProgram(), "intensity");
-        mIsInitialized = true;
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setIntensity(mIntensity);
         setColorMatrix(mColorMatrix);
     }
 
     public void setIntensity(final float intensity) {
         mIntensity = intensity;
-        if (mIsInitialized) {
-            setFloat(mIntensityLocation, intensity);
-        }
+        setFloat(mIntensityLocation, intensity);
     }
 
     public void setColorMatrix(final float[] colorMatrix) {
         mColorMatrix = colorMatrix;
-        if (mIsInitialized) {
-            setUniformMatrix4f(mColorMatrixLocation, colorMatrix);
-        }
+        setUniformMatrix4f(mColorMatrixLocation, colorMatrix);
     }
 }
