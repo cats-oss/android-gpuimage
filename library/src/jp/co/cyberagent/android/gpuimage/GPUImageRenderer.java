@@ -303,12 +303,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         mRotation = rotation;
         mFlipHorizontal = flipHorizontal;
         mFlipVertical = flipVertical;
-
-        float[] rotatedTex = TextureRotationUtil.getRotation(rotation, flipHorizontal, flipVertical);
-
-        mGLTextureBuffer.clear();
-        mGLTextureBuffer.put(rotatedTex).position(0);
-
         adjustImageScaling();
     }
 

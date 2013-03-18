@@ -17,6 +17,7 @@
 package jp.co.cyberagent.android.gpuimage;
 
 import android.opengl.GLES20;
+import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -38,6 +39,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
 
     private final FloatBuffer mGLCubeBuffer;
     private final FloatBuffer mGLTextureBuffer;
+    private final FloatBuffer mGLTextureFlipBuffer;
 
     /**
      * Instantiates a new GPUImageFilterGroup with the given filters.
@@ -55,6 +57,12 @@ public class GPUImageFilterGroup extends GPUImageFilter {
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
         mGLTextureBuffer.put(TEXTURE_NO_ROTATION).position(0);
+
+        float[] flipTexture = TextureRotationUtil.getRotation(Rotation.NORMAL, false, true);
+        mGLTextureFlipBuffer = ByteBuffer.allocateDirect(flipTexture.length * 4)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
+        mGLTextureFlipBuffer.put(flipTexture).position(0);
     }
 
     /*
@@ -151,7 +159,8 @@ public class GPUImageFilterGroup extends GPUImageFilter {
             GPUImageFilter filter = mFilters.get(i);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[i]);
             GLES20.glClearColor(0, 0, 0, 1);
-            filter.onDraw(previousTexture, mGLCubeBuffer, mGLTextureBuffer);
+            filter.onDraw(previousTexture, mGLCubeBuffer,
+                    (i == 0 && mFilters.size() % 2 == 0) ? mGLTextureFlipBuffer : mGLTextureBuffer);
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
             previousTexture = mFrameBufferTextures[i];
         }
