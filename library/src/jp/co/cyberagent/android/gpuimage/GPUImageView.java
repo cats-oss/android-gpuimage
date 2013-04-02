@@ -77,6 +77,15 @@ public class GPUImageView extends GLSurfaceView {
     }
 
     /**
+     * Set the scale type of GPUImage.
+     *
+     * @param scaleType the new ScaleType
+     */
+    public void setScaleType(GPUImage.ScaleType scaleType) {
+        mGPUImage.setScaleType(scaleType);
+    }
+
+    /**
      * Set the filter to be applied on the image.
      *
      * @param filter Filter that should be applied on the image.
