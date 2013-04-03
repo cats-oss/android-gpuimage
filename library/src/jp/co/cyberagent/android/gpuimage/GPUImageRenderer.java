@@ -100,6 +100,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         GLES20.glViewport(0, 0, width, height);
         GLES20.glUseProgram(mFilter.getProgram());
         mFilter.onOutputSizeChanged(width, height);
+        adjustImageScaling();
         synchronized (mSurfaceChangedWaiter) {
             mSurfaceChangedWaiter.notifyAll();
         }
@@ -251,28 +252,23 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
         float ratio1 = outputWidth / mImageWidth;
         float ratio2 = outputHeight / mImageHeight;
-        float ratioMin = Math.min(ratio1, ratio2);
-        mImageWidth = Math.round(mImageWidth * ratioMin);
-        mImageHeight = Math.round(mImageHeight * ratioMin);
+        float ratioMax = Math.max(ratio1, ratio2);
+        int imageWidthNew = Math.round(mImageWidth * ratioMax);
+        int imageHeightNew = Math.round(mImageHeight * ratioMax);
 
-        float ratioWidth = 1.0f;
-        float ratioHeight = 1.0f;
-        if (mImageWidth != outputWidth) {
-            ratioWidth = mImageWidth / outputWidth;
-        } else if (mImageHeight != outputHeight) {
-            ratioHeight = mImageHeight / outputHeight;
-        }
+        float ratioWidth = imageWidthNew / outputWidth;
+        float ratioHeight = imageHeightNew / outputHeight;
 
         float[] cube = CUBE;
         float[] textureCords = TextureRotationUtil.getRotation(mRotation, mFlipHorizontal, mFlipVertical);
         if (mScaleType == GPUImage.ScaleType.CENTER_CROP) {
-            float distHorizontal = (1 / ratioWidth - 1) / 2;
-            float distVertical = (1 / ratioHeight - 1) / 2;
+            float distHorizontal = (1 - 1 / ratioWidth) / 2;
+            float distVertical = (1 - 1 / ratioHeight) / 2;
             textureCords = new float[]{
-                    addDistance(textureCords[0], distVertical), addDistance(textureCords[1], distHorizontal),
-                    addDistance(textureCords[2], distVertical), addDistance(textureCords[3], distHorizontal),
-                    addDistance(textureCords[4], distVertical), addDistance(textureCords[5], distHorizontal),
-                    addDistance(textureCords[6], distVertical), addDistance(textureCords[7], distHorizontal),
+                    addDistance(textureCords[0], distHorizontal), addDistance(textureCords[1], distVertical),
+                    addDistance(textureCords[2], distHorizontal), addDistance(textureCords[3], distVertical),
+                    addDistance(textureCords[4], distHorizontal), addDistance(textureCords[5], distVertical),
+                    addDistance(textureCords[6], distHorizontal), addDistance(textureCords[7], distVertical),
             };
         } else {
             cube = new float[]{
