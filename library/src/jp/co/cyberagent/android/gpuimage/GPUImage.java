@@ -581,9 +581,11 @@ public class GPUImage {
             int height = bitmap.getHeight();
             int[] newSize = getScaleSize(width, height);
             Bitmap workBitmap = Bitmap.createScaledBitmap(bitmap, newSize[0], newSize[1], true);
-            bitmap.recycle();
-            bitmap = workBitmap;
-            System.gc();
+            if (workBitmap != bitmap) {
+                bitmap.recycle();
+                bitmap = workBitmap;
+                System.gc();
+            }
 
             if (mScaleType == ScaleType.CENTER_CROP) {
                 // Crop it
@@ -591,8 +593,10 @@ public class GPUImage {
                 int diffHeight = newSize[1] - mOutputHeight;
                 workBitmap = Bitmap.createBitmap(bitmap, diffWidth / 2, diffHeight / 2,
                         newSize[0] - diffWidth, newSize[1] - diffHeight);
-                bitmap.recycle();
-                bitmap = workBitmap;
+                if (workBitmap != bitmap) {
+                    bitmap.recycle();
+                    bitmap = workBitmap;
+                }
             }
 
             return bitmap;
