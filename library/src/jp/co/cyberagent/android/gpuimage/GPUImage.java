@@ -39,7 +39,6 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -324,6 +323,9 @@ public class GPUImage {
     }
 
     /**
+     * Deprecated: Please use
+     * {@link GPUImageView#saveToPictures(String, String, jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener)}
+     *
      * Save current image with applied filter to Pictures. It will be stored on
      * the default Picture folder on the phone below the given folerName and
      * fileName. <br />
@@ -334,12 +336,16 @@ public class GPUImage {
      * @param fileName the file name
      * @param listener the listener
      */
+    @Deprecated
     public void saveToPictures(final String folderName, final String fileName,
             final OnPictureSavedListener listener) {
         saveToPictures(mCurrentBitmap, folderName, fileName, listener);
     }
 
     /**
+     * Deprecated: Please use
+     * {@link GPUImageView#saveToPictures(String, String, jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener)}
+     *
      * Apply and save the given bitmap with applied filter to Pictures. It will
      * be stored on the default Picture folder on the phone below the given
      * folerName and fileName. <br />
@@ -351,9 +357,19 @@ public class GPUImage {
      * @param fileName the file name
      * @param listener the listener
      */
+    @Deprecated
     public void saveToPictures(final Bitmap bitmap, final String folderName, final String fileName,
             final OnPictureSavedListener listener) {
         new SaveTask(bitmap, folderName, fileName, listener).execute();
+    }
+
+    /**
+     * Runs the given Runnable on the OpenGL thread.
+     *
+     * @param runnable The runnable to be run on the OpenGL thread.
+     */
+    void runOnGLThread(Runnable runnable) {
+        mRenderer.runOnDrawEnd(runnable);
     }
 
     private int getOutputWidth() {
@@ -382,6 +398,7 @@ public class GPUImage {
         }
     }
 
+    @Deprecated
     private class SaveTask extends AsyncTask<Void, Void, Void> {
 
         private final Bitmap mBitmap;

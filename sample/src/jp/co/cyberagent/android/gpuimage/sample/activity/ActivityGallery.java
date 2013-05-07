@@ -16,10 +16,9 @@
 
 package jp.co.cyberagent.android.gpuimage.sample.activity;
 
-import jp.co.cyberagent.android.gpuimage.GPUImage;
-import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
+import jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFilterChosenListener;
@@ -27,7 +26,6 @@ import jp.co.cyberagent.android.gpuimage.sample.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -107,6 +105,7 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
     private void saveImage() {
         String fileName = System.currentTimeMillis() + ".jpg";
         mGPUImageView.saveToPictures("GPUImage", fileName, this);
+//        mGPUImageView.saveToPictures("GPUImage", fileName, 1600, 1600, this);
     }
 
     private void switchFilterTo(final GPUImageFilter filter) {

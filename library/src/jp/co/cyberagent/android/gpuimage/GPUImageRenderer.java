@@ -66,6 +66,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private int mAddedPadding;
 
     private final Queue<Runnable> mRunOnDraw;
+    private final Queue<Runnable> mRunOnDrawEnd;
     private Rotation mRotation;
     private boolean mFlipHorizontal;
     private boolean mFlipVertical;
@@ -74,6 +75,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     public GPUImageRenderer(final GPUImageFilter filter) {
         mFilter = filter;
         mRunOnDraw = new LinkedList<Runnable>();
+        mRunOnDrawEnd = new LinkedList<Runnable>();
 
         mGLCubeBuffer = ByteBuffer.allocateDirect(CUBE.length * 4)
                 .order(ByteOrder.nativeOrder())
@@ -109,14 +111,19 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     @Override
     public void onDrawFrame(final GL10 gl) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        synchronized (mRunOnDraw) {
-            while (!mRunOnDraw.isEmpty()) {
-                mRunOnDraw.poll().run();
-            }
-        }
+        runAll(mRunOnDraw);
         mFilter.onDraw(mGLTextureId, mGLCubeBuffer, mGLTextureBuffer);
+        runAll(mRunOnDrawEnd);
         if (mSurfaceTexture != null) {
             mSurfaceTexture.updateTexImage();
+        }
+    }
+
+    private void runAll(Queue<Runnable> queue) {
+        synchronized (queue) {
+            while (!queue.isEmpty()) {
+                queue.poll().run();
+            }
         }
     }
 
@@ -317,6 +324,12 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     protected void runOnDraw(final Runnable runnable) {
         synchronized (mRunOnDraw) {
             mRunOnDraw.add(runnable);
+        }
+    }
+
+    protected void runOnDrawEnd(final Runnable runnable) {
+        synchronized (mRunOnDrawEnd) {
+            mRunOnDrawEnd.add(runnable);
         }
     }
 }
