@@ -170,12 +170,8 @@ public class GPUImage {
      * @param bitmap the new image
      */
     public void setImage(final Bitmap bitmap) {
-        setImage(bitmap, false);
         mCurrentBitmap = bitmap;
-    }
-
-    private void setImage(final Bitmap bitmap, final boolean recycle) {
-        mRenderer.setImageBitmap(bitmap, recycle);
+        mRenderer.setImageBitmap(bitmap, false);
         requestRender();
     }
 
