@@ -54,8 +54,8 @@ public class GPUImageFilter {
     protected int mGLAttribPosition;
     protected int mGLUniformTexture;
     protected int mGLAttribTextureCoordinate;
-    private int mOutputWidth;
-    private int mOutputHeight;
+    protected int mOutputWidth;
+    protected int mOutputHeight;
     private boolean mIsInitialized;
 
     public GPUImageFilter() {
@@ -222,7 +222,7 @@ public class GPUImageFilter {
 
             @Override
             public void run() {
-            	float[] vec2 = new float[2];
+                float[] vec2 = new float[2];
             	vec2[0] = point.x;
             	vec2[1] = point.y;
                 GLES20.glUniform2fv(location, 1, vec2, 0);
