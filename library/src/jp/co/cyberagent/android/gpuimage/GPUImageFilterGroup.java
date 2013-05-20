@@ -33,7 +33,7 @@ import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE
  */
 public class GPUImageFilterGroup extends GPUImageFilter {
 
-    private final List<GPUImageFilter> mFilters;
+    protected final List<GPUImageFilter> mFilters;
     private int[] mFrameBuffers;
     private int[] mFrameBufferTextures;
 
