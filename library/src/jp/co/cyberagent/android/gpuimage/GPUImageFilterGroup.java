@@ -135,7 +135,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         for (int i=0;i<size;i++)
         	mFilters.get(i).onOutputSizeChanged(width, height);
 
-        if (mMergedFilters!=null)
+        if (mMergedFilters!=null && mMergedFilters.size()>0)
         {
         size=mMergedFilters.size();
         mFrameBuffers = new int[size - 1];
