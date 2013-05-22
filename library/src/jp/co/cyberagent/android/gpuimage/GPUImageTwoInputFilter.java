@@ -16,13 +16,13 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.graphics.Bitmap;
-import android.opengl.GLES20;
-import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+
+import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
+import android.graphics.Bitmap;
+import android.opengl.GLES20;
 
 public class GPUImageTwoInputFilter extends GPUImageFilter {
     private static final String VERTEX_SHADER = "attribute vec4 position;\n" +
@@ -62,21 +62,41 @@ public class GPUImageTwoInputFilter extends GPUImageFilter {
         filterInputTextureUniform2 = GLES20.glGetUniformLocation(getProgram(), "inputImageTexture2"); // This does assume a name of "inputImageTexture2" for second input texture in the fragment shader
         GLES20.glEnableVertexAttribArray(filterSecondTextureCoordinateAttribute);
 
-        if (mBitmap != null) {
+        if (mBitmap != null&&!mBitmap.isRecycled()) {
             setBitmap(mBitmap);
         }
     }
-
+    
     public void setBitmap(final Bitmap bitmap) {
+        if(bitmap!=null&&bitmap.isRecycled())
+    		return;
         mBitmap = bitmap;
+        if(mBitmap==null)
+        	return;
         runOnDraw(new Runnable() {
             public void run() {
                 if (filterSourceTexture2 == OpenGlUtils.NO_TEXTURE) {
+                	if(bitmap==null||bitmap.isRecycled())
+                		return;
                     GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
                     filterSourceTexture2 = OpenGlUtils.loadTexture(bitmap, OpenGlUtils.NO_TEXTURE, false);
                 }
             }
         });
+    }
+    
+    public Bitmap getBitmap()
+    {
+    	return mBitmap;
+    }
+
+    public void recycleBitmap()
+    {
+    	if(mBitmap!=null&&!mBitmap.isRecycled())
+    	{
+    		mBitmap.recycle();
+    		mBitmap=null;
+    	}
     }
 
     public void onDestroy() {
