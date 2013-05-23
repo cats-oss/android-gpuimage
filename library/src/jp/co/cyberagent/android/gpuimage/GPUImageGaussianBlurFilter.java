@@ -85,4 +85,14 @@ public class GPUImageGaussianBlurFilter extends GPUImageTwoPassTextureSamplingFi
 	{
 		return blurSize;
 	}
+
+    public void setBlurSize(float blurSize) {
+        this.blurSize = blurSize;
+        runOnDraw(new Runnable() {
+            @Override
+            public void run() {
+                initTexelOffsets();
+            }
+        });
+    }
 }
