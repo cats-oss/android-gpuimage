@@ -184,7 +184,8 @@ public class GPUImageFilterGroup extends GPUImageFilter {
             int previousTexture = textureId;
             for (int i = 0; i < size; i++) {
                 GPUImageFilter filter = mMergedFilters.get(i);
-                if (i < size - 1) {
+                boolean isNotLast = i < size - 1;
+                if (isNotLast) {
                     GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[i]);
                     GLES20.glClearColor(0, 0, 0, 0);
                 }
@@ -197,7 +198,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
                     filter.onDraw(previousTexture, mGLCubeBuffer, mGLTextureBuffer);
                 }
 
-                if (i < size - 1) {
+                if (isNotLast) {
                     GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
                     previousTexture = mFrameBufferTextures[i];
                 }

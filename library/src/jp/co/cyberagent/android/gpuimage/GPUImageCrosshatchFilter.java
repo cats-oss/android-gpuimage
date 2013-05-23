@@ -2,6 +2,10 @@ package jp.co.cyberagent.android.gpuimage;
 
 import android.opengl.GLES20;
 
+/**
+ * crossHatchSpacing: The fractional width of the image to use as the spacing for the crosshatch. The default is 0.03.
+ * lineWidth: A relative width for the crosshatch lines. The default is 0.003.
+ */
 public class GPUImageCrosshatchFilter extends GPUImageFilter {
     public static final String CROSSHATCH_FRAGMENT_SHADER = "" +
             "varying highp vec2 textureCoordinate;\n" +
@@ -49,6 +53,9 @@ public class GPUImageCrosshatchFilter extends GPUImageFilter {
     private float mLineWidth;
     private int mLineWidthLocation;
 
+    /**
+     * Using default values of crossHatchSpacing: 0.03f and lineWidth: 0.003f.
+     */
     public GPUImageCrosshatchFilter() {
         this(0.03f, 0.003f);
     }

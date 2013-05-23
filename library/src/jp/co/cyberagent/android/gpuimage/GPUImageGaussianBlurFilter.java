@@ -1,5 +1,9 @@
 package jp.co.cyberagent.android.gpuimage;
 
+/**
+ * A more generalized 9x9 Gaussian blur filter
+ * blurSize value ranging from 0.0 on up, with a default of 1.0
+ */
 public class GPUImageGaussianBlurFilter extends GPUImageTwoPassTextureSamplingFilter {
     public static final String VERTEX_SHADER =
             "attribute vec4 position;\n" +
