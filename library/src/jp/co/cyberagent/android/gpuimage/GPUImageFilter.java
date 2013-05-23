@@ -223,8 +223,8 @@ public class GPUImageFilter {
             @Override
             public void run() {
                 float[] vec2 = new float[2];
-            	vec2[0] = point.x;
-            	vec2[1] = point.y;
+                vec2[0] = point.x;
+                vec2[1] = point.y;
                 GLES20.glUniform2fv(location, 1, vec2, 0);
             }
         });

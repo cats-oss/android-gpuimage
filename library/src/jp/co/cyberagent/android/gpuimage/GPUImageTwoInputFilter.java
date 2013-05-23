@@ -68,35 +68,35 @@ public class GPUImageTwoInputFilter extends GPUImageFilter {
     }
     
     public void setBitmap(final Bitmap bitmap) {
-        if(bitmap!=null&&bitmap.isRecycled())
-    		return;
+        if (bitmap != null && bitmap.isRecycled()) {
+            return;
+        }
         mBitmap = bitmap;
-        if(mBitmap==null)
-        	return;
+        if (mBitmap == null) {
+            return;
+        }
         runOnDraw(new Runnable() {
             public void run() {
                 if (filterSourceTexture2 == OpenGlUtils.NO_TEXTURE) {
-                	if(bitmap==null||bitmap.isRecycled())
-                		return;
+                    if (bitmap == null || bitmap.isRecycled()) {
+                        return;
+                    }
                     GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
                     filterSourceTexture2 = OpenGlUtils.loadTexture(bitmap, OpenGlUtils.NO_TEXTURE, false);
                 }
             }
         });
     }
-    
-    public Bitmap getBitmap()
-    {
-    	return mBitmap;
+
+    public Bitmap getBitmap() {
+        return mBitmap;
     }
 
-    public void recycleBitmap()
-    {
-    	if(mBitmap!=null&&!mBitmap.isRecycled())
-    	{
-    		mBitmap.recycle();
-    		mBitmap=null;
-    	}
+    public void recycleBitmap() {
+        if (mBitmap != null && !mBitmap.isRecycled()) {
+            mBitmap.recycle();
+            mBitmap = null;
+        }
     }
 
     public void onDestroy() {
