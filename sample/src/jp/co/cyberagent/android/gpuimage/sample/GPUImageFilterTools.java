@@ -83,6 +83,14 @@ public class GPUImageFilterTools {
         filters.addFilter("Gaussian Blur", FilterType.GAUSSIAN_BLUR);
         filters.addFilter("Crosshatch", FilterType.CROSSHATCH);
 
+        filters.addFilter("Box Blur", FilterType.BOX_BLUR);
+        filters.addFilter("CGA Color Space", FilterType.CGA_COLORSPACE);
+        filters.addFilter("Dilation", FilterType.DILATION);
+        filters.addFilter("Kuwahara", FilterType.KUWAHARA);
+        filters.addFilter("RGB Dilation", FilterType.RGB_DILATION);
+        filters.addFilter("Sketch", FilterType.SKETCH);
+        filters.addFilter("Toon", FilterType.TOON);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
         builder.setItems(filters.names.toArray(new String[filters.names.size()]),
@@ -221,6 +229,21 @@ public class GPUImageFilterTools {
                 return new GPUImageGaussianBlurFilter();
             case CROSSHATCH:
                 return new GPUImageCrosshatchFilter();
+
+            case BOX_BLUR:
+                return new GPUImageBoxBlurFilter();
+            case CGA_COLORSPACE:
+                return new GPUImageCGAColorspaceFilter();
+            case DILATION:
+                return new GPUImageDilationFilter();
+            case KUWAHARA:
+                return new GPUImageKuwaharaFilter();
+            case RGB_DILATION:
+                return new GPUImageRGBDilationFilter();
+            case SKETCH:
+                return new GPUImageSketchFilter();
+            case TOON:
+                return new GPUImageToonFilter();
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
@@ -247,7 +270,7 @@ public class GPUImageFilterTools {
         SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE, TONE_CURVE, BLEND_COLOR_BURN, BLEND_COLOR_DODGE, BLEND_DARKEN, BLEND_DIFFERENCE,
         BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
         BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA,
-        GAUSSIAN_BLUR, CROSSHATCH
+        GAUSSIAN_BLUR, CROSSHATCH, BOX_BLUR, CGA_COLORSPACE, DILATION, KUWAHARA, RGB_DILATION, SKETCH, TOON
     }
 
     private static class FilterList {
@@ -311,6 +334,10 @@ public class GPUImageFilterTools {
             } else {
                 adjuster = null;
             }
+        }
+
+        public boolean canAdjust() {
+            return adjuster != null;
         }
 
         public void adjust(final int percentage) {
