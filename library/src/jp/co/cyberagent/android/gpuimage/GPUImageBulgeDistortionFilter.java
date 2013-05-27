@@ -4,7 +4,7 @@ import android.graphics.PointF;
 import android.opengl.GLES20;
 
 public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
-  
+	
 	public static final String BULGE_FRAGMENT_SHADER = "" +
 			"varying highp vec2 textureCoordinate;\n"+
 			"\n"+
@@ -40,6 +40,8 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
 	private int radiusLocation;
 	private PointF center;
 	private int centerLocation;
+	private float aspectRatio;
+	private int aspectRatioLocation;
 	
 	public GPUImageBulgeDistortionFilter()
 	{
@@ -60,6 +62,7 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
         scaleLocation = GLES20.glGetUniformLocation(getProgram(), "scale");
         radiusLocation = GLES20.glGetUniformLocation(getProgram(), "radius");
         centerLocation = GLES20.glGetUniformLocation(getProgram(), "center");
+        aspectRatioLocation = GLES20.glGetUniformLocation(getProgram(), "aspectRatio");
     }
     
     @Override
@@ -69,6 +72,19 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
         setScale(scale);
         setCenter(center);
     }
+    
+    @Override
+    public void onOutputSizeChanged(int width, int height) {
+        aspectRatio = (float)height/width;
+        setAspectRatio(aspectRatio);
+    	super.onOutputSizeChanged(width, height);
+    }
+    
+    private void setAspectRatio(float aspectRatio) {
+		this.aspectRatio = aspectRatio;
+		
+		setFloat(aspectRatioLocation, aspectRatio);
+	}
     
     public void setRadius(float radius) {
     	this.radius = radius;
