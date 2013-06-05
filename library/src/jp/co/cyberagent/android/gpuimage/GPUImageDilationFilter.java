@@ -1,5 +1,26 @@
+/*
+ * Copyright (C) 2012 CyberAgent
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jp.co.cyberagent.android.gpuimage;
 
+/**
+ * For each pixel, this sets it to the maximum value of the red channel in a rectangular neighborhood extending
+ * out dilationRadius pixels from the center.
+ * This extends out bright features, and is most commonly used with black-and-white thresholded images.
+ */
 public class GPUImageDilationFilter extends GPUImageTwoPassTextureSamplingFilter {
     public static final String VERTEX_SHADER_1 =
             "attribute vec4 position;\n" +
@@ -240,6 +261,12 @@ public class GPUImageDilationFilter extends GPUImageTwoPassTextureSamplingFilter
         this(1);
     }
 
+    /**
+     * Acceptable values for dilationRadius, which sets the distance in pixels to sample out from the center,
+     * are 1, 2, 3, and 4.
+     *
+     * @param radius 1, 2, 3 or 4
+     */
     public GPUImageDilationFilter(int radius) {
         this(getVertexShader(radius), getFragmentShader(radius));
     }

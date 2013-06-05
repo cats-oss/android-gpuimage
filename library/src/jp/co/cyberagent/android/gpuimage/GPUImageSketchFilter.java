@@ -1,10 +1,29 @@
+/*
+ * Copyright (C) 2012 CyberAgent
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jp.co.cyberagent.android.gpuimage;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Converts video to look like a sketch.
+ * This is just the Sobel edge detection filter with the colors inverted.
+ */
 public class GPUImageSketchFilter extends GPUImageFilterGroup {
-
     public static final String SKETCH_FRAGMENT_SHADER = "" +
             "precision mediump float;\n" +
             "\n" +
@@ -41,13 +60,8 @@ public class GPUImageSketchFilter extends GPUImageFilterGroup {
             "}\n";
 
     public GPUImageSketchFilter() {
-        super(createFilters());
-    }
-
-    private static List<GPUImageFilter> createFilters() {
-        List<GPUImageFilter> filters = new ArrayList<GPUImageFilter>(2);
-        filters.add(new GPUImageGrayscaleFilter());
-        filters.add(new GPUImage3x3TextureSamplingFilter(SKETCH_FRAGMENT_SHADER));
-        return filters;
+        super();
+        addFilter(new GPUImageGrayscaleFilter());
+        addFilter(new GPUImage3x3TextureSamplingFilter(SKETCH_FRAGMENT_SHADER));
     }
 }

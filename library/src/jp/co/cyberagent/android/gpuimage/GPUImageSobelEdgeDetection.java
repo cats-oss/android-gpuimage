@@ -23,7 +23,6 @@ import java.util.List;
  * Applies sobel edge detection on the image.
  */
 public class GPUImageSobelEdgeDetection extends GPUImageFilterGroup {
-
     public static final String SOBEL_EDGE_DETECTION = "" +
             "precision mediump float;\n" + 
             "\n" + 
@@ -60,14 +59,9 @@ public class GPUImageSobelEdgeDetection extends GPUImageFilterGroup {
             "}";
 
     public GPUImageSobelEdgeDetection() {
-        super(createFilters());
-    }
-
-    private static List<GPUImageFilter> createFilters() {
-        List<GPUImageFilter> filters = new ArrayList<GPUImageFilter>(2);
-        filters.add(new GPUImageGrayscaleFilter());
-        filters.add(new GPUImage3x3TextureSamplingFilter(SOBEL_EDGE_DETECTION));
-        return filters;
+        super();
+        addFilter(new GPUImageGrayscaleFilter());
+        addFilter(new GPUImage3x3TextureSamplingFilter(SOBEL_EDGE_DETECTION));
     }
 
     public void setLineSize(final float size) {

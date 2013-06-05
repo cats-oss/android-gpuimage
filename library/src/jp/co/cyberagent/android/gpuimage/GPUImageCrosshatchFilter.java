@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2012 CyberAgent
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jp.co.cyberagent.android.gpuimage;
 
 import android.opengl.GLES20;
@@ -80,6 +96,11 @@ public class GPUImageCrosshatchFilter extends GPUImageFilter {
         setLineWidth(mLineWidth);
     }
 
+    /**
+     * The fractional width of the image to use as the spacing for the crosshatch. The default is 0.03.
+     *
+     * @param crossHatchSpacing default 0.03
+     */
     public void setCrossHatchSpacing(final float crossHatchSpacing) {
         float singlePixelSpacing;
         if (getOutputWidth() != 0) {
@@ -97,6 +118,11 @@ public class GPUImageCrosshatchFilter extends GPUImageFilter {
         setFloat(mCrossHatchSpacingLocation, mCrossHatchSpacing);
     }
 
+    /**
+     * A relative width for the crosshatch lines. The default is 0.003.
+     *
+     * @param lineWidth default 0.003
+     */
     public void setLineWidth(final float lineWidth) {
         mLineWidth = lineWidth;
         setFloat(mLineWidthLocation, mLineWidth);
