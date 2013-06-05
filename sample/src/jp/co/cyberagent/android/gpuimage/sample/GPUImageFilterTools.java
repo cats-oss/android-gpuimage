@@ -327,10 +327,10 @@ public class GPUImageFilterTools {
                 adjuster = new BrightnessAdjuster().filter(filter);
             } else if (filter instanceof GPUImageSobelEdgeDetection) {
                 adjuster = new SobelAdjuster().filter(filter);
-            } else if (filter instanceof GPUImage3x3TextureSamplingFilter) {
-                adjuster = new GPU3x3TextureAdjuster().filter(filter);
             } else if (filter instanceof GPUImageEmbossFilter) {
                 adjuster = new EmbossAdjuster().filter(filter);
+            } else if (filter instanceof GPUImage3x3TextureSamplingFilter) {
+                adjuster = new GPU3x3TextureAdjuster().filter(filter);
             } else if (filter instanceof GPUImageHueFilter) {
                 adjuster = new HueAdjuster().filter(filter);
             } else if (filter instanceof GPUImagePosterizeFilter) {
@@ -359,6 +359,16 @@ public class GPUImageFilterTools {
                 adjuster = new GaussianBlurAdjuster().filter(filter);
             } else if (filter instanceof GPUImageCrosshatchFilter) {
                 adjuster = new CrosshatchBlurAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageBulgeDistortionFilter) {
+                adjuster = new BulgeDistortionAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageGlassSphereFilter) {
+                adjuster = new GlassSphereAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageHazeFilter) {
+                adjuster = new HazeAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageSphereRefractionFilter) {
+                adjuster = new SphereRefractionAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageSwirlFilter) {
+                adjuster = new SwirlAdjuster().filter(filter);
             } else {
                 adjuster = null;
             }
@@ -556,6 +566,43 @@ public class GPUImageFilterTools {
             public void adjust(final int percentage) {
                 getFilter().setCrossHatchSpacing(range(percentage, 0.0f, 0.06f));
                 getFilter().setLineWidth(range(percentage, 0.0f, 0.006f));
+            }
+        }
+
+        private class BulgeDistortionAdjuster extends Adjuster<GPUImageBulgeDistortionFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setRadius(range(percentage, 0.0f, 1.0f));
+                getFilter().setScale(range(percentage, -1.0f, 1.0f));
+            }
+        }
+
+        private class GlassSphereAdjuster extends Adjuster<GPUImageGlassSphereFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setRadius(range(percentage, 0.0f, 1.0f));
+            }
+        }
+
+        private class HazeAdjuster extends Adjuster<GPUImageHazeFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setDistance(range(percentage, -0.3f, 0.3f));
+                getFilter().setSlope(range(percentage, -0.3f, 0.3f));
+            }
+        }
+
+        private class SphereRefractionAdjuster extends Adjuster<GPUImageSphereRefractionFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setRadius(range(percentage, 0.0f, 1.0f));
+            }
+        }
+
+        private class SwirlAdjuster extends Adjuster<GPUImageSwirlFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setAngle(range(percentage, 0.0f, 2.0f));
             }
         }
     }
