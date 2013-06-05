@@ -45,6 +45,13 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     private final FloatBuffer mGLTextureFlipBuffer;
 
     /**
+     * Instantiates a new GPUImageFilterGroup with no filters.
+     */
+    public GPUImageFilterGroup() {
+        this(null);
+    }
+
+    /**
      * Instantiates a new GPUImageFilterGroup with the given filters.
      *
      * @param filters the filters which represent this filter

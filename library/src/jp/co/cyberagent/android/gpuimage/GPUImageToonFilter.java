@@ -1,9 +1,28 @@
+/*
+ * Copyright (C) 2012 CyberAgent
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jp.co.cyberagent.android.gpuimage;
 
 import android.opengl.GLES20;
 
+/**
+ * This uses Sobel edge detection to place a black border around objects,
+ * and then it quantizes the colors present in the image to give a cartoon-like quality to the image.
+ */
 public class GPUImageToonFilter extends GPUImage3x3TextureSamplingFilter {
-
     public static final String TOON_FRAGMENT_SHADER = "" +
             "precision highp float;\n" +
             "\n" +
@@ -51,10 +70,10 @@ public class GPUImageToonFilter extends GPUImage3x3TextureSamplingFilter {
             "gl_FragColor = vec4(posterizedImageColor * thresholdTest, textureColor.a);\n" +
             "}\n";
 
-    float threshold;
-    int thresholdLocation;
-    float quantizationLevels;
-    int quantizationLevelsLocation;
+    float mThreshold;
+    int mThresholdLocation;
+    float mQuantizationLevels;
+    int mQuantizationLevelsLocation;
 
     public GPUImageToonFilter() {
         this(0.2f, 10.0f);
@@ -62,31 +81,41 @@ public class GPUImageToonFilter extends GPUImage3x3TextureSamplingFilter {
 
     public GPUImageToonFilter(float threshold, float quantizationLevels) {
         super(TOON_FRAGMENT_SHADER);
-        this.threshold = threshold;
-        this.quantizationLevels = quantizationLevels;
+        mThreshold = threshold;
+        mQuantizationLevels = quantizationLevels;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        thresholdLocation = GLES20.glGetUniformLocation(getProgram(), "threshold");
-        quantizationLevelsLocation = GLES20.glGetUniformLocation(getProgram(), "quantizationLevels");
+        mThresholdLocation = GLES20.glGetUniformLocation(getProgram(), "threshold");
+        mQuantizationLevelsLocation = GLES20.glGetUniformLocation(getProgram(), "quantizationLevels");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setThreshold(threshold);
-        setQuantizationLevels(quantizationLevels);
+        setThreshold(mThreshold);
+        setQuantizationLevels(mQuantizationLevels);
     }
 
+    /**
+     * The threshold at which to apply the edges, default of 0.2.
+     *
+     * @param threshold default 0.2
+     */
     public void setThreshold(final float threshold) {
-        this.threshold = threshold;
-        setFloat(thresholdLocation, threshold);
+        mThreshold = threshold;
+        setFloat(mThresholdLocation, threshold);
     }
 
+    /**
+     * The levels of quantization for the posterization of colors within the scene, with a default of 10.0.
+     *
+     * @param quantizationLevels default 10.0
+     */
     public void setQuantizationLevels(final float quantizationLevels) {
-        this.quantizationLevels = quantizationLevels;
-        setFloat(quantizationLevelsLocation, quantizationLevels);
+        mQuantizationLevels = quantizationLevels;
+        setFloat(mQuantizationLevelsLocation, quantizationLevels);
     }
 }
