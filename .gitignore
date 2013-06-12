@@ -4,5 +4,3 @@ target/
 
 .idea/
 *.iml
-sample/gpuimage-sample.apk
-sample/classes/artifacts/
