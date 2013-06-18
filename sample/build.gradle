@@ -1,0 +1,45 @@
+apply plugin: 'android'
+
+dependencies {
+    compile project(':library')
+}
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "17.0.0"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 16
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+
+        instrumentTest.setRoot('tests')
+    }
+}
+
+//////////////
+// NDK Support
+//////////////
+task copyNativeLibs(type: Copy) {
+    from(new File('libs')) { include '**/*.so' }
+    into new File(buildDir, 'native-libs')
+}
+
+tasks.withType(Compile) { compileTask -> compileTask.dependsOn copyNativeLibs }
+
+clean.dependsOn 'cleanCopyNativeLibs'
+
+tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
+    pkgTask.jniDir new File(buildDir, 'native-libs')
+}
