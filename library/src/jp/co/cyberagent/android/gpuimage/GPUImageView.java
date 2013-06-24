@@ -85,6 +85,15 @@ public class GPUImageView extends FrameLayout {
         }
     }
 
+    /**
+     * Retrieve the GPUImage instance used by this view.
+     *
+     * @return used GPUImage instance
+     */
+    public GPUImage getGPUImage() {
+        return mGPUImage;
+    }
+
     // TODO Should be an xml attribute. But then GPUImage can not be distributed as .jar anymore.
     public void setRatio(float ratio) {
         mRatio = ratio;
