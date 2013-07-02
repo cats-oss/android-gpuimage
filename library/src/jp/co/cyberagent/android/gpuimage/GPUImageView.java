@@ -305,6 +305,20 @@ public class GPUImageView extends FrameLayout {
         return bitmap;
     }
 
+    /**
+     * Pauses the GLSurfaceView.
+     */
+    public void onPause() {
+        mGLSurfaceView.onPause();
+    }
+
+    /**
+     * Resumes the GLSurfaceView.
+     */
+    public void onResume() {
+        mGLSurfaceView.onResume();
+    }
+
     public static class Size {
         int width;
         int height;
