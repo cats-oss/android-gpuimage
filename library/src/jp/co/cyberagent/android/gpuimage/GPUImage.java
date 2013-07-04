@@ -498,7 +498,9 @@ public class GPUImage {
             }
 
             cursor.moveToFirst();
-            return cursor.getInt(0);
+            int orientation = cursor.getInt(0);
+            cursor.close();
+            return orientation;
         }
     }
 
