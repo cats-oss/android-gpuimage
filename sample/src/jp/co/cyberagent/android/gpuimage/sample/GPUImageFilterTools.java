@@ -80,6 +80,27 @@ public class GPUImageFilterTools {
         filters.addFilter("Blend (Normal)", FilterType.BLEND_NORMAL);
 
         filters.addFilter("Lookup (Amatorka)", FilterType.LOOKUP_AMATORKA);
+        filters.addFilter("Gaussian Blur", FilterType.GAUSSIAN_BLUR);
+        filters.addFilter("Crosshatch", FilterType.CROSSHATCH);
+
+        filters.addFilter("Box Blur", FilterType.BOX_BLUR);
+        filters.addFilter("CGA Color Space", FilterType.CGA_COLORSPACE);
+        filters.addFilter("Dilation", FilterType.DILATION);
+        filters.addFilter("Kuwahara", FilterType.KUWAHARA);
+        filters.addFilter("RGB Dilation", FilterType.RGB_DILATION);
+        filters.addFilter("Sketch", FilterType.SKETCH);
+        filters.addFilter("Toon", FilterType.TOON);
+        filters.addFilter("Smooth Toon", FilterType.SMOOTH_TOON);
+
+        filters.addFilter("Bulge Distortion", FilterType.BULGE_DISTORTION);
+        filters.addFilter("Glass Sphere", FilterType.GLASS_SPHERE);
+        filters.addFilter("Haze", FilterType.HAZE);
+        filters.addFilter("Laplacian", FilterType.LAPLACIAN);
+        filters.addFilter("Non Maximum Suppression", FilterType.NON_MAXIMUM_SUPPRESSION);
+        filters.addFilter("Sphere Refraction", FilterType.SPHERE_REFRACTION);
+        filters.addFilter("Swirl", FilterType.SWIRL);
+        filters.addFilter("Weak Pixel Inclusion", FilterType.WEAK_PIXEL_INCLUSION);
+        filters.addFilter("False Color", FilterType.FALSE_COLOR);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
@@ -215,6 +236,47 @@ public class GPUImageFilterTools {
                 GPUImageLookupFilter amatorka = new GPUImageLookupFilter();
                 amatorka.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.lookup_amatorka));
                 return amatorka;
+            case GAUSSIAN_BLUR:
+                return new GPUImageGaussianBlurFilter();
+            case CROSSHATCH:
+                return new GPUImageCrosshatchFilter();
+
+            case BOX_BLUR:
+                return new GPUImageBoxBlurFilter();
+            case CGA_COLORSPACE:
+                return new GPUImageCGAColorspaceFilter();
+            case DILATION:
+                return new GPUImageDilationFilter();
+            case KUWAHARA:
+                return new GPUImageKuwaharaFilter();
+            case RGB_DILATION:
+                return new GPUImageRGBDilationFilter();
+            case SKETCH:
+                return new GPUImageSketchFilter();
+            case TOON:
+                return new GPUImageToonFilter();
+            case SMOOTH_TOON:
+                return new GPUImageSmoothToonFilter();
+
+            case BULGE_DISTORTION:
+                return new GPUImageBulgeDistortionFilter();
+            case GLASS_SPHERE:
+                return new GPUImageGlassSphereFilter();
+            case HAZE:
+                return new GPUImageHazeFilter();
+            case LAPLACIAN:
+                return new GPUImageLaplacianFilter();
+            case NON_MAXIMUM_SUPPRESSION:
+                return new GPUImageNonMaximumSuppressionFilter();
+            case SPHERE_REFRACTION:
+                return new GPUImageSphereRefractionFilter();
+            case SWIRL:
+                return new GPUImageSwirlFilter();
+            case WEAK_PIXEL_INCLUSION:
+                return new GPUImageWeakPixelInclusionFilter();
+            case FALSE_COLOR:
+                return new GPUImageFalseColorFilter();
+
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
@@ -240,7 +302,9 @@ public class GPUImageFilterTools {
         CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION,
         SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE, TONE_CURVE, BLEND_COLOR_BURN, BLEND_COLOR_DODGE, BLEND_DARKEN, BLEND_DIFFERENCE,
         BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
-        BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA
+        BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA,
+        GAUSSIAN_BLUR, CROSSHATCH, BOX_BLUR, CGA_COLORSPACE, DILATION, KUWAHARA, RGB_DILATION, SKETCH, TOON, SMOOTH_TOON, BULGE_DISTORTION, GLASS_SPHERE, HAZE, LAPLACIAN, NON_MAXIMUM_SUPPRESSION,
+        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR
     }
 
     private static class FilterList {
@@ -269,10 +333,10 @@ public class GPUImageFilterTools {
                 adjuster = new BrightnessAdjuster().filter(filter);
             } else if (filter instanceof GPUImageSobelEdgeDetection) {
                 adjuster = new SobelAdjuster().filter(filter);
-            } else if (filter instanceof GPUImage3x3TextureSamplingFilter) {
-                adjuster = new GPU3x3TextureAdjuster().filter(filter);
             } else if (filter instanceof GPUImageEmbossFilter) {
                 adjuster = new EmbossAdjuster().filter(filter);
+            } else if (filter instanceof GPUImage3x3TextureSamplingFilter) {
+                adjuster = new GPU3x3TextureAdjuster().filter(filter);
             } else if (filter instanceof GPUImageHueFilter) {
                 adjuster = new HueAdjuster().filter(filter);
             } else if (filter instanceof GPUImagePosterizeFilter) {
@@ -297,9 +361,27 @@ public class GPUImageFilterTools {
                 adjuster = new VignetteAdjuster().filter(filter);
             } else if (filter instanceof GPUImageDissolveBlendFilter) {
                 adjuster = new DissolveBlendAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageGaussianBlurFilter) {
+                adjuster = new GaussianBlurAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageCrosshatchFilter) {
+                adjuster = new CrosshatchBlurAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageBulgeDistortionFilter) {
+                adjuster = new BulgeDistortionAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageGlassSphereFilter) {
+                adjuster = new GlassSphereAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageHazeFilter) {
+                adjuster = new HazeAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageSphereRefractionFilter) {
+                adjuster = new SphereRefractionAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageSwirlFilter) {
+                adjuster = new SwirlAdjuster().filter(filter);
             } else {
                 adjuster = null;
             }
+        }
+
+        public boolean canAdjust() {
+            return adjuster != null;
         }
 
         public void adjust(final int percentage) {
@@ -475,6 +557,58 @@ public class GPUImageFilterTools {
             @Override
             public void adjust(final int percentage) {
                 getFilter().setMix(range(percentage, 0.0f, 1.0f));
+            }
+        }
+
+        private class GaussianBlurAdjuster extends Adjuster<GPUImageGaussianBlurFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setBlurSize(range(percentage, 0.0f, 1.0f));
+            }
+        }
+
+        private class CrosshatchBlurAdjuster extends Adjuster<GPUImageCrosshatchFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setCrossHatchSpacing(range(percentage, 0.0f, 0.06f));
+                getFilter().setLineWidth(range(percentage, 0.0f, 0.006f));
+            }
+        }
+
+        private class BulgeDistortionAdjuster extends Adjuster<GPUImageBulgeDistortionFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setRadius(range(percentage, 0.0f, 1.0f));
+                getFilter().setScale(range(percentage, -1.0f, 1.0f));
+            }
+        }
+
+        private class GlassSphereAdjuster extends Adjuster<GPUImageGlassSphereFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setRadius(range(percentage, 0.0f, 1.0f));
+            }
+        }
+
+        private class HazeAdjuster extends Adjuster<GPUImageHazeFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setDistance(range(percentage, -0.3f, 0.3f));
+                getFilter().setSlope(range(percentage, -0.3f, 0.3f));
+            }
+        }
+
+        private class SphereRefractionAdjuster extends Adjuster<GPUImageSphereRefractionFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setRadius(range(percentage, 0.0f, 1.0f));
+            }
+        }
+
+        private class SwirlAdjuster extends Adjuster<GPUImageSwirlFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setAngle(range(percentage, 0.0f, 2.0f));
             }
         }
     }

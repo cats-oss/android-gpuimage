@@ -39,7 +39,6 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -171,12 +170,8 @@ public class GPUImage {
      * @param bitmap the new image
      */
     public void setImage(final Bitmap bitmap) {
-        setImage(bitmap, false);
         mCurrentBitmap = bitmap;
-    }
-
-    private void setImage(final Bitmap bitmap, final boolean recycle) {
-        mRenderer.setImageBitmap(bitmap, recycle);
+        mRenderer.setImageBitmap(bitmap, false);
         requestRender();
     }
 
@@ -324,6 +319,9 @@ public class GPUImage {
     }
 
     /**
+     * Deprecated: Please use
+     * {@link GPUImageView#saveToPictures(String, String, jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener)}
+     *
      * Save current image with applied filter to Pictures. It will be stored on
      * the default Picture folder on the phone below the given folerName and
      * fileName. <br />
@@ -334,12 +332,16 @@ public class GPUImage {
      * @param fileName the file name
      * @param listener the listener
      */
+    @Deprecated
     public void saveToPictures(final String folderName, final String fileName,
             final OnPictureSavedListener listener) {
         saveToPictures(mCurrentBitmap, folderName, fileName, listener);
     }
 
     /**
+     * Deprecated: Please use
+     * {@link GPUImageView#saveToPictures(String, String, jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener)}
+     *
      * Apply and save the given bitmap with applied filter to Pictures. It will
      * be stored on the default Picture folder on the phone below the given
      * folerName and fileName. <br />
@@ -351,9 +353,19 @@ public class GPUImage {
      * @param fileName the file name
      * @param listener the listener
      */
+    @Deprecated
     public void saveToPictures(final Bitmap bitmap, final String folderName, final String fileName,
             final OnPictureSavedListener listener) {
         new SaveTask(bitmap, folderName, fileName, listener).execute();
+    }
+
+    /**
+     * Runs the given Runnable on the OpenGL thread.
+     *
+     * @param runnable The runnable to be run on the OpenGL thread.
+     */
+    void runOnGLThread(Runnable runnable) {
+        mRenderer.runOnDrawEnd(runnable);
     }
 
     private int getOutputWidth() {
@@ -382,6 +394,7 @@ public class GPUImage {
         }
     }
 
+    @Deprecated
     private class SaveTask extends AsyncTask<Void, Void, Void> {
 
         private final Bitmap mBitmap;
@@ -476,7 +489,9 @@ public class GPUImage {
             }
 
             cursor.moveToFirst();
-            return cursor.getInt(0);
+            int orientation = cursor.getInt(0);
+            cursor.close();
+            return orientation;
         }
     }
 
@@ -581,9 +596,11 @@ public class GPUImage {
             int height = bitmap.getHeight();
             int[] newSize = getScaleSize(width, height);
             Bitmap workBitmap = Bitmap.createScaledBitmap(bitmap, newSize[0], newSize[1], true);
-            bitmap.recycle();
-            bitmap = workBitmap;
-            System.gc();
+            if (workBitmap != bitmap) {
+                bitmap.recycle();
+                bitmap = workBitmap;
+                System.gc();
+            }
 
             if (mScaleType == ScaleType.CENTER_CROP) {
                 // Crop it
@@ -591,8 +608,10 @@ public class GPUImage {
                 int diffHeight = newSize[1] - mOutputHeight;
                 workBitmap = Bitmap.createBitmap(bitmap, diffWidth / 2, diffHeight / 2,
                         newSize[0] - diffWidth, newSize[1] - diffHeight);
-                bitmap.recycle();
-                bitmap = workBitmap;
+                if (workBitmap != bitmap) {
+                    bitmap.recycle();
+                    bitmap = workBitmap;
+                }
             }
 
             return bitmap;
