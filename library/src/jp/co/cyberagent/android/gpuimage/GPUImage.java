@@ -556,6 +556,7 @@ public class GPUImage {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
+            mGPUImage.deleteImage();
             mGPUImage.setImage(bitmap);
         }
 
