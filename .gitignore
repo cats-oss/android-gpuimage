@@ -4,3 +4,8 @@ target/
 
 .idea/
 *.iml
+
+#Gradle
+build/
+.gradle/
+local.properties

@@ -85,6 +85,15 @@ public class GPUImageView extends FrameLayout {
         }
     }
 
+    /**
+     * Retrieve the GPUImage instance used by this view.
+     *
+     * @return used GPUImage instance
+     */
+    public GPUImage getGPUImage() {
+        return mGPUImage;
+    }
+
     // TODO Should be an xml attribute. But then GPUImage can not be distributed as .jar anymore.
     public void setRatio(float ratio) {
         mRatio = ratio;
@@ -294,6 +303,20 @@ public class GPUImageView extends FrameLayout {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bitmap.copyPixelsFromBuffer(pixelMirroredBuffer);
         return bitmap;
+    }
+
+    /**
+     * Pauses the GLSurfaceView.
+     */
+    public void onPause() {
+        mGLSurfaceView.onPause();
+    }
+
+    /**
+     * Resumes the GLSurfaceView.
+     */
+    public void onResume() {
+        mGLSurfaceView.onResume();
     }
 
     public static class Size {
