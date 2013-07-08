@@ -25,6 +25,7 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
+
 import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -279,10 +280,10 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             };
         } else {
             cube = new float[]{
-                    CUBE[0] * ratioWidth, CUBE[1] * ratioHeight,
-                    CUBE[2] * ratioWidth, CUBE[3] * ratioHeight,
-                    CUBE[4] * ratioWidth, CUBE[5] * ratioHeight,
-                    CUBE[6] * ratioWidth, CUBE[7] * ratioHeight,
+                    CUBE[0] / ratioHeight, CUBE[1] / ratioWidth,
+                    CUBE[2] / ratioHeight, CUBE[3] / ratioWidth,
+                    CUBE[4] / ratioHeight, CUBE[5] / ratioWidth,
+                    CUBE[6] / ratioHeight, CUBE[7] / ratioWidth,
             };
         }
 
