@@ -8,3 +8,4 @@ target/
 #Gradle
 build/
 .gradle/
+local.properties
