@@ -249,21 +249,23 @@ public class GPUImage {
     public Bitmap getBitmapWithFilterApplied(final Bitmap bitmap) {
         if (mGlSurfaceView != null) {
             mRenderer.deleteImage();
-            final Semaphore lock = new Semaphore(0);
             mRenderer.runOnDraw(new Runnable() {
 
                 @Override
                 public void run() {
-                    mFilter.destroy();
-                    lock.release();
+                    synchronized(mFilter) {
+                        mFilter.destroy();
+                        mFilter.notify();
+                    }
                 }
             });
             requestRender();
-
-            try {
-                lock.acquire();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            synchronized(mFilter) {
+                try {
+                    mFilter.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
