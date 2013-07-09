@@ -15,10 +15,9 @@ before_install:
     - export ANDROID_NDK_HOME=$PWD/android-ndk-r8e
 
     # Install required Android components.
-    - android update sdk --filter platform-tools,android-16,extra-android-support --no-ui --force
-
-    # Do you accept the license 'android-sdk-license-bcbbd656' [y/n]:
-    - echo y | android update sdk --filter tools,platform-tools,build-tools-17.0.0 --no-ui --force > /dev/null
+    - echo y | android update sdk --filter platform-tools --no-ui --force > /dev/null
+    - echo y | android update sdk --filter tools --no-ui --force > /dev/null
+    - echo y | android update sdk --filter build-tools-17.0.0 --no-ui --force > /dev/null
 
     - echo y | android update sdk --filter android-16 --no-ui --force > /dev/null
     - echo y | android update sdk --filter android-17 --no-ui --force > /dev/null
