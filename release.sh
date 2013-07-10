@@ -22,6 +22,9 @@ function updateManifest {
 updateManifest "sample/AndroidManifest.xml"
 updateManifest "library/AndroidManifest.xml"
 
+# update build.gradle
+perl -pi -e "s/version = \"(.*)\"/version = \"$VERSION\"/g" library/build.gradle
+
 echo ""
 echo "# Now run:"
 echo ""
@@ -29,3 +32,5 @@ echo git commit -a -m \"Update version to v$VERSION\"
 echo mvn release:clean
 echo mvn release:prepare
 echo mvn release:perform
+echo ""
+echo "./gradlew uploadArchives"

@@ -1,4 +1,64 @@
 apply plugin: 'android-library'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+version = "1.1.2-SNAPSHOT"
+group = "jp.co.cyberagent.android.gpuimage"
+
+configurations {
+    archives {
+        extendsFrom configurations.default
+    }
+}
+
+signing {
+    required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+        repository(url: sonatypeRepo) {
+            authentication(userName: sonatypeUsername, password: sonatypePassword)
+        }
+        snapshotRepository(url: sonatypeSnapshotRepo) {
+            authentication(userName: sonatypeUsername, password: sonatypePassword)
+        }
+
+        pom.project {
+            artifactId 'gpuimage-library'
+            name 'GPUImage for Android Library'
+            packaging 'aar'
+            description 'Image filters for Android with OpenGL (based on GPUImage for iOS)'
+            url 'https://github.com/cyberagent/android-gpuimage/'
+
+            scm {
+                url 'scm:git@github.com:CyberAgent/android-gpuimage.git'
+                connection 'scm:git@github.com:CyberAgent/android-gpuimage.git'
+                developerConnection 'scm:git@github.com:CyberAgent/android-gpuimage.git'
+            }
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+
+            developers {
+                developer {
+                    id 'pboos'
+                    name 'Patrick Boos'
+                    email 'patrickboos85@gmail.com'
+                }
+            }
+        }
+    }
+}
 
 android {
     compileSdkVersion 17
