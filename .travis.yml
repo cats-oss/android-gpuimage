@@ -24,4 +24,7 @@ before_install:
     - echo y | android update sdk --filter extra-android-support --no-ui --force > /dev/null
 
     # setup properties (no real values, but needed for setup)
-    - echo "sonatypeRepo=http://doesnotmatter\nsonatypeSnapshotRepo=http://doesnotmatter\nsonatypeUsername=doesnotmatter\nsonatypePassword=doesnotmatter" > test.txt
+    - echo "sonatypeRepo=http://doesnotmatter" > gradle.properties
+    - echo "sonatypeSnapshotRepo=http://doesnotmatter" >> gradle.properties
+    - echo "sonatypeUsername=doesnotmatter" >> gradle.properties
+    - echo "sonatypePassword=doesnotmatter" >> gradle.properties
