@@ -117,6 +117,7 @@ public class GPUImageView extends FrameLayout {
      */
     public void setRotation(Rotation rotation) {
         mGPUImage.setRotation(rotation);
+        requestRender();
     }
 
     /**
