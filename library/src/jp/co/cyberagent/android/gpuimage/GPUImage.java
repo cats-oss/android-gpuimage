@@ -190,6 +190,15 @@ public class GPUImage {
     }
 
     /**
+     * Sets the rotation of the displayed image.
+     *
+     * @param rotation new rotation
+     */
+    public void setRotation(Rotation rotation) {
+        mRenderer.setRotation(rotation);
+    }
+
+    /**
      * Deletes the current image.
      */
     public void deleteImage() {

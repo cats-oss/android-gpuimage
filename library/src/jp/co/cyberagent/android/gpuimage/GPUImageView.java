@@ -111,6 +111,15 @@ public class GPUImageView extends FrameLayout {
     }
 
     /**
+     * Sets the rotation of the displayed image.
+     *
+     * @param rotation new rotation
+     */
+    public void setRotation(Rotation rotation) {
+        mGPUImage.setRotation(rotation);
+    }
+
+    /**
      * Set the filter to be applied on the image.
      *
      * @param filter Filter that should be applied on the image.
