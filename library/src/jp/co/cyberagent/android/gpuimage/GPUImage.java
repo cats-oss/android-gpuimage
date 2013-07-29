@@ -41,13 +41,12 @@ import android.view.WindowManager;
 import java.io.*;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 /**
  * The main accessor for GPUImage functionality. This class helps to do common
  * tasks through a simple interface.
  */
-public class GPUImage {  
+public class GPUImage {
     private final Context mContext;
     private final GPUImageRenderer mRenderer;
     private GLSurfaceView mGlSurfaceView;
@@ -55,24 +54,26 @@ public class GPUImage {
     private Bitmap mCurrentBitmap;
     private ScaleType mScaleType = ScaleType.CENTER_CROP;
 
-    /**    
-     * Instantiates a new GPUImage object.   
-     * 
+	private OnImageLoadedListener listener;
+
+    /**
+     * Instantiates a new GPUImage object.
+     *
      * @param context the context
      */
-    public GPUImage(final Context context) {  
+    public GPUImage(final Context context) {
         if (!supportsOpenGLES2(context)) {
             throw new IllegalStateException("OpenGL ES 2.0 is not supported on this phone.");
         }
- 
-        mContext = context; 
+
+        mContext = context;
         mFilter = new GPUImageFilter();
         mRenderer = new GPUImageRenderer(mFilter);
     }
 
     /**
      * Checks if OpenGL ES 2.0 is supported on the current device.
-     * 
+     *
      * @param context the context
      * @return true, if successful
      */
@@ -86,7 +87,7 @@ public class GPUImage {
 
     /**
      * Sets the GLSurfaceView which will display the preview.
-     * 
+     *
      * @param view the GLSurfaceView
      */
     public void setGLSurfaceView(final GLSurfaceView view) {
@@ -108,7 +109,7 @@ public class GPUImage {
 
     /**
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
-     * 
+     *
      * @param camera the camera
      */
     public void setUpCamera(final Camera camera) {
@@ -117,7 +118,7 @@ public class GPUImage {
 
     /**
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
-     * 
+     *
      * @param camera the camera
      * @param degrees by how many degrees the image should be rotated
      * @param flipHorizontal if the image should be flipped horizontally
@@ -155,7 +156,7 @@ public class GPUImage {
     /**
      * Sets the filter which should be applied to the image which was (or will
      * be) set by setImage(...).
-     * 
+     *
      * @param filter the new filter
      */
     public void setFilter(final GPUImageFilter filter) {
@@ -166,14 +167,19 @@ public class GPUImage {
 
     /**
      * Sets the image on which the filter should be applied.
-     * 
+     *
      * @param bitmap the new image
      */
     public void setImage(final Bitmap bitmap) {
         mCurrentBitmap = bitmap;
         mRenderer.setImageBitmap(bitmap, false);
         requestRender();
+		if(listener != null) listener.onLoad(this);
     }
+
+	public void setOnImageLoadedListener(OnImageLoadedListener listener){
+		this.listener = listener;
+	}
 
     /**
      * This sets the scale type of GPUImage. This has to be run before setting the image.
@@ -209,16 +215,16 @@ public class GPUImage {
 
     /**
      * Sets the image on which the filter should be applied from a Uri.
-     * 
+     *
      * @param uri the uri of the new image
      */
-    public void setImage(final Uri uri) {
-        new LoadImageUriTask(this, uri).execute();
-    }
+	public void setImage(final Uri uri) {
+		new LoadImageUriTask(this, uri).execute();
+	}
 
     /**
      * Sets the image on which the filter should be applied from a File.
-     * 
+     *
      * @param file the file of the new image
      */
     public void setImage(final File file) {
@@ -242,7 +248,7 @@ public class GPUImage {
 
     /**
      * Gets the current displayed image with applied filter as a Bitmap.
-     * 
+     *
      * @return the current image with filter applied
      */
     public Bitmap getBitmapWithFilterApplied() {
@@ -251,7 +257,7 @@ public class GPUImage {
 
     /**
      * Gets the given bitmap with current filter applied as a Bitmap.
-     * 
+     *
      * @param bitmap the bitmap on which the current filter should be applied
      * @return the bitmap with filter applied
      */
@@ -305,7 +311,7 @@ public class GPUImage {
      * Whenever a new Bitmap is ready, the listener will be called with the
      * bitmap. The order of the calls to the listener will be the same as the
      * filter order.
-     * 
+     *
      * @param bitmap the bitmap on which the filters will be applied
      * @param filters the filters which will be applied on the bitmap
      * @param listener the listener on which the results will be notified
@@ -338,7 +344,7 @@ public class GPUImage {
      * fileName. <br />
      * This method is async and will notify when the image was saved through the
      * listener.
-     * 
+     *
      * @param folderName the folder name
      * @param fileName the file name
      * @param listener the listener
@@ -358,7 +364,7 @@ public class GPUImage {
      * folerName and fileName. <br />
      * This method is async and will notify when the image was saved through the
      * listener.
-     * 
+     *
      * @param bitmap the bitmap
      * @param folderName the folder name
      * @param fileName the file name
@@ -404,6 +410,14 @@ public class GPUImage {
             return display.getHeight();
         }
     }
+
+	public int getImageWidth(){
+		return mCurrentBitmap != null ? mCurrentBitmap.getWidth() : 0;
+	}
+
+	public int getImageHeight(){
+		return mCurrentBitmap != null ? mCurrentBitmap.getHeight() : 0;
+	}
 
     @Deprecated
     private class SaveTask extends AsyncTask<Void, Void, Void> {
