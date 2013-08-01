@@ -268,8 +268,8 @@ public class GPUImage {
                     }
                 }
             });
-            requestRender();
             synchronized(mFilter) {
+                requestRender();
                 try {
                     mFilter.wait();
                 } catch (InterruptedException e) {
