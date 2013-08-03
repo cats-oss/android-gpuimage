@@ -97,7 +97,12 @@ tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
 
 task buildNative(type: Exec) {
     if (System.env.ANDROID_NDK_HOME != null) {
-        def ndkBuild = new File(System.env.ANDROID_NDK_HOME, 'ndk-build')
+        def ndkBuild
+		if (System.properties['os.name'].toLowerCase().contains('windows')) {
+			ndkBuild = new File(System.env.ANDROID_NDK_HOME, 'ndk-build.cmd')
+		} else {
+			ndkBuild = new File(System.env.ANDROID_NDK_HOME, 'ndk-build')
+		}
         commandLine ndkBuild
     } else {
         doLast {
