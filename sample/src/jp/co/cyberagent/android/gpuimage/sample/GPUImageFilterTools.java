@@ -297,6 +297,8 @@ public class GPUImageFilterTools {
                 adjuster = new VignetteAdjuster().filter(filter);
             } else if (filter instanceof GPUImageDissolveBlendFilter) {
                 adjuster = new DissolveBlendAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageChromaKeyBlendFilter) {
+                adjuster = new ChromaKeyBlendAdjuster().filter(filter);
             } else {
                 adjuster = null;
             }
@@ -475,6 +477,13 @@ public class GPUImageFilterTools {
             @Override
             public void adjust(final int percentage) {
                 getFilter().setMix(range(percentage, 0.0f, 1.0f));
+            }
+        }
+        
+        private class ChromaKeyBlendAdjuster extends Adjuster<GPUImageChromaKeyBlendFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setThresholdSensitivity(range(percentage, 0.2f, 0.6f));
             }
         }
     }
