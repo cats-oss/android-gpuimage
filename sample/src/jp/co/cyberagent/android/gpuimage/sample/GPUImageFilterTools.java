@@ -379,6 +379,8 @@ public class GPUImageFilterTools {
                 adjuster = new SphereRefractionAdjuster().filter(filter);
             } else if (filter instanceof GPUImageSwirlFilter) {
                 adjuster = new SwirlAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageColorBalanceFilter) {
+                adjuster = new ColorBalanceAdjuster().filter(filter);
             } else {
                 adjuster = null;
             }
@@ -613,6 +615,17 @@ public class GPUImageFilterTools {
             @Override
             public void adjust(final int percentage) {
                 getFilter().setAngle(range(percentage, 0.0f, 2.0f));
+            }
+        }
+
+        private class ColorBalanceAdjuster extends Adjuster<GPUImageColorBalanceFilter> {
+
+            @Override
+            public void adjust(int percentage) {
+                getFilter().setMidtones(new float[]{
+                        range(percentage, 0.0f, 1.0f),
+                        range(percentage / 2, 0.0f, 1.0f),
+                        range(percentage / 3, 0.0f, 1.0f)});
             }
         }
     }
