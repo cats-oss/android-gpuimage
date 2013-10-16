@@ -16,15 +16,15 @@
 
 package jp.co.cyberagent.android.gpuimage.sample;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import jp.co.cyberagent.android.gpuimage.*;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
+import jp.co.cyberagent.android.gpuimage.*;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class GPUImageFilterTools {  
     public static void showDialog(final Context context,
@@ -101,6 +101,8 @@ public class GPUImageFilterTools {
         filters.addFilter("Swirl", FilterType.SWIRL);
         filters.addFilter("Weak Pixel Inclusion", FilterType.WEAK_PIXEL_INCLUSION);
         filters.addFilter("False Color", FilterType.FALSE_COLOR);
+
+        filters.addFilter("Color Balance", FilterType.COLOR_BALANCE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
@@ -276,6 +278,8 @@ public class GPUImageFilterTools {
                 return new GPUImageWeakPixelInclusionFilter();
             case FALSE_COLOR:
                 return new GPUImageFalseColorFilter();
+            case COLOR_BALANCE:
+                return new GPUImageColorBalanceFilter();
 
             default:
                 throw new IllegalStateException("No filter of that type!");
@@ -304,7 +308,7 @@ public class GPUImageFilterTools {
         BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
         BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA,
         GAUSSIAN_BLUR, CROSSHATCH, BOX_BLUR, CGA_COLORSPACE, DILATION, KUWAHARA, RGB_DILATION, SKETCH, TOON, SMOOTH_TOON, BULGE_DISTORTION, GLASS_SPHERE, HAZE, LAPLACIAN, NON_MAXIMUM_SUPPRESSION,
-        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR
+        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE
     }
 
     private static class FilterList {
@@ -375,6 +379,8 @@ public class GPUImageFilterTools {
                 adjuster = new SphereRefractionAdjuster().filter(filter);
             } else if (filter instanceof GPUImageSwirlFilter) {
                 adjuster = new SwirlAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageColorBalanceFilter) {
+                adjuster = new ColorBalanceAdjuster().filter(filter);
             } else {
                 adjuster = null;
             }
@@ -609,6 +615,17 @@ public class GPUImageFilterTools {
             @Override
             public void adjust(final int percentage) {
                 getFilter().setAngle(range(percentage, 0.0f, 2.0f));
+            }
+        }
+
+        private class ColorBalanceAdjuster extends Adjuster<GPUImageColorBalanceFilter> {
+
+            @Override
+            public void adjust(int percentage) {
+                getFilter().setMidtones(new float[]{
+                        range(percentage, 0.0f, 1.0f),
+                        range(percentage / 2, 0.0f, 1.0f),
+                        range(percentage / 3, 0.0f, 1.0f)});
             }
         }
     }
