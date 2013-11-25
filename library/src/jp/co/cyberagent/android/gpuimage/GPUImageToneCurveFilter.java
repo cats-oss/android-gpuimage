@@ -173,10 +173,10 @@ public class GPUImageToneCurveFilter extends GPUImageFilter {
                 if ((mRedCurve.size() >= 256) && (mGreenCurve.size() >= 256) && (mBlueCurve.size() >= 256) && (mRgbCompositeCurve.size() >= 256)) {
                     byte[] toneCurveByteArray = new byte[256 * 4];
                     for (int currentCurveIndex = 0; currentCurveIndex < 256; currentCurveIndex++) {
-                        // BGRA for upload to texture
-                        toneCurveByteArray[currentCurveIndex * 4] = (byte) ((int) Math.min(Math.max(currentCurveIndex + mBlueCurve.get(currentCurveIndex) + mRgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                        // RGBA for upload to texture
+                        toneCurveByteArray[currentCurveIndex * 4] = (byte) ((int) Math.min(Math.max(currentCurveIndex + mRedCurve.get(currentCurveIndex) + mRgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
                         toneCurveByteArray[currentCurveIndex * 4 + 1] = (byte) ((int) Math.min(Math.max(currentCurveIndex + mGreenCurve.get(currentCurveIndex) + mRgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
-                        toneCurveByteArray[currentCurveIndex * 4 + 2] = (byte) ((int) Math.min(Math.max(currentCurveIndex + mRedCurve.get(currentCurveIndex) + mRgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                        toneCurveByteArray[currentCurveIndex * 4 + 2] = (byte) ((int) Math.min(Math.max(currentCurveIndex + mBlueCurve.get(currentCurveIndex) + mRgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
                         toneCurveByteArray[currentCurveIndex * 4 + 3] = (byte) (255 & 0xff);
                     }
 
