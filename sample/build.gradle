@@ -5,12 +5,12 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 17
-    buildToolsVersion "17.0.0"
+    compileSdkVersion 19
+    buildToolsVersion "19.0.1"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 16
+        targetSdkVersion 19
     }
 
     sourceSets {
@@ -41,5 +41,6 @@ tasks.withType(Compile) { compileTask -> compileTask.dependsOn copyNativeLibs }
 clean.dependsOn 'cleanCopyNativeLibs'
 
 tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
-    pkgTask.jniDir new File(buildDir, 'native-libs')
+    pkgTask.jniFolders = new HashSet<File>()
+    pkgTask.jniFolders.add(new File(buildDir, 'native-libs'))
 }
