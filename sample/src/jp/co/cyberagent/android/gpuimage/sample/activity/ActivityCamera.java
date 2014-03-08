@@ -16,13 +16,24 @@
 
 package jp.co.cyberagent.android.gpuimage.sample.activity;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera.Parameters;
+import android.net.Uri;
+import android.opengl.GLSurfaceView;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.Display;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
@@ -32,21 +43,14 @@ import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFi
 import jp.co.cyberagent.android.gpuimage.sample.R;
 import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper;
 import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Parameters;
-import android.net.Uri;
-import android.opengl.GLSurfaceView;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         OnClickListener {
@@ -127,7 +131,8 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     private void takePicture() {
         // TODO get a size that is about the size of the screen
         Camera.Parameters params = mCamera.mCameraInstance.getParameters();
-        params.setPictureSize(1280, 960);
+        Camera.Size size = chooseSizeCloseToDisplay(params.getSupportedPictureSizes());
+        params.setPictureSize(size.width, size.height);
         params.setRotation(90);
         mCamera.mCameraInstance.setParameters(params);
         for (Camera.Size size2 : mCamera.mCameraInstance.getParameters()
@@ -239,6 +244,44 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     public void onStopTrackingTouch(final SeekBar seekBar) {
     }
 
+    private Camera.Size chooseSizeCloseToDisplay(List<Camera.Size> sizes) {
+        Camera.Size preferredSize = null;
+        Point displaySize = getDisplaySize();
+        float displayAspectRatio = (float) displaySize.y / displaySize.x;
+        float selectedAspectRatio = Float.MAX_VALUE;
+        for (Camera.Size size: sizes) {
+            float aspectRatio = (float) size.width / size.height;
+            float diff = Math.abs(aspectRatio - displayAspectRatio);
+            float selectedDiff = Math.abs(selectedAspectRatio - displayAspectRatio);
+            if (diff < selectedDiff
+                    || (diff == selectedDiff
+                    && (Math.abs(displaySize.x - size.height)
+                    < Math.abs(displaySize.x - preferredSize.height)))) {
+                preferredSize = size;
+                selectedAspectRatio = aspectRatio;
+            }
+        }
+        return preferredSize;
+    }
+
+    private Point getDisplaySize() {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            display.getSize(size);
+            return size;
+        } else {
+            return getDisplaySizeForSDK12AndPrior(display, size);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private Point getDisplaySizeForSDK12AndPrior(Display display, Point size) {
+        size.x = display.getWidth();
+        size.y = display.getHeight();
+        return size;
+    }
+
     private class CameraLoader {
         private int mCurrentCameraId = 0;
         private Camera mCameraInstance;
@@ -260,9 +303,8 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         private void setUpCamera(final int id) {
             mCameraInstance = getCameraInstance(id);
             Parameters parameters = mCameraInstance.getParameters();
-            // TODO adjust by getting supportedPreviewSizes and then choosing
-            // the best one for screen size (best fill screen)
-            parameters.setPreviewSize(720, 480);
+            Camera.Size size = chooseSizeCloseToDisplay(parameters.getSupportedPreviewSizes());
+            parameters.setPreviewSize(size.width, size.height);
             if (parameters.getSupportedFocusModes().contains(
                     Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
                 parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
