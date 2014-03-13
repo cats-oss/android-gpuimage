@@ -32,6 +32,7 @@ import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
@@ -190,18 +191,15 @@ public class PixelBuffer {
 
     private void convertToBitmap() {
         IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
-        IntBuffer ibt = IntBuffer.allocate(mWidth * mHeight);
         mGL.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
+
+        mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+        mBitmap.copyPixelsFromBuffer(ib);
 
         // Convert upside down mirror-reversed image to right-side up normal
         // image.
-        for (int i = 0; i < mHeight; i++) {
-            for (int j = 0; j < mWidth; j++) {
-                ibt.put((mHeight - i - 1) * mWidth + j, ib.get(i * mWidth + j));
-            }
-        }
-
-        mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-        mBitmap.copyPixelsFromBuffer(ibt);
+        Matrix matrix = new Matrix();
+        matrix.preScale(1.0f, -1.0f);
+        mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mWidth, mHeight, matrix, false);
     }
 }
