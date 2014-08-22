@@ -188,7 +188,7 @@ public class PixelBuffer {
                 attribute, value) ? value[0] : 0;
     }
 
-    private void convertToBitmap() {
+    private void convertToBitmap0() {
         int[] iat = new int[mWidth * mHeight];
         IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
         mGL.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
@@ -201,9 +201,17 @@ public class PixelBuffer {
                 iat[(mHeight - i - 1) * mWidth + j] = ia[i * mWidth + j];
             }
         }
-        
 
         mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
         mBitmap.copyPixelsFromBuffer(IntBuffer.wrap(iat));
+    }
+
+    private void convertToBitmap() {
+        IntBuffer ib = IntBuffer.allocate(mWidth);
+        mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+        for (int i = 0; i < mHeight; i++) {
+            mGL.glReadPixels(0, i, mWidth, 1, GL_RGBA, GL_UNSIGNED_BYTE, ib);
+            mBitmap.setPixels(ib.array(), 0, mWidth, 0, mHeight - 1 - i, mWidth, 1);
+        }
     }
 }

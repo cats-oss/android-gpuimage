@@ -22,8 +22,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import jp.co.cyberagent.android.gpuimage.GPUImage;
+import jp.co.cyberagent.android.gpuimage.PixelBuffer;
 import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
@@ -124,16 +126,31 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         }
     }
 
+    private Camera.Size getBestPictureSize(Camera.Parameters params) {
+        List<Camera.Size> sizes = params.getSupportedPictureSizes();
+        Camera.Size size = sizes.get(0);
+        final int count = sizes.size();
+        // Log.d("camerasize", String.format("size = [%d, %d]", size.width, size.height));
+        for (int i = 1; i < count; i++) {
+            Camera.Size s = sizes.get(i);
+            // Log.d("camerasize", String.format("size = [%d, %d]", s.width, s.height));
+            if (s.height > size.height) {
+                size = s;
+            }
+        }
+
+        return size;
+    }
+
     private void takePicture() {
         // TODO get a size that is about the size of the screen
         Camera.Parameters params = mCamera.mCameraInstance.getParameters();
-        params.setPictureSize(1280, 960);
+        Camera.Size bestSize = getBestPictureSize(params);
+        params.setPictureSize(bestSize.width, bestSize.height);
+        // params.setPictureSize(3264, 2448);
         params.setRotation(90);
         mCamera.mCameraInstance.setParameters(params);
-        for (Camera.Size size2 : mCamera.mCameraInstance.getParameters()
-                .getSupportedPictureSizes()) {
-            Log.i("ASDF", "Supported: " + size2.width + "x" + size2.height);
-        }
+
         mCamera.mCameraInstance.takePicture(null, null,
                 new Camera.PictureCallback() {
 
@@ -158,6 +175,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
                         }
 
                         data = null;
+
                         Bitmap bitmap = BitmapFactory.decodeFile(pictureFile
                                 .getAbsolutePath());
                         // mGPUImage.setImage(bitmap);

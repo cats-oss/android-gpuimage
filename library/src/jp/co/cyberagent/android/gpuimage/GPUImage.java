@@ -278,7 +278,13 @@ public class GPUImage {
             }
         }
 
-        GPUImageRenderer renderer = new GPUImageRenderer(mFilter);
+        GPUImageFilterGroup filters = new GPUImageFilterGroup();
+        filters.addFilter(mFilter);
+        GPUImageFilter rbFilter = new GPUImageExchangeRBFilter();
+        rbFilter.init();
+        filters.addFilter(rbFilter);
+
+        GPUImageRenderer renderer = new GPUImageRenderer(filters);
         renderer.setRotation(Rotation.NORMAL,
                 mRenderer.isFlippedHorizontally(), mRenderer.isFlippedVertically());
         renderer.setScaleType(mScaleType);
@@ -286,7 +292,8 @@ public class GPUImage {
         buffer.setRenderer(renderer);
         renderer.setImageBitmap(bitmap, false);
         Bitmap result = buffer.getBitmap();
-        mFilter.destroy();
+        filters.destroy();
+
         renderer.deleteImage();
         buffer.destroy();
 
