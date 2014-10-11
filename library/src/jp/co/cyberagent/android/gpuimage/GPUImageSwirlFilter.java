@@ -105,6 +105,10 @@ public class GPUImageSwirlFilter extends GPUImageFilter {
         setFloat(mAngleLocation, angle);
     }
 
+    public float getAngle() {
+        return mAngle;
+    }
+
     /**
      * The center about which to apply the distortion, with a default of (0.5, 0.5).
      *
@@ -113,5 +117,9 @@ public class GPUImageSwirlFilter extends GPUImageFilter {
     public void setCenter(PointF center) {
         mCenter = center;
         setPoint(mCenterLocation, center);
+    }
+
+    public PointF getCenter() {
+        return mCenter;
     }
 }
