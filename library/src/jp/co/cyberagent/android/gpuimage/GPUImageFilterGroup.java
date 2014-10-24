@@ -89,6 +89,19 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         updateMergedFilters();
     }
 
+    public void removeFilter(GPUImageFilter aFilter) {
+        if (aFilter == null) {
+            return;
+        }
+        mFilters.remove(aFilter);
+        updateMergedFilters();
+    }
+
+    public void clearFilters() {
+        mFilters.clear();
+        updateMergedFilters();
+    }
+
     /*
      * (non-Javadoc)
      * @see jp.co.cyberagent.android.gpuimage.GPUImageFilter#onInit()
@@ -239,6 +252,10 @@ public class GPUImageFilterGroup extends GPUImageFilter {
 
         List<GPUImageFilter> filters;
         for (GPUImageFilter filter : mFilters) {
+            if (filter.getClass().getName().equals(GPUImageFilter.class.getName())) {
+                continue;
+            }
+
             if (filter instanceof GPUImageFilterGroup) {
                 ((GPUImageFilterGroup) filter).updateMergedFilters();
                 filters = ((GPUImageFilterGroup) filter).getMergedFilters();

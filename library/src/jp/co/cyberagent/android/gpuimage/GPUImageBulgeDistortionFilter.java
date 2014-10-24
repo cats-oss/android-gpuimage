@@ -96,6 +96,7 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
     private void setAspectRatio(float aspectRatio) {
         mAspectRatio = aspectRatio;
         setFloat(mAspectRatioLocation, aspectRatio);
+        setCenter(mCenter);
     }
 
     /**
@@ -108,6 +109,10 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
         setFloat(mRadiusLocation, radius);
     }
 
+    public float getRadius() {
+        return mRadius;
+    }
+
     /**
      * The amount of distortion to apply, from -1.0 to 1.0, with a default of 0.5
      *
@@ -118,6 +123,10 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
         setFloat(mScaleLocation, scale);
     }
 
+    public float getScale(float scale) {
+        return mScale;
+    }
+
     /**
      * The center about which to apply the distortion, with a default of (0.5, 0.5)
      *
@@ -125,6 +134,10 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
      */
     public void setCenter(PointF center) {
         mCenter = center;
-        setPoint(mCenterLocation, center);
+        setPoint(mCenterLocation, new PointF(mCenter.x, mCenter.y * mAspectRatio + 0.5f - 0.5f * mAspectRatio));
+    }
+
+    public PointF getCenter() {
+        return mCenter;
     }
 }

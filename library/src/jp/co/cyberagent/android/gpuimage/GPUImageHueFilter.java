@@ -93,4 +93,8 @@ public class GPUImageHueFilter extends GPUImageFilter {
         float hueAdjust = (mHue % 360.0f) * (float) Math.PI / 180.0f;
         setFloat(mHueLocation, hueAdjust);
     }
+
+    public float getHue() {
+        return mHue;
+    }
 }
