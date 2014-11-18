@@ -38,6 +38,10 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 
@@ -58,10 +62,11 @@ uploadArchives {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
+            def sonatypeRepo = isReleaseVersion ?
+                    "https://oss.sonatype.org/service/local/staging/deploy/maven2/" :
+                    "https://oss.sonatype.org/content/repositories/snapshots/"
+
             repository(url: sonatypeRepo) {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
-            snapshotRepository(url: sonatypeSnapshotRepo) {
                 authentication(userName: sonatypeUsername, password: sonatypePassword)
             }
 
