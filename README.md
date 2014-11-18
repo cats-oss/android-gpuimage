@@ -16,14 +16,9 @@ GPUImage can be used as a library project or by copying the following files/fold
 * library/libs/armeabi (only needed for camera live preview)
 * library/bin/gpuimage.jar
 
-### Maven dependency
+### Gradle dependency
 
-    <dependency>
-      <groupId>jp.co.cyberagent.android.gpuimage</groupId>
-      <artifactId>gpuimage-library</artifactId>
-      <type>apklib</type>
-      <version>(use current version here)</version>
-    </dependency>
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:(use current version here)'
 
 If you want to use it with live camera preview, than you will need to add the following as well:
 
@@ -68,13 +63,13 @@ Run the following command in the library folder. Make sure you have android-ndk 
     cd library
     ndk-build
 
-### Maven
+### Gradle
 Make sure that you run the clean target when using maven.
 
-    mvn clean install
+    gradle clean assemble
 
 ## License
-    Copyright 2012 CyberAgent
+    Copyright 2012 CyberAgent, Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

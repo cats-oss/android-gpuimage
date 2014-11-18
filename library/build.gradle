@@ -1,68 +1,29 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-version = "1.1.2-SNAPSHOT"
-group = "jp.co.cyberagent.android.gpuimage"
-
-configurations {
-    archives {
-        extendsFrom configurations.default
-    }
-}
-
-signing {
-    required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
-
-uploadArchives {
-    configuration = configurations.archives
-    repositories.mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-        repository(url: sonatypeRepo) {
-            authentication(userName: sonatypeUsername, password: sonatypePassword)
-        }
-        snapshotRepository(url: sonatypeSnapshotRepo) {
-            authentication(userName: sonatypeUsername, password: sonatypePassword)
-        }
-
-        pom.project {
-            artifactId 'gpuimage-library'
-            name 'GPUImage for Android Library'
-            packaging 'aar'
-            description 'Image filters for Android with OpenGL (based on GPUImage for iOS)'
-            url 'https://github.com/cyberagent/android-gpuimage/'
-
-            scm {
-                url 'scm:git@github.com:CyberAgent/android-gpuimage.git'
-                connection 'scm:git@github.com:CyberAgent/android-gpuimage.git'
-                developerConnection 'scm:git@github.com:CyberAgent/android-gpuimage.git'
-            }
-
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
-            }
-
-            developers {
-                developer {
-                    id 'pboos'
-                    name 'Patrick Boos'
-                    email 'patrickboos85@gmail.com'
-                }
-            }
-        }
-    }
-}
+version = VERSION_NAME
+group = GROUP
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 android {
-    compileSdkVersion 17
-    buildToolsVersion "17.0.0"
+    compileSdkVersion COMPILE_SDK_VERSION as int
+    buildToolsVersion BUILD_TOOLS_VERSION
+
+    defaultConfig {
+        minSdkVersion MIN_SDK_VERSION as int
+        targetSdkVersion TARGET_SDK_VERSION as int
+
+        versionCode = VERSION_CODE
+        versionName = VERSION_NAME
+
+        ndk {
+            moduleName "gpuimage-library"
+            stl "gnustl_shared"
+            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
+            ldLibs "log"
+        }
+    }
 
     sourceSets {
         main {
@@ -79,42 +40,60 @@ android {
     }
 }
 
-//////////////
-// NDK Support
-//////////////
-task copyNativeLibs(type: Copy, dependsOn: 'buildNative') {
-    from(new File('libs')) { include '**/*.so' }
-    into new File(buildDir, 'native-libs')
-}
 
-tasks.withType(Compile) { compileTask -> compileTask.dependsOn copyNativeLibs }
-
-clean.dependsOn 'cleanCopyNativeLibs'
-
-tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
-    pkgTask.jniDir new File(buildDir, 'native-libs')
-}
-
-task buildNative(type: Exec) {
-    if (System.env.ANDROID_NDK_HOME != null) {
-        def ndkBuild
-		if (System.properties['os.name'].toLowerCase().contains('windows')) {
-			ndkBuild = new File(System.env.ANDROID_NDK_HOME, 'ndk-build.cmd')
-		} else {
-			ndkBuild = new File(System.env.ANDROID_NDK_HOME, 'ndk-build')
-		}
-        commandLine ndkBuild
-    } else {
-        doLast {
-            println '##################'
-            println 'Skipping NDK build'
-            println 'Reason: ANDROID_NDK_HOME not set.'
-            println '##################'
-        }
+configurations {
+    archives {
+        extendsFrom configurations.default
     }
 }
 
-// UTF-8
-tasks.withType(Compile) {
-    options.encoding = 'UTF-8'
+signing {
+    required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+    configuration = configurations.archives
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: sonatypeRepo) {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+            snapshotRepository(url: sonatypeSnapshotRepo) {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            pom.project {
+                artifactId 'gpuimage-library'
+                name 'GPUImage for Android Library'
+                packaging 'aar'
+                description 'Image filters for Android with OpenGL (based on GPUImage for iOS)'
+                url 'https://github.com/cyberagent/android-gpuimage/'
+
+                scm {
+                    url 'scm:git@github.com:CyberAgent/android-gpuimage.git'
+                    connection 'scm:git@github.com:CyberAgent/android-gpuimage.git'
+                    developerConnection 'scm:git@github.com:CyberAgent/android-gpuimage.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'pboos'
+                        name 'Patrick Boos'
+                        email 'patrickboos85@gmail.com'
+                    }
+                }
+            }
+        }
+    }
 }
