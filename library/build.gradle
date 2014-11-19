@@ -1,10 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
-apply plugin: 'signing'
-
-version = VERSION_NAME
-group = GROUP
-ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
@@ -41,64 +36,5 @@ android {
 
     lintOptions {
         abortOnError false
-    }
-}
-
-
-configurations {
-    archives {
-        extendsFrom configurations.default
-    }
-}
-
-signing {
-    required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
-
-uploadArchives {
-    configuration = configurations.archives
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            def sonatypeRepo = isReleaseVersion ?
-                    "https://oss.sonatype.org/service/local/staging/deploy/maven2/" :
-                    "https://oss.sonatype.org/content/repositories/snapshots/"
-
-            repository(url: sonatypeRepo) {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
-
-            pom.project {
-                artifactId 'gpuimage-library'
-                name 'GPUImage for Android Library'
-                packaging 'aar'
-                description 'Image filters for Android with OpenGL (based on GPUImage for iOS)'
-                url 'https://github.com/cyberagent/android-gpuimage/'
-
-                scm {
-                    url 'scm:git@github.com:CyberAgent/android-gpuimage.git'
-                    connection 'scm:git@github.com:CyberAgent/android-gpuimage.git'
-                    developerConnection 'scm:git@github.com:CyberAgent/android-gpuimage.git'
-                }
-
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution 'repo'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'pboos'
-                        name 'Patrick Boos'
-                        email 'patrickboos85@gmail.com'
-                    }
-                }
-            }
-        }
     }
 }
