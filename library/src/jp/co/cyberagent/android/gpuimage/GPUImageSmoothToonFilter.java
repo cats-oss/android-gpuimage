@@ -27,7 +27,7 @@ public class GPUImageSmoothToonFilter extends GPUImageFilterGroup {
     GPUImageToonFilter toonFilter;
 
     /**
-     * setup & teardown
+     * Setup and Tear down
      */
     public GPUImageSmoothToonFilter() {
         // First pass: apply a variable Gaussian blur

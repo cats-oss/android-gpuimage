@@ -19,8 +19,8 @@ package jp.co.cyberagent.android.gpuimage;
 import android.opengl.GLES20;
 
 /**
- * Adjusts the white balance of incoming image. <br />
- * <br />
+ * Adjusts the white balance of incoming image. <br>
+ * <br>
  * temperature: 
  * tint:
  */

@@ -19,8 +19,8 @@ package jp.co.cyberagent.android.gpuimage;
 import android.opengl.GLES20;
 
 /**
- * Sharpens the picture. <br />
- * <br />
+ * Sharpens the picture. <br>
+ * <br>
  * sharpness: from -4.0 to 4.0, with 0.0 as the normal level
  */
 public class GPUImageSharpenFilter extends GPUImageFilter {

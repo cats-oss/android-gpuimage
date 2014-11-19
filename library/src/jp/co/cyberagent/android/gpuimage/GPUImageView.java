@@ -173,8 +173,8 @@ public class GPUImageView extends FrameLayout {
 
     /**
      * Save current image with applied filter to Pictures. It will be stored on
-     * the default Picture folder on the phone below the given folerName and
-     * fileName. <br />
+     * the default Picture folder on the phone below the given folderName and
+     * fileName. <br>
      * This method is async and will notify when the image was saved through the
      * listener.
      *
@@ -189,8 +189,8 @@ public class GPUImageView extends FrameLayout {
 
     /**
      * Save current image with applied filter to Pictures. It will be stored on
-     * the default Picture folder on the phone below the given folerName and
-     * fileName. <br />
+     * the default Picture folder on the phone below the given folderName and
+     * fileName. <br>
      * This method is async and will notify when the image was saved through the
      * listener.
      *
