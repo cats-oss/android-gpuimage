@@ -24,11 +24,15 @@ android {
     }
 
     lintOptions {
-        abortOnError false
+        abortOnError true
     }
+}
+repositories {
+    jcenter()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 dependencies {
-    compile project(':library')
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:+'
     compile 'com.android.support:support-v4:21.+'
 }
