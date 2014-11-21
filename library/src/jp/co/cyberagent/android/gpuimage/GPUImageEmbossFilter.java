@@ -17,8 +17,8 @@
 package jp.co.cyberagent.android.gpuimage;
 
 /**
- * Applies an emboss effect to the image.<br />
- * <br />
+ * Applies an emboss effect to the image.<br>
+ * <br>
  * Intensity ranges from 0.0 to 4.0, with 1.0 as the normal level
  */
 public class GPUImageEmbossFilter extends GPUImage3x3ConvolutionFilter {

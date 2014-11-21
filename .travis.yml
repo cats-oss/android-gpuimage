@@ -1,0 +1,30 @@
+language: java
+jdk: oraclejdk7
+before_install:
+    # Install base Android SDK
+    - sudo apt-get update -qq
+    - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
+    - wget http://dl.google.com/android/android-sdk_r21.0.1-linux.tgz
+    - tar xzf android-sdk_r21.0.1-linux.tgz
+    - export ANDROID_HOME=$PWD/android-sdk-linux
+    - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+
+    # Install Android NDK
+    - wget http://dl.google.com/android/ndk/android-ndk-r8e-linux-x86_64.tar.bz2
+    - tar xjf android-ndk-r8e-linux-x86_64.tar.bz2
+    - export ANDROID_NDK_HOME=$PWD/android-ndk-r8e
+
+    # Install required Android components.
+    - echo y | android update sdk --filter platform-tools --no-ui --force > /dev/null
+    - echo y | android update sdk --filter tools --no-ui --force > /dev/null
+    - echo y | android update sdk --filter build-tools-17.0.0 --no-ui --force > /dev/null
+
+    - echo y | android update sdk --filter android-16 --no-ui --force > /dev/null
+    - echo y | android update sdk --filter android-17 --no-ui --force > /dev/null
+    - echo y | android update sdk --filter extra-android-support --no-ui --force > /dev/null
+
+    # setup properties (no real values, but needed for setup)
+    - echo "sonatypeRepo=http://doesnotmatter" > gradle.properties
+    - echo "sonatypeSnapshotRepo=http://doesnotmatter" >> gradle.properties
+    - echo "sonatypeUsername=doesnotmatter" >> gradle.properties
+    - echo "sonatypePassword=doesnotmatter" >> gradle.properties
