@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jp.co.cyberagent.android.gpuimage.sample"
     android:versionCode="5"
-    android:versionName="1.2.0-SNAPSHOT" >
+    android:versionName="1.2.1-SNAPSHOT" >
 
     <uses-sdk
         android:minSdkVersion="8"

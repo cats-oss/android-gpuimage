@@ -15,7 +15,7 @@ android {
         ndk {
             moduleName "gpuimage-library"
             stl "gnustl_shared"
-            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
+            abiFilters "all"
             ldLibs "log"
         }
     }
@@ -29,6 +29,7 @@ android {
             renderscript.srcDirs = ['src']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
+            jni.srcDirs = ['jni']
         }
 
         instrumentTest.setRoot('tests')
