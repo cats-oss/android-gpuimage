@@ -1,30 +1,40 @@
-language: java
-jdk: oraclejdk7
+language:
+  - android
+jdk:
+  - oraclejdk8
+
+android:
+  components:
+    - build-tools-21.0.2
+    - android-21
+    - extra-google-m2repository
+    - extra-android-m2repository
+
+  licenses:
+    - 'android-sdk-license-.+'
+
+notifications:
+  email: false
+
+before_script:
+  - sudo service postgresql stop || true
+  - sudo service mysql stop || true
+  - sudo service memcached stop || true
+  - sudo service bootlogd stop || true
+  - sudo service elasticsearch stop || true
+  - sudo service mongodb stop || true
+  - sudo service neo4j stop || true
+  - sudo service cassandra stop || true
+  - sudo service riak stop || true
+  - sudo service rsync stop || true
+  - sudo service x11-common stop || true
+
 before_install:
-    # Install base Android SDK
-    - sudo apt-get update -qq
-    - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
-    - wget http://dl.google.com/android/android-sdk_r21.0.1-linux.tgz
-    - tar xzf android-sdk_r21.0.1-linux.tgz
-    - export ANDROID_HOME=$PWD/android-sdk-linux
-    - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+  - wget http://dl.google.com/android/ndk/android-ndk-r10c-linux-x86_64.bin
+  - chmod +x android-ndk-r10c-linux-x86_64.bin
+  - ./android-ndk-r10c-linux-x86_64.bin | egrep -v ^Extracting
+  - export ANDROID_NDK_HOME=`pwd`/android-ndk-r10c
+  - export PATH=${PATH}:${ANDROID_NDK_HOME}
 
-    # Install Android NDK
-    - wget http://dl.google.com/android/ndk/android-ndk-r8e-linux-x86_64.tar.bz2
-    - tar xjf android-ndk-r8e-linux-x86_64.tar.bz2
-    - export ANDROID_NDK_HOME=$PWD/android-ndk-r8e
-
-    # Install required Android components.
-    - echo y | android update sdk --filter platform-tools --no-ui --force > /dev/null
-    - echo y | android update sdk --filter tools --no-ui --force > /dev/null
-    - echo y | android update sdk --filter build-tools-17.0.0 --no-ui --force > /dev/null
-
-    - echo y | android update sdk --filter android-16 --no-ui --force > /dev/null
-    - echo y | android update sdk --filter android-17 --no-ui --force > /dev/null
-    - echo y | android update sdk --filter extra-android-support --no-ui --force > /dev/null
-
-    # setup properties (no real values, but needed for setup)
-    - echo "sonatypeRepo=http://doesnotmatter" > gradle.properties
-    - echo "sonatypeSnapshotRepo=http://doesnotmatter" >> gradle.properties
-    - echo "sonatypeUsername=doesnotmatter" >> gradle.properties
-    - echo "sonatypePassword=doesnotmatter" >> gradle.properties
+script:
+  - ./gradlew assemble --info
