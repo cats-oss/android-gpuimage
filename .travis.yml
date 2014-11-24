@@ -17,6 +17,7 @@ before_install:
   - ./android-ndk-r10c-linux-x86_64.bin | egrep -v ^Extracting
   - export ANDROID_NDK_HOME=`pwd`/android-ndk-r10c
   - export PATH=${PATH}:${ANDROID_NDK_HOME}
+  - echo "ndk.dir=ANDROID_NDK_HOME" > local.properties
 
 script:
   - ./gradlew build --info
