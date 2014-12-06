@@ -36,11 +36,11 @@ JNIEXPORT void JNICALL Java_jp_co_cyberagent_android_gpuimage_GPUImageNativeLibr
                              Cr = yuv[cOff + 1];
                              if(Cr < 0) Cr += 127; else Cr -= 128;
                      }
-                     R = Y + Cr + (Cr >> 2) + (Cr >> 3) + (Cr >> 5);
+                     R = Y + Cr + (Cr >> 3) + (Cr >> 6);
                      if(R < 0) R = 0; else if(R > 255) R = 255;
-                     G = Y - (Cb >> 2) + (Cb >> 4) + (Cb >> 5) - (Cr >> 1) + (Cr >> 3) + (Cr >> 4) + (Cr >> 5);
+                     G = Y - (Cb >> 1) + (Cb >> 4) + (Cb >> 5) - Cr + (Cr >> 2) + (Cr >> 3) + (Cr >> 5) + + (Cr >> 6);
                      if(G < 0) G = 0; else if(G > 255) G = 255;
-                     B = Y + Cb + (Cb >> 1) + (Cb >> 2) + (Cb >> 6);
+                     B = Y + (Cb << 1) + (Cb >> 5);
                      if(B < 0) B = 0; else if(B > 255) B = 255;
                      rgbData[pixPtr++] = 0xff000000 + (R << 16) + (G << 8) + B;
              }
@@ -84,11 +84,11 @@ JNIEXPORT void JNICALL Java_jp_co_cyberagent_android_gpuimage_GPUImageNativeLibr
                              Cr = yuv[cOff + 1];
                              if(Cr < 0) Cr += 127; else Cr -= 128;
                      }
-                     R = Y + Cr + (Cr >> 2) + (Cr >> 3) + (Cr >> 5);
+                     R = Y + Cr + (Cr >> 3) + (Cr >> 6);
                      if(R < 0) R = 0; else if(R > 255) R = 255;
-                     G = Y - (Cb >> 2) + (Cb >> 4) + (Cb >> 5) - (Cr >> 1) + (Cr >> 3) + (Cr >> 4) + (Cr >> 5);
+                     G = Y - (Cb >> 1) + (Cb >> 4) + (Cb >> 5) - Cr + (Cr >> 2) + (Cr >> 3) + (Cr >> 5) + + (Cr >> 6);
                      if(G < 0) G = 0; else if(G > 255) G = 255;
-                     B = Y + Cb + (Cb >> 1) + (Cb >> 2) + (Cb >> 6);
+                     B = Y + (Cb << 1) + (Cb >> 5);
                      if(B < 0) B = 0; else if(B > 255) B = 255;
                      rgbData[pixPtr++] = 0xff000000 + (B << 16) + (G << 8) + R;
              }

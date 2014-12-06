@@ -34,6 +34,6 @@ repositories {
 
 dependencies {
     compile project(':library')
-//    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:+'
+//    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:+@aar'
     compile 'com.android.support:support-v4:21.+'
 }
