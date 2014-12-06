@@ -16,22 +16,6 @@
 
 package jp.co.cyberagent.android.gpuimage.sample.activity;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import jp.co.cyberagent.android.gpuimage.GPUImage;
-import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
-import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
-import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
-import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
-import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFilterChosenListener;
-import jp.co.cyberagent.android.gpuimage.sample.R;
-import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper;
-import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -48,8 +32,24 @@ import android.view.View.OnClickListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
-        OnClickListener {
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import jp.co.cyberagent.android.gpuimage.GPUImage;
+import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
+import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
+import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
+import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
+import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFilterChosenListener;
+import jp.co.cyberagent.android.gpuimage.sample.R;
+import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper;
+import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
+
+public class ActivityCamera extends Activity implements OnSeekBarChangeListener, OnClickListener {
 
     private GPUImage mGPUImage;
     private CameraHelper mCameraHelper;
@@ -105,7 +105,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
 
             case R.id.button_capture:
                 if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
-                        Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                        Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
                     takePicture();
                 } else {
                     mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
@@ -127,12 +127,10 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     private void takePicture() {
         // TODO get a size that is about the size of the screen
         Camera.Parameters params = mCamera.mCameraInstance.getParameters();
-        params.setPictureSize(1280, 960);
         params.setRotation(90);
         mCamera.mCameraInstance.setParameters(params);
-        for (Camera.Size size2 : mCamera.mCameraInstance.getParameters()
-                .getSupportedPictureSizes()) {
-            Log.i("ASDF", "Supported: " + size2.width + "x" + size2.height);
+        for (Camera.Size size : params.getSupportedPictureSizes()) {
+            Log.i("ASDF", "Supported: " + size.width + "x" + size.height);
         }
         mCamera.mCameraInstance.takePicture(null, null,
                 new Camera.PictureCallback() {
@@ -158,8 +156,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
                         }
 
                         data = null;
-                        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile
-                                .getAbsolutePath());
+                        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath());
                         // mGPUImage.setImage(bitmap);
                         final GLSurfaceView view = (GLSurfaceView) findViewById(R.id.surfaceView);
                         view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -225,7 +222,8 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     }
 
     @Override
-    public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+    public void onProgressChanged(final SeekBar seekBar, final int progress,
+            final boolean fromUser) {
         if (mFilterAdjuster != null) {
             mFilterAdjuster.adjust(progress);
         }
@@ -240,6 +238,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     }
 
     private class CameraLoader {
+
         private int mCurrentCameraId = 0;
         private Camera mCameraInstance;
 
@@ -262,10 +261,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
             Parameters parameters = mCameraInstance.getParameters();
             // TODO adjust by getting supportedPreviewSizes and then choosing
             // the best one for screen size (best fill screen)
-            parameters.setPreviewSize(720, 480);
             if (parameters.getSupportedFocusModes().contains(
                     Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                parameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
             }
             mCameraInstance.setParameters(parameters);
 
@@ -273,8 +271,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
                     ActivityCamera.this, mCurrentCameraId);
             CameraInfo2 cameraInfo = new CameraInfo2();
             mCameraHelper.getCameraInfo(mCurrentCameraId, cameraInfo);
-            boolean flipHorizontal = cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT
-                    ? true : false;
+            boolean flipHorizontal = cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT;
             mGPUImage.setUpCamera(mCameraInstance, orientation, flipHorizontal, false);
         }
 
