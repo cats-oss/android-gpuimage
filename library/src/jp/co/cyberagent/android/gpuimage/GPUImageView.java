@@ -239,7 +239,7 @@ public class GPUImageView extends FrameLayout {
         post(new Runnable() {
             @Override
             public void run() {
-                // Show loading¥
+                // Show loading
                 addView(new LoadingView(getContext()));
 
                 mGLSurfaceView.requestLayout();
