@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.2.2-SNAPSHOT@aar'
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.2.3-SNAPSHOT@aar'
 }
 ```
 
