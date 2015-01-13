@@ -15,11 +15,10 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 ```groovy
 repositories {
     mavenCentral()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 dependencies {
-    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.2.3-SNAPSHOT@aar'
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.2.3'
 }
 ```
 
