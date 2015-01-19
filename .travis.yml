@@ -1,40 +1,43 @@
-language:
-  - android
-jdk:
-  - oraclejdk8
+language: android
+
+# Turning off caching to avoid caching Issues
+# cache: false
+# Using the new Container-Based Infrastructure
+sudo: false
+
+env:
+  global:
+    # Initiating clean Gradle output
+    - TERM=dumb
+    # Amount of memory granted to Gradle JVM
+    - GRADLE_OPTS="-Xmx512m -XX:MaxPermSize=512m"
+    # General Android settings used in builds
+    - ANDROID_TARGET=android-21
+
+before_install:
+    # Making sure gradlew has executable permissions
+    - chmod +x gradlew
+    - wget http://dl.google.com/android/ndk/android-ndk-r10c-linux-x86_64.bin		
+    - chmod +x android-ndk-r10c-linux-x86_64.bin		
+    - ./android-ndk-r10c-linux-x86_64.bin | egrep -v ^Extracting		
+    - export ANDROID_NDK_HOME=`pwd`/android-ndk-r10c		
+    - export PATH=${PATH}:${ANDROID_NDK_HOME}
 
 android:
   components:
-    - build-tools-21.0.2
-    - android-21
+    # We are using the latest revision of Android SDK Tools
+    - platform-tools
+    - tools
+    # The BuildTools version we are using for our project
+    - build-tools-21.1.2
+
+    # Additional components
+    - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
 
   licenses:
-    - 'android-sdk-license-.+'
-
-notifications:
-  email: false
-
-before_script:
-  - sudo service postgresql stop || true
-  - sudo service mysql stop || true
-  - sudo service memcached stop || true
-  - sudo service bootlogd stop || true
-  - sudo service elasticsearch stop || true
-  - sudo service mongodb stop || true
-  - sudo service neo4j stop || true
-  - sudo service cassandra stop || true
-  - sudo service riak stop || true
-  - sudo service rsync stop || true
-  - sudo service x11-common stop || true
-
-before_install:
-  - wget http://dl.google.com/android/ndk/android-ndk-r10c-linux-x86_64.bin
-  - chmod +x android-ndk-r10c-linux-x86_64.bin
-  - ./android-ndk-r10c-linux-x86_64.bin | egrep -v ^Extracting
-  - export ANDROID_NDK_HOME=`pwd`/android-ndk-r10c
-  - export PATH=${PATH}:${ANDROID_NDK_HOME}
+     - 'android-sdk-license-.+'
 
 script:
-  - ./gradlew assemble --info
+  ./gradlew :library:clean :library:build
