@@ -106,6 +106,9 @@ public class GPUImageFilterTools {
 
         filters.addFilter("Levels Min (Mid Adjust)", FilterType.LEVELS_FILTER_MIN);
 
+        filters. addFilter("Bilateral Blur", FilterType.BILATERAL_BLUR);
+
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
         builder.setItems(filters.names.toArray(new String[filters.names.size()]),
@@ -287,6 +290,9 @@ public class GPUImageFilterTools {
                 levelsFilter.setMin(0.0f, 3.0f, 1.0f);
                 return levelsFilter;
 
+            case BILATERAL_BLUR:
+                return new GPUImageBilateralFilter();
+
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
@@ -314,7 +320,7 @@ public class GPUImageFilterTools {
         BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
         BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA,
         GAUSSIAN_BLUR, CROSSHATCH, BOX_BLUR, CGA_COLORSPACE, DILATION, KUWAHARA, RGB_DILATION, SKETCH, TOON, SMOOTH_TOON, BULGE_DISTORTION, GLASS_SPHERE, HAZE, LAPLACIAN, NON_MAXIMUM_SUPPRESSION,
-        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE, LEVELS_FILTER_MIN
+        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE, LEVELS_FILTER_MIN, BILATERAL_BLUR
     }
 
     private static class FilterList {
@@ -389,7 +395,11 @@ public class GPUImageFilterTools {
                 adjuster = new ColorBalanceAdjuster().filter(filter);
             } else if (filter instanceof GPUImageLevelsFilter) {
                 adjuster = new LevelsMinMidAdjuster().filter(filter);
-            } else {
+            } else if (filter instanceof GPUImageBilateralFilter) {
+                adjuster = new BilateralAdjuster().filter(filter);
+            }
+            else {
+
                 adjuster = null;
             }
         }
@@ -643,5 +653,13 @@ public class GPUImageFilterTools {
                 getFilter().setMin(0.0f, range(percentage, 0.0f, 1.0f) , 1.0f);
             }
         }
+
+        private class BilateralAdjuster extends Adjuster<GPUImageBilateralFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setDistanceNormalizationFactor(range(percentage, 0.0f, 15.0f));
+            }
+        }
+
     }
 }
