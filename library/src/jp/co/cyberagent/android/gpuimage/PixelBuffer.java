@@ -194,6 +194,7 @@ public class PixelBuffer {
         mGL.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
         int[] ia = ib.array();
 
+        //Stupid !
         // Convert upside down mirror-reversed image to right-side up normal
         // image.
         for (int i = 0; i < mHeight; i++) {
