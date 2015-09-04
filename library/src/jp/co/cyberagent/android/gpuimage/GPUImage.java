@@ -202,6 +202,15 @@ public class GPUImage {
     }
 
     /**
+     * Sets the rotation of the displayed image with flip options.
+     *
+     * @param rotation new rotation
+     */
+    public void setRotation(Rotation rotation, boolean flipHorizontal, boolean flipVertical) {
+        mRenderer.setRotation(rotation, flipHorizontal, flipVertical);
+    }
+
+    /**
      * Deletes the current image.
      */
     public void deleteImage() {
