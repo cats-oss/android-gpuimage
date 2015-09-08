@@ -16,6 +16,8 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
+import android.opengl.GLES20;
+
 public class GPUImageLookupFilter extends GPUImageTwoInputFilter {
 
     public static final String LOOKUP_FRAGMENT_SHADER = "varying highp vec2 textureCoordinate;\n" +
@@ -23,6 +25,8 @@ public class GPUImageLookupFilter extends GPUImageTwoInputFilter {
             " \n" +
             " uniform sampler2D inputImageTexture;\n" +
             " uniform sampler2D inputImageTexture2; // lookup texture\n" +
+            " \n" +
+            " uniform float intensity;\n" +
             " \n" +
             " void main()\n" +
             " {\n" +
@@ -50,11 +54,35 @@ public class GPUImageLookupFilter extends GPUImageTwoInputFilter {
             "     lowp vec4 newColor2 = texture2D(inputImageTexture2, texPos2);\n" +
             "     \n" +
             "     lowp vec4 newColor = mix(newColor1, newColor2, fract(blueColor));\n" +
-            "     gl_FragColor = vec4(newColor.rgb, textureColor.w);\n" +
+            "     gl_FragColor = mix(textureColor, vec4(newColor.rgb, textureColor.w), intensity);\n" +
             " }";
 
+    private int mIntensityLocation;
+    private float mIntensity;
 
     public GPUImageLookupFilter() {
+        this(1.0f);
+    }
+
+    public GPUImageLookupFilter(final float intensity) {
         super(LOOKUP_FRAGMENT_SHADER);
+        mIntensity = intensity;
+    }
+
+    @Override
+    public void onInit() {
+        super.onInit();
+        mIntensityLocation = GLES20.glGetUniformLocation(getProgram(), "intensity");
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
+        setIntensity(mIntensity);
+    }
+
+    public void setIntensity(final float intensity) {
+        mIntensity = intensity;
+        setFloat(mIntensityLocation, mIntensity);
     }
 }
