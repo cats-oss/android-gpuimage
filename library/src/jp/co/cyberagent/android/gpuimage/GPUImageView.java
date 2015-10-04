@@ -59,8 +59,11 @@ public class GPUImageView extends FrameLayout {
     private void init(Context context, AttributeSet attrs) {
         mGLSurfaceView = new GPUImageGLSurfaceView(context, attrs);
         addView(mGLSurfaceView);
-        mGPUImage = new GPUImage(getContext());
-        mGPUImage.setGLSurfaceView(mGLSurfaceView);
+
+        if (!isInEditMode()) {
+            mGPUImage = new GPUImage(getContext());
+            mGPUImage.setGLSurfaceView(mGLSurfaceView);
+        }
     }
 
     @Override
