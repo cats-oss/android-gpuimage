@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -56,6 +57,9 @@ public class GPUImageView extends FrameLayout {
 
     private void init(Context context, AttributeSet attrs) {
         mGLSurfaceView = new GPUImageGLSurfaceView(context, attrs);
+        mGLSurfaceView.setZOrderOnTop(true);
+        mGLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        mGLSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
         addView(mGLSurfaceView);
         mGPUImage = new GPUImage(getContext());
         mGPUImage.setGLSurfaceView(mGLSurfaceView);
