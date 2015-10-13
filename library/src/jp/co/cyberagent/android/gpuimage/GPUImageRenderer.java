@@ -73,6 +73,9 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private boolean mFlipVertical;
     private GPUImage.ScaleType mScaleType = GPUImage.ScaleType.CENTER_CROP;
 
+    private Size mCachePreviewSize;
+    private Camera mCacheCamera;
+
     public GPUImageRenderer(final GPUImageFilter filter) {
         mFilter = filter;
         mRunOnDraw = new LinkedList<Runnable>();
@@ -130,22 +133,26 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
-        final Size previewSize = camera.getParameters().getPreviewSize();
+        if (mCacheCamera != camera) {
+            mCachePreviewSize = camera.getParameters().getPreviewSize();
+            mCacheCamera = camera;
+        }
+ 
         if (mGLRgbBuffer == null) {
-            mGLRgbBuffer = IntBuffer.allocate(previewSize.width * previewSize.height);
+            mGLRgbBuffer = IntBuffer.allocate(mCachePreviewSize.width * mCachePreviewSize.height);
         }
         if (mRunOnDraw.isEmpty()) {
             runOnDraw(new Runnable() {
                 @Override
                 public void run() {
-                    GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
+                    GPUImageNativeLibrary.YUVtoRBGA(data, mCachePreviewSize.width, mCachePreviewSize.height,
                             mGLRgbBuffer.array());
-                    mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, previewSize, mGLTextureId);
+                    mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, mCachePreviewSize, mGLTextureId);
                     camera.addCallbackBuffer(data);
 
-                    if (mImageWidth != previewSize.width) {
-                        mImageWidth = previewSize.width;
-                        mImageHeight = previewSize.height;
+                    if (mImageWidth != mCachePreviewSize.width) {
+                        mImageWidth = mCachePreviewSize.width;
+                        mImageHeight = mCachePreviewSize.height;
                         adjustImageScaling();
                     }
                 }
