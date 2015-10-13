@@ -153,7 +153,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         }
     }
 
-    public void setUpSurfaceTexture(final Camera camera) {
+    public void setUpSurfaceTexture(final Camera camera, final byte[] previewBuf) {
         runOnDraw(new Runnable() {
             @Override
             public void run() {
@@ -161,8 +161,9 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 GLES20.glGenTextures(1, textures, 0);
                 mSurfaceTexture = new SurfaceTexture(textures[0]);
                 try {
+                    camera.addCallbackBuffer(previewBuf);
                     camera.setPreviewTexture(mSurfaceTexture);
-                    camera.setPreviewCallback(GPUImageRenderer.this);
+                    camera.setPreviewCallbackWithBuffer(GPUImageRenderer.this);
                     camera.startPreview();
                 } catch (IOException e) {
                     e.printStackTrace();

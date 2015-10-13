@@ -41,6 +41,7 @@ import android.view.WindowManager;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -55,6 +56,8 @@ public class GPUImage {
     private GPUImageFilter mFilter;
     private Bitmap mCurrentBitmap;
     private ScaleType mScaleType = ScaleType.CENTER_CROP;
+
+    private ByteBuffer mPreviewBuf;
 
     /**
      * Instantiates a new GPUImage object.
@@ -128,11 +131,16 @@ public class GPUImage {
      */
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
             final boolean flipVertical) {
+        // allocate memory for preview
+        Camera.Size size = camera.getParameters().getPreviewSize();
+        mPreviewBuf = ByteBuffer.allocateDirect(size.width * size.height * 3 / 2);
+        
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            setUpCameraGingerbread(camera);
+            setUpCameraGingerbread(camera, mPreviewBuf.array());
         } else {
-            camera.setPreviewCallback(mRenderer);
+            camera.addCallbackBuffer(mPreviewBuf.array());
+            camera.setPreviewCallbackWithBuffer(mRenderer);
             camera.startPreview();
         }
         Rotation rotation = Rotation.NORMAL;
@@ -151,8 +159,8 @@ public class GPUImage {
     }
 
     @TargetApi(11)
-    private void setUpCameraGingerbread(final Camera camera) {
-        mRenderer.setUpSurfaceTexture(camera);
+    private void setUpCameraGingerbread(final Camera camera, byte[] previewBuf) {
+        mRenderer.setUpSurfaceTexture(camera, previewBuf);
     }
 
     /**
