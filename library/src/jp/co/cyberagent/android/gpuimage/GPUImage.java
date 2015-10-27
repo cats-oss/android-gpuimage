@@ -44,6 +44,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import jp.co.cyberagent.android.gpuimage.util.AssetsUtil;
+
 /**
  * The main accessor for GPUImage functionality. This class helps to do common
  * tasks through a simple interface.
@@ -483,6 +485,8 @@ public class GPUImage {
                 InputStream inputStream;
                 if (mUri.getScheme().startsWith("http") || mUri.getScheme().startsWith("https")) {
                     inputStream = new URL(mUri.toString()).openStream();
+                } else if (AssetsUtil.isAssetUri(mUri)) {
+                    inputStream = mContext.getAssets().open(AssetsUtil.getFilePath(mUri));
                 } else {
                     inputStream = mContext.getContentResolver().openInputStream(mUri);
                 }
