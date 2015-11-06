@@ -1,5 +1,4 @@
 # GPUImage for Android
-[![Build Status](https://api.travis-ci.org/CyberAgent/android-gpuimage.png?branch=master,develop)](https://travis-ci.org/CyberAgent/android-gpuimage)
 
 Idea from: [iOS GPUImage framework](https://github.com/BradLarson/GPUImage)
 
