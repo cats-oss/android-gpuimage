@@ -91,6 +91,7 @@ public class GPUImageFilterTools {
         filters.addFilter("Sketch", FilterType.SKETCH);
         filters.addFilter("Toon", FilterType.TOON);
         filters.addFilter("Smooth Toon", FilterType.SMOOTH_TOON);
+        filters.addFilter("Halftone", FilterType.HALFTONE);
 
         filters.addFilter("Bulge Distortion", FilterType.BULGE_DISTORTION);
         filters.addFilter("Glass Sphere", FilterType.GLASS_SPHERE);
@@ -286,6 +287,8 @@ public class GPUImageFilterTools {
                 GPUImageLevelsFilter levelsFilter = new GPUImageLevelsFilter();
                 levelsFilter.setMin(0.0f, 3.0f, 1.0f);
                 return levelsFilter;
+            case HALFTONE:
+                return new GPUImageHalftoneFilter();
 
             default:
                 throw new IllegalStateException("No filter of that type!");
@@ -314,7 +317,7 @@ public class GPUImageFilterTools {
         BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
         BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA,
         GAUSSIAN_BLUR, CROSSHATCH, BOX_BLUR, CGA_COLORSPACE, DILATION, KUWAHARA, RGB_DILATION, SKETCH, TOON, SMOOTH_TOON, BULGE_DISTORTION, GLASS_SPHERE, HAZE, LAPLACIAN, NON_MAXIMUM_SUPPRESSION,
-        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE, LEVELS_FILTER_MIN
+        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE, LEVELS_FILTER_MIN, HALFTONE
     }
 
     private static class FilterList {
