@@ -57,7 +57,8 @@ public class GPUImageView extends FrameLayout {
 
     private void init(Context context, AttributeSet attrs) {
         mGLSurfaceView = new GPUImageGLSurfaceView(context, attrs);
-        mGLSurfaceView.setZOrderOnTop(true);
+//        mGLSurfaceView.setZOrderOnTop(true);
+        mGLSurfaceView.setZOrderMediaOverlay(true);
         mGLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         mGLSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
         addView(mGLSurfaceView);
