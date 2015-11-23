@@ -1,7 +1,6 @@
 /**
  * @author wysaid
  * @mail admin@wysaid.org
- *
 */
 
 package jp.co.cyberagent.android.gpuimage;
