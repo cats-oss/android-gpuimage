@@ -73,6 +73,10 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private boolean mFlipVertical;
     private GPUImage.ScaleType mScaleType = GPUImage.ScaleType.CENTER_CROP;
 
+    private float mBackgroundRed = 0;
+    private float mBackgroundGreen = 0;
+    private float mBackgroundBlue = 0;
+
     public GPUImageRenderer(final GPUImageFilter filter) {
         mFilter = filter;
         mRunOnDraw = new LinkedList<Runnable>();
@@ -91,10 +95,8 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
     @Override
     public void onSurfaceCreated(final GL10 unused, final EGLConfig config) {
-        GLES20.glDisable(GL10.GL_DITHER);
-        GLES20.glClearColor(0,0,0,0);
-        GLES20.glEnable(GL10.GL_CULL_FACE);
-        GLES20.glEnable(GL10.GL_DEPTH_TEST);
+        GLES20.glClearColor(mBackgroundRed, mBackgroundGreen, mBackgroundBlue, 1);
+        GLES20.glDisable(GLES20.GL_DEPTH_TEST);
         mFilter.init();
     }
 
@@ -120,6 +122,19 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         if (mSurfaceTexture != null) {
             mSurfaceTexture.updateTexImage();
         }
+    }
+
+    /**
+     * Sets the background color
+     *
+     * @param red red color value
+     * @param green green color value
+     * @param blue red color value
+     */
+    public void setBackgroundColor(float red, float green, float blue) {
+        mBackgroundRed = red;
+        mBackgroundGreen = green;
+        mBackgroundBlue = blue;
     }
 
     private void runAll(Queue<Runnable> queue) {

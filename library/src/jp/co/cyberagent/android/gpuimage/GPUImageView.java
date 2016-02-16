@@ -19,8 +19,9 @@ package jp.co.cyberagent.android.gpuimage;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
-import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -57,9 +58,6 @@ public class GPUImageView extends FrameLayout {
 
     private void init(Context context, AttributeSet attrs) {
         mGLSurfaceView = new GPUImageGLSurfaceView(context, attrs);
-        mGLSurfaceView.setZOrderOnTop(true);
-        mGLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        mGLSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
         addView(mGLSurfaceView);
         mGPUImage = new GPUImage(getContext());
         mGPUImage.setGLSurfaceView(mGLSurfaceView);
@@ -96,6 +94,17 @@ public class GPUImageView extends FrameLayout {
      */
     public GPUImage getGPUImage() {
         return mGPUImage;
+    }
+
+    /**
+     * Sets the background color
+     *
+     * @param red red color value
+     * @param green green color value
+     * @param blue red color value
+     */
+    public void setBackgroundColor(float red, float green, float blue) {
+        mGPUImage.setBackgroundColor(red, green, blue);
     }
 
     // TODO Should be an xml attribute. But then GPUImage can not be distributed as .jar anymore.
