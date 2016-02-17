@@ -1,61 +1,65 @@
 apply plugin: 'com.android.library'
 
-android {
-    compileSdkVersion COMPILE_SDK_VERSION as int
-    buildToolsVersion BUILD_TOOLS_VERSION
+model {
 
-    defaultConfig {
-        minSdkVersion MIN_SDK_VERSION as int
-        targetSdkVersion TARGET_SDK_VERSION as int
+    android {
+        compileSdkVersion = 22
+        buildToolsVersion = "22.0.1"
 
-        versionCode = VERSION_CODE
-        versionName = VERSION_NAME
+        defaultConfig.with {
+            minSdkVersion.apiLevel = 8
+            targetSdkVersion.apiLevel = 22
 
-        ndk {
-            moduleName "gpuimage-library"
-            stl "gnustl_shared"
-            abiFilters "all"
-            ldLibs "log"
+            versionCode = 1
+            versionName = "1.0"
+
+           
         }
-    }
+        
+         android.ndk {
+                moduleName = "gpuimage-library"
+                stl = "gnustl_shared"
+                abiFilters = "all"
+                ldLibs = "log"
+            }
 
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-            jni.srcDirs = ['jni']
+        android.sourceSets {
+            main {
+                manifest.srcFile 'AndroidManifest.xml'
+                java.srcDirs = ['src']
+                resources.srcDirs = ['src']
+                aidl.srcDirs = ['src']
+                renderscript.srcDirs = ['src']
+                res.srcDirs = ['res']
+                assets.srcDirs = ['assets']
+                jni.srcDirs = ['jni']
+            }
+    
+            instrumentTest.setRoot('tests')
         }
-
-        instrumentTest.setRoot('tests')
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-
-    android.libraryVariants.all { variant ->
-        if (variant.buildType.isDebuggable()) {
-            return; // Skip debug builds.
+    
+        android.lintOptions {
+            abortOnError = false
         }
-        task("javadoc${variant.name.capitalize()}", type: Javadoc) {
-            description "Generates Javadoc for $variant.name."
-            source = variant.javaCompile.source
-            ext.androidJar = System.getenv("ANDROID_HOME") + "/platforms/${android.compileSdkVersion}/android.jar"
-            classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
-        }
-
-        task("bundleJavadoc${variant.name.capitalize()}", type: Jar) {
-            description "Bundles Javadoc into zip for $variant.name."
-            classifier = "javadoc"
-            from tasks["javadoc${variant.name.capitalize()}"]
+    
+        android.libraryVariants.all { variant ->
+            if (variant.buildType.isDebuggable()) {
+                return; // Skip debug builds.
+            }
+            task("javadoc${variant.name.capitalize()}", type: Javadoc) {
+                description "Generates Javadoc for $variant.name."
+                source = variant.javaCompile.source
+                ext.androidJar = System.getenv("ANDROID_HOME") + "/platforms/${android.compileSdkVersion}/android.jar"
+                classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
+            }
+    
+            task("bundleJavadoc${variant.name.capitalize()}", type: Jar) {
+                description "Bundles Javadoc into zip for $variant.name."
+                classifier = "javadoc"
+                from tasks["javadoc${variant.name.capitalize()}"]
+            }
         }
     }
 }
-
 apply from: 'android-artifacts.gradle'
 apply from: 'central-publish.gradle'
