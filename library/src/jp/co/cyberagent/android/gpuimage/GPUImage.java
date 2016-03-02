@@ -179,6 +179,15 @@ public class GPUImage {
     }
 
     /**
+     * Gets the filter which is applied to the image.
+     *
+     * @return filter the currently used filter
+     */
+    public GPUImageFilter getFilter() {
+        return mFilter;
+    }
+
+    /**
      * Sets the image on which the filter should be applied.
      *
      * @param bitmap the new image
