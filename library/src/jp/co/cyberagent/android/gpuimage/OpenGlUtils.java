@@ -20,6 +20,7 @@ import java.nio.IntBuffer;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.Matrix;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
@@ -34,6 +35,9 @@ public class OpenGlUtils {
 
     public static int loadTexture(final Bitmap img, final int usedTexId, final boolean recycle) {
         int textures[] = new int[1];
+
+        Bitmap flippedBitmap = flipBitmap(img);
+
         if (usedTexId == NO_TEXTURE) {
             GLES20.glGenTextures(1, textures, 0);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
@@ -46,15 +50,18 @@ public class OpenGlUtils {
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
                     GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, img, 0);
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, flippedBitmap, 0);
         } else {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, usedTexId);
-            GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, img);
+            GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, flippedBitmap);
             textures[0] = usedTexId;
         }
         if (recycle) {
             img.recycle();
         }
+
+        flippedBitmap.recycle();
+
         return textures[0];
     }
 
@@ -137,5 +144,11 @@ public class OpenGlUtils {
     public static float rnd(final float min, final float max) {
         float fRandNum = (float) Math.random();
         return min + (max - min) * fRandNum;
+    }
+
+    private static Bitmap flipBitmap(Bitmap bitmap) {
+        Matrix flip = new Matrix();
+        flip.postScale(1f, -1f);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), flip, true);
     }
 }

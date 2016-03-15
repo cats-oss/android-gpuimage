@@ -42,7 +42,6 @@ public class GPUImageFilterGroup extends GPUImageFilter {
 
     private final FloatBuffer mGLCubeBuffer;
     private final FloatBuffer mGLTextureBuffer;
-    private final FloatBuffer mGLTextureFlipBuffer;
 
     /**
      * Instantiates a new GPUImageFilterGroup with no filters.
@@ -73,12 +72,6 @@ public class GPUImageFilterGroup extends GPUImageFilter {
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
         mGLTextureBuffer.put(TEXTURE_NO_ROTATION).position(0);
-
-        float[] flipTexture = TextureRotationUtil.getRotation(Rotation.NORMAL, false, true);
-        mGLTextureFlipBuffer = ByteBuffer.allocateDirect(flipTexture.length * 4)
-                .order(ByteOrder.nativeOrder())
-                .asFloatBuffer();
-        mGLTextureFlipBuffer.put(flipTexture).position(0);
     }
 
     public void addFilter(GPUImageFilter aFilter) {
@@ -199,8 +192,6 @@ public class GPUImageFilterGroup extends GPUImageFilter {
 
                 if (i == 0) {
                     filter.onDraw(previousTexture, cubeBuffer, textureBuffer);
-                } else if (i == size - 1) {
-                    filter.onDraw(previousTexture, mGLCubeBuffer, (size % 2 == 0) ? mGLTextureFlipBuffer : mGLTextureBuffer);
                 } else {
                     filter.onDraw(previousTexture, mGLCubeBuffer, mGLTextureBuffer);
                 }
