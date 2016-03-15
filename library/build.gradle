@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
@@ -8,8 +9,10 @@ android {
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
 
-        versionCode = VERSION_CODE
-        versionName = VERSION_NAME
+        versionCode "git rev-list origin/master --count".execute().text.toInteger()
+        versionName VERSION_NAME
+
+        consumerProguardFiles 'proguard-rules.txt'
 
         ndk {
             moduleName "gpuimage-library"
@@ -37,25 +40,33 @@ android {
     lintOptions {
         abortOnError false
     }
-
-    android.libraryVariants.all { variant ->
-        if (variant.buildType.isDebuggable()) {
-            return; // Skip debug builds.
-        }
-        task("javadoc${variant.name.capitalize()}", type: Javadoc) {
-            description "Generates Javadoc for $variant.name."
-            source = variant.javaCompile.source
-            ext.androidJar = System.getenv("ANDROID_HOME") + "/platforms/${android.compileSdkVersion}/android.jar"
-            classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
-        }
-
-        task("bundleJavadoc${variant.name.capitalize()}", type: Jar) {
-            description "Bundles Javadoc into zip for $variant.name."
-            classifier = "javadoc"
-            from tasks["javadoc${variant.name.capitalize()}"]
-        }
-    }
 }
 
-apply from: 'android-artifacts.gradle'
-apply from: 'central-publish.gradle'
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+}
+
+publish {
+    userOrg = POM_DEVELOPER_ID
+    groupId = GROUP
+    artifactId = ARTIFACT_ID
+    publishVersion = VERSION_NAME
+    desc = POM_DESCRIPTION
+    website = POM_URL
+}
