@@ -440,21 +440,23 @@ public class GPUImageView extends FrameLayout {
             try {
                 file.getParentFile().mkdirs();
                 boolean imageSaved = image.compress(Bitmap.CompressFormat.JPEG, 80, new FileOutputStream(file));
-                if (imageSaved) {
-                    final String imagePath = file.getAbsolutePath();
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mListener.onPictureSaved(imagePath);
-                        }
-                    });
-                } else {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mListener.onPictureSaveFailed();
-                        }
-                    });
+                if (mListener != null) {
+                    if (imageSaved) {
+                        final String imagePath = file.getAbsolutePath();
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mListener.onPictureSaved(imagePath);
+                            }
+                        });
+                    } else {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mListener.onPictureSaveFailed();
+                            }
+                        });
+                    }
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
