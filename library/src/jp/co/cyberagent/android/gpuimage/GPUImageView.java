@@ -27,6 +27,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.*;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
@@ -299,25 +300,35 @@ public class GPUImageView extends FrameLayout {
         final int height = mGLSurfaceView.getMeasuredHeight();
 
         // Take picture on OpenGL thread
+        final boolean[] success = new boolean[1];
         final int[] pixelMirroredArray = new int[width * height];
         mGPUImage.runOnGLThread(new Runnable() {
             @Override
             public void run() {
-                final IntBuffer pixelBuffer = IntBuffer.allocate(width * height);
-                GLES20.glReadPixels(0, 0, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
-                int[] pixelArray = pixelBuffer.array();
+                try {
+                    final IntBuffer pixelBuffer = IntBuffer.allocate( width * height );
+                    GLES20.glReadPixels( 0, 0, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer );
+                    int[] pixelArray = pixelBuffer.array();
 
-                // Convert upside down mirror-reversed image to right-side up normal image.
-                for (int i = 0; i < height; i++) {
-                    for (int j = 0; j < width; j++) {
-                        pixelMirroredArray[(height - i - 1) * width + j] = pixelArray[i * width + j];
+                    // Convert upside down mirror-reversed image to right-side up normal image.
+                    for (int i = 0; i < height; i++) {
+                        for (int j = 0; j < width; j++) {
+                            pixelMirroredArray[(height - i - 1) * width + j] = pixelArray[i * width + j];
+                        }
                     }
+                    success[0] = true;
+                } catch (Throwable t) {
+                    Log.e( "GPUImageView", "While capturing: " + t.toString() );
+                } finally {
+                    waiter.release();
                 }
-                waiter.release();
             }
         });
         requestRender();
         waiter.acquire();
+
+        if (!success[0])
+            return null;
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bitmap.copyPixelsFromBuffer(IntBuffer.wrap(pixelMirroredArray));
