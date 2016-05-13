@@ -181,7 +181,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                     camera.setPreviewTexture(mSurfaceTexture);
                     camera.setPreviewCallback(GPUImageRenderer.this);
                     camera.startPreview();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
