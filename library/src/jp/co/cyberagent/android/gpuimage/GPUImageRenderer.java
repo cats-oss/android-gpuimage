@@ -50,14 +50,14 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             1.0f, 1.0f,
     };
 
-    private GPUImageFilter mFilter;
+    protected GPUImageFilter mFilter;
 
     public final Object mSurfaceChangedWaiter = new Object();
 
-    private int mGLTextureId = NO_IMAGE;
-    private SurfaceTexture mSurfaceTexture = null;
-    private final FloatBuffer mGLCubeBuffer;
-    private final FloatBuffer mGLTextureBuffer;
+    protected int mGLTextureId = NO_IMAGE;
+    protected SurfaceTexture mSurfaceTexture = null;
+    protected final FloatBuffer mGLCubeBuffer;
+    protected final FloatBuffer mGLTextureBuffer;
     private IntBuffer mGLRgbBuffer;
 
     private int mOutputWidth;
@@ -267,7 +267,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         return mOutputHeight;
     }
 
-    private void adjustImageScaling() {
+    protected void adjustImageScaling() {
         float outputWidth = mOutputWidth;
         float outputHeight = mOutputHeight;
         if (mRotation == Rotation.ROTATION_270 || mRotation == Rotation.ROTATION_90) {

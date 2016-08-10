@@ -34,12 +34,17 @@ public class ActivityMain extends Activity implements OnClickListener {
         setContentView(R.layout.activity_main);
         findViewById(R.id.button_gallery).setOnClickListener(this);
         findViewById(R.id.button_camera).setOnClickListener(this);
+        findViewById(R.id.button_movie_writer).setOnClickListener(this);
     }
 
     @Override public void onClick(final View v) {
-        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.CAMERA)
-            == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA },
+        if (
+                PermissionChecker.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_DENIED ||
+                PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[]
+                    { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE },
                 v.getId());
         } else {
             startActivity(v.getId());
@@ -48,7 +53,9 @@ public class ActivityMain extends Activity implements OnClickListener {
 
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions,
         int[] grantResults) {
-        if (grantResults.length != 1 || grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (
+                grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             startActivity(requestCode);
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -62,6 +69,9 @@ public class ActivityMain extends Activity implements OnClickListener {
                 break;
             case R.id.button_camera:
                 startActivity(new Intent(this, ActivityCamera.class));
+                break;
+            case R.id.button_movie_writer:
+                startActivity(new Intent(this, ActivityMovieWriter.class));
                 break;
 
             default:

@@ -51,9 +51,9 @@ import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
 
 public class ActivityCamera extends Activity implements OnSeekBarChangeListener, OnClickListener {
 
-    private GPUImage mGPUImage;
+    protected GPUImage mGPUImage;
     private CameraHelper mCameraHelper;
-    private CameraLoader mCamera;
+    protected CameraLoader mCamera;
     private GPUImageFilter mFilter;
     private FilterAdjuster mFilterAdjuster;
 
@@ -65,7 +65,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         findViewById(R.id.button_choose_filter).setOnClickListener(this);
         findViewById(R.id.button_capture).setOnClickListener(this);
 
-        mGPUImage = new GPUImage(this);
+        createGPUImage();
         mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
 
         mCameraHelper = new CameraHelper(this);
@@ -104,23 +104,31 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
                 break;
 
             case R.id.button_capture:
-                if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
-                        Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                    takePicture();
-                } else {
-                    mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
-
-                        @Override
-                        public void onAutoFocus(final boolean success, final Camera camera) {
-                            takePicture();
-                        }
-                    });
-                }
+                onCaptureButtonClicked();
                 break;
 
             case R.id.img_switch_camera:
                 mCamera.switchCamera();
                 break;
+        }
+    }
+
+    protected void createGPUImage() {
+        mGPUImage = new GPUImage(this);
+    }
+
+    protected void onCaptureButtonClicked() {
+        if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
+                Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            takePicture();
+        } else {
+            mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
+
+                @Override
+                public void onAutoFocus(final boolean success, final Camera camera) {
+                    takePicture();
+                }
+            });
         }
     }
 
@@ -179,7 +187,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
-    private static File getOutputMediaFile(final int type) {
+    protected static File getOutputMediaFile(final int type) {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 

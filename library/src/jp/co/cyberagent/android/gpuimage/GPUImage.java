@@ -50,8 +50,8 @@ import java.util.concurrent.Semaphore;
  */
 public class GPUImage {
     private final Context mContext;
-    private final GPUImageRenderer mRenderer;
-    private GLSurfaceView mGlSurfaceView;
+    protected GPUImageRenderer mRenderer;
+    protected GLSurfaceView mGlSurfaceView;
     private GPUImageFilter mFilter;
     private Bitmap mCurrentBitmap;
     private ScaleType mScaleType = ScaleType.CENTER_CROP;
