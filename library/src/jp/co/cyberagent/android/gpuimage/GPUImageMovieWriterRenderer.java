@@ -34,7 +34,7 @@ public class GPUImageMovieWriterRenderer extends GPUImageRenderer {
     private int mRecordingStatus = RECORDING_OFF;
     private File mOutputFile = null;
     private int mOutputWidth = 480;
-    private int mOutoutHeight = 640;
+    private int mOutputHeight = 640;
     private int mOutputBitrate = 1000000;
 
     public void changeRecordingState(boolean isRecording) {
@@ -62,7 +62,7 @@ public class GPUImageMovieWriterRenderer extends GPUImageRenderer {
             switch (mRecordingStatus) {
                 case RECORDING_OFF:
                     mVideoEncoder.startRecording(new TextureMovieEncoder.EncoderConfig(
-                            mOutputFile, mOutputWidth, mOutoutHeight, mOutputBitrate, EGL14.eglGetCurrentContext()
+                            mOutputFile, mOutputWidth, mOutputHeight, mOutputBitrate, EGL14.eglGetCurrentContext()
                     ));
                     mRecordingStatus = RECORDING_ON;
                     break;
@@ -111,7 +111,7 @@ public class GPUImageMovieWriterRenderer extends GPUImageRenderer {
 
     public void setOutputResolution(int width, int height) {
         mOutputWidth = width;
-        mOutoutHeight = height;
+        mOutputHeight = height;
     }
 
     public void setOutputBitrate(int bitrate) {
