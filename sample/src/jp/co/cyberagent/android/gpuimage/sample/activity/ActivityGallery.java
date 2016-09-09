@@ -16,7 +16,9 @@
 
 package jp.co.cyberagent.android.gpuimage.sample.activity;
 
+import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageTiltShiftFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
 import jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
@@ -25,6 +27,7 @@ import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFi
 import jp.co.cyberagent.android.gpuimage.sample.R;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -111,12 +114,27 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
     private void switchFilterTo(final GPUImageFilter filter) {
         if (mFilter == null
                 || (filter != null && !mFilter.getClass().equals(filter.getClass()))) {
+
+
+
             mFilter = filter;
+            setUpTiltShiftFilterIfNeeded(mFilter);
             mGPUImageView.setFilter(mFilter);
             mFilterAdjuster = new FilterAdjuster(mFilter);
 
             findViewById(R.id.seekBar).setVisibility(
                     mFilterAdjuster.canAdjust() ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void setUpTiltShiftFilterIfNeeded(final GPUImageFilter filter){
+        if (filter instanceof GPUImageTiltShiftFilter){
+            final GPUImage gpuImage = new GPUImage(this);
+            gpuImage.setImage(mGPUImageView.getGPUImage().getBitmapWithFilterApplied());
+
+
+            final Bitmap bitmap = gpuImage.getBitmapWithFilterApplied();
+            ((GPUImageTiltShiftFilter) filter).setBitmap(this,bitmap);
         }
     }
 

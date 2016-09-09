@@ -22,6 +22,7 @@ import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import jp.co.cyberagent.android.gpuimage.*;
 
@@ -112,6 +113,8 @@ public class GPUImageFilterTools {
         filters. addFilter("Bilateral Blur", FilterType.BILATERAL_BLUR);
 
         filters.addFilter("Transform (2-D)", FilterType.TRANSFORM2D);
+
+        filters.addFilter("TiltShift", FilterType.TILT_SHIFT);
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -303,6 +306,9 @@ public class GPUImageFilterTools {
             case TRANSFORM2D:
                 return new GPUImageTransformFilter();
 
+            case TILT_SHIFT:
+                return new GPUImageTiltShiftFilter();
+
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
@@ -330,7 +336,7 @@ public class GPUImageFilterTools {
         BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
         BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA,
         GAUSSIAN_BLUR, CROSSHATCH, BOX_BLUR, CGA_COLORSPACE, DILATION, KUWAHARA, RGB_DILATION, SKETCH, TOON, SMOOTH_TOON, BULGE_DISTORTION, GLASS_SPHERE, HAZE, LAPLACIAN, NON_MAXIMUM_SUPPRESSION,
-        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE, LEVELS_FILTER_MIN, BILATERAL_BLUR, HALFTONE, TRANSFORM2D
+        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE, LEVELS_FILTER_MIN, BILATERAL_BLUR, HALFTONE, TRANSFORM2D, TILT_SHIFT
     }
 
     private static class FilterList {
@@ -409,6 +415,8 @@ public class GPUImageFilterTools {
                 adjuster = new BilateralAdjuster().filter(filter);
             } else if (filter instanceof GPUImageTransformFilter) {
                 adjuster = new RotateAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageTiltShiftFilter){
+                adjuster = new TiltShiftAdjuster().filter(filter);
             }
             else {
 
@@ -458,17 +466,17 @@ public class GPUImageFilterTools {
         }
 
         private class PixelationAdjuster extends Adjuster<GPUImagePixelationFilter> {
-          @Override
-          public void adjust(final int percentage) {
-              getFilter().setPixel(range(percentage, 1.0f, 100.0f));
-          }
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setPixel(range(percentage, 1.0f, 100.0f));
+            }
         }
 
         private class HueAdjuster extends Adjuster<GPUImageHueFilter> {
-          @Override
-          public void adjust(final int percentage) {
-            getFilter().setHue(range(percentage, 0.0f, 360.0f));
-          }
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setHue(range(percentage, 0.0f, 360.0f));
+            }
         }
 
         private class ContrastAdjuster extends Adjuster<GPUImageContrastFilter> {
@@ -679,6 +687,14 @@ public class GPUImageFilterTools {
                 float[] transform = new float[16];
                 Matrix.setRotateM(transform, 0, 360 * percentage / 100, 0, 0, 1.0f);
                 getFilter().setTransform3D(transform);
+            }
+        }
+
+        private class TiltShiftAdjuster extends Adjuster<GPUImageTiltShiftFilter>{
+            @Override
+            public void adjust(final int percentage) {
+                Log.d("hogehoge",percentage+"");
+                getFilter().setTilt(range(percentage,0.0f,1.0f));
             }
         }
 
