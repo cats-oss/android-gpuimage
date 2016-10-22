@@ -14,10 +14,16 @@ android {
 
         consumerProguardFiles 'proguard-rules.txt'
 
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
+
         ndk {
             moduleName "gpuimage-library"
             stl "gnustl_shared"
-            abiFilters "all"
+            abiFilters = ['armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips', 'mips64']
             ldLibs "log"
         }
     }
@@ -35,6 +41,12 @@ android {
         }
 
         instrumentTest.setRoot('tests')
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
     }
 
     lintOptions {
