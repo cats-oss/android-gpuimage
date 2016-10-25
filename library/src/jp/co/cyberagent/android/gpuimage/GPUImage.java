@@ -105,6 +105,17 @@ public class GPUImage {
     }
 
     /**
+     * Sets the background color
+     *
+     * @param red red color value
+     * @param green green color value
+     * @param blue red color value
+     */
+    public void setBackgroundColor(float red, float green, float blue) {
+        mRenderer.setBackgroundColor(red, green, blue);
+    }
+
+    /**
      * Request the preview to be rendered again.
      */
     public void requestRender() {
@@ -203,6 +214,15 @@ public class GPUImage {
      */
     public void setRotation(Rotation rotation) {
         mRenderer.setRotation(rotation);
+    }
+
+    /**
+     * Sets the rotation of the displayed image with flip options.
+     *
+     * @param rotation new rotation
+     */
+    public void setRotation(Rotation rotation, boolean flipHorizontal, boolean flipVertical) {
+        mRenderer.setRotation(rotation, flipHorizontal, flipVertical);
     }
 
     /**
