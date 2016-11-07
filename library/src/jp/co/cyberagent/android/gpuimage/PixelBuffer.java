@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2012 CyberAgent
- * Copyright (C) 2010 jsemler 
- * 
+ * Copyright (C) 2010 jsemler
+ *
  * Original publication without License
  * http://www.anddev.org/android-2d-3d-graphics-opengl-tutorials-f2/possible-to-do-opengl-off-screen-rendering-in-android-t13232.html#p41662
  */
@@ -189,22 +189,26 @@ public class PixelBuffer {
     }
 
     private void convertToBitmap() {
-        int[] iat = new int[mWidth * mHeight];
         IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
         mGL.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
-        int[] ia = ib.array();
 
-        //Stupid !
-        // Convert upside down mirror-reversed image to right-side up normal
-        // image.
-        for (int i = 0; i < mHeight; i++) {
-            for (int j = 0; j < mWidth; j++) {
-                iat[(mHeight - i - 1) * mWidth + j] = ia[i * mWidth + j];
+        int[] ia = ib.array();
+        int count = ia.length;
+        int lines = mHeight / 2;
+
+        // Convert upside down mirror-reversed image to right-side up normal image.
+        for (int i = 0; i < lines; i++) {
+            for (int j = 0, base = i * mWidth; j < mWidth; j++) {
+                int pos1 = base + j; // i * mWidth + j
+                int pos2 = count - base - mWidth + j; // (mHeight - i - 1) * mWidth + j;
+                // swap data
+                int temp = ia[pos1];
+                ia[pos1] = ia[pos2];
+                ia[pos2] = temp;
             }
         }
-        
 
         mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-        mBitmap.copyPixelsFromBuffer(IntBuffer.wrap(iat));
+        mBitmap.copyPixelsFromBuffer(IntBuffer.wrap(ia));
     }
 }

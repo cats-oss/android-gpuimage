@@ -62,10 +62,6 @@ public class GPUImage {
      * @param context the context
      */
     public GPUImage(final Context context) {
-        if (!supportsOpenGLES2(context)) {
-            throw new IllegalStateException("OpenGL ES 2.0 is not supported on this phone.");
-        }
-
         mContext = context;
         mFilter = new GPUImageFilter();
         mRenderer = new GPUImageRenderer(mFilter);
@@ -78,11 +74,15 @@ public class GPUImage {
      * @return true, if successful
      */
     private boolean supportsOpenGLES2(final Context context) {
-        final ActivityManager activityManager = (ActivityManager)
-                context.getSystemService(Context.ACTIVITY_SERVICE);
-        final ConfigurationInfo configurationInfo =
-                activityManager.getDeviceConfigurationInfo();
-        return configurationInfo.reqGlEsVersion >= 0x20000;
+        try {
+            final ActivityManager activityManager = (ActivityManager)
+              context.getSystemService( Context.ACTIVITY_SERVICE );
+            final ConfigurationInfo configurationInfo =
+              activityManager.getDeviceConfigurationInfo();
+            return configurationInfo != null && configurationInfo.reqGlEsVersion >= 0x20000;
+        } catch (UnsupportedOperationException ignored) {
+            return false;
+        }
     }
 
     /**
@@ -91,6 +91,10 @@ public class GPUImage {
      * @param view the GLSurfaceView
      */
     public void setGLSurfaceView(final GLSurfaceView view) {
+        if (!supportsOpenGLES2(mContext)) {
+            throw new IllegalStateException("OpenGL ES 2.0 is not supported on this phone.");
+        }
+
         mGlSurfaceView = view;
         mGlSurfaceView.setEGLContextClientVersion(2);
         mGlSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
