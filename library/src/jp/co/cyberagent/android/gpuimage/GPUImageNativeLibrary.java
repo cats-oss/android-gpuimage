@@ -16,6 +16,8 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
+import android.graphics.Bitmap;
+
 public class GPUImageNativeLibrary {
     static {
         System.loadLibrary("gpuimage-library");
@@ -24,4 +26,6 @@ public class GPUImageNativeLibrary {
     public static native void YUVtoRBGA(byte[] yuv, int width, int height, int[] out);
 
     public static native void YUVtoARBG(byte[] yuv, int width, int height, int[] out);
+
+    public static native void gpuBitmap(Bitmap srcBitmap);
 }

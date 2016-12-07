@@ -189,22 +189,7 @@ public class PixelBuffer {
     }
 
     private void convertToBitmap() {
-        int[] iat = new int[mWidth * mHeight];
-        IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
-        mGL.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
-        int[] ia = ib.array();
-
-        //Stupid !
-        // Convert upside down mirror-reversed image to right-side up normal
-        // image.
-        for (int i = 0; i < mHeight; i++) {
-            for (int j = 0; j < mWidth; j++) {
-                iat[(mHeight - i - 1) * mWidth + j] = ia[i * mWidth + j];
-            }
-        }
-        
-
         mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-        mBitmap.copyPixelsFromBuffer(IntBuffer.wrap(iat));
+        GPUImageNativeLibrary.gpuBitmap(mBitmap);
     }
 }

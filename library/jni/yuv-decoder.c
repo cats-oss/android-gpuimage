@@ -1,6 +1,11 @@
 #include <jni.h>
 #include <android/log.h>
 
+#include <android/bitmap.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+
+
 
 JNIEXPORT void JNICALL Java_jp_co_cyberagent_android_gpuimage_GPUImageNativeLibrary_YUVtoRBGA(JNIEnv * env, jobject obj, jbyteArray yuv420sp, jint width, jint height, jintArray rgbOut)
 {
@@ -112,4 +117,38 @@ JNIEXPORT void JNICALL Java_jp_co_cyberagent_android_gpuimage_GPUImageNativeLibr
 
     (*env)->ReleasePrimitiveArrayCritical(env, rgbOut, rgbData, 0);
     (*env)->ReleasePrimitiveArrayCritical(env, yuv420sp, yuv, 0);
+}
+
+
+JNIEXPORT void JNICALL Java_jp_co_cyberagent_android_gpuimage_GPUImageNativeLibrary_gpuBitmap(JNIEnv *jenv, jclass thiz, jobject src)
+{
+    unsigned char * srcByteBuffer;
+    int result = 0;
+    int i,j;
+    AndroidBitmapInfo srcInfo;
+
+    result = AndroidBitmap_getInfo(jenv, src, &srcInfo);
+    if(result != ANDROID_BITMAP_RESULT_SUCCESS) {
+        return;
+    }
+
+    result = AndroidBitmap_lockPixels(jenv,src,(void**)&srcByteBuffer);
+    if(result != ANDROID_BITMAP_RESULT_SUCCESS) {
+        return;
+    }
+
+    int width = srcInfo.width;
+    int height = srcInfo.height;
+    glReadPixels(0, 0, srcInfo.width, srcInfo.height, GL_RGBA, GL_UNSIGNED_BYTE, srcByteBuffer);
+
+    int *pIntBuffer = (int*)srcByteBuffer;
+
+    for (i = 0; i < height / 2; i++) {
+        for (j = 0; j < width; j++) {
+            int temp = pIntBuffer[(height - i - 1) * width + j];
+            pIntBuffer[(height - i - 1) * width + j] = pIntBuffer[i * width + j];
+            pIntBuffer[i * width + j] = temp;
+        }
+    }
+    AndroidBitmap_unlockPixels(jenv,src);
 }
