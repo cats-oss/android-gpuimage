@@ -279,6 +279,17 @@ public class GPUImage {
      * @return the bitmap with filter applied
      */
     public Bitmap getBitmapWithFilterApplied(final Bitmap bitmap) {
+        return getBitmapWithFilterApplied(bitmap, false);
+    }
+
+    /**
+     * Gets the given bitmap with current filter applied as a Bitmap.
+     *
+     * @param bitmap the bitmap on which the current filter should be applied
+     * @param recycle recycle the bitmap or not.
+     * @return the bitmap with filter applied
+     */
+    public Bitmap getBitmapWithFilterApplied(final Bitmap bitmap, boolean recycle) {
         if (mGlSurfaceView != null) {
             mRenderer.deleteImage();
             mRenderer.runOnDraw(new Runnable() {
@@ -307,7 +318,7 @@ public class GPUImage {
         renderer.setScaleType(mScaleType);
         PixelBuffer buffer = new PixelBuffer(bitmap.getWidth(), bitmap.getHeight());
         buffer.setRenderer(renderer);
-        renderer.setImageBitmap(bitmap, false);
+        renderer.setImageBitmap(bitmap, recycle);
         Bitmap result = buffer.getBitmap();
         mFilter.destroy();
         renderer.deleteImage();
