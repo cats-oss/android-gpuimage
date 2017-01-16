@@ -191,6 +191,7 @@ public class PixelBuffer {
     private void convertToBitmap() {
         int[] iat = new int[mWidth * mHeight];
         IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
+		mGL.glFlush();
         mGL.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
         int[] ia = ib.array();
 

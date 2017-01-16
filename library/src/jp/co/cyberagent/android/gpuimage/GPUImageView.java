@@ -309,6 +309,7 @@ public class GPUImageView extends FrameLayout {
             @Override
             public void run() {
                 final IntBuffer pixelBuffer = IntBuffer.allocate(width * height);
+				GLES20.glFlush();
                 GLES20.glReadPixels(0, 0, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
                 int[] pixelArray = pixelBuffer.array();
 
