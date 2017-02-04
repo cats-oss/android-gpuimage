@@ -1,6 +1,10 @@
 
 language: android
 
+# installing Java 8 JDK is required to prevent getting "Unsupported major.minor version 52.0" error
+jdk:
+  - oraclejdk8
+
 # Turning off caching to avoid caching Issues
 # cache: false
 # Using the new Container-Based Infrastructure
