@@ -9,7 +9,7 @@ android {
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
 
-        versionCode "git rev-list origin/master --count".execute().text.toInteger()
+        versionCode VERSION_CODE as int
         versionName VERSION_NAME
 
         consumerProguardFiles 'proguard-rules.txt'

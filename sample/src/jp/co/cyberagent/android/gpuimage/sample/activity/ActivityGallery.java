@@ -98,8 +98,13 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
     }
 
     @Override
-    public void onPictureSaved(final Uri uri) {
-        Toast.makeText(this, "Saved: " + uri.toString(), Toast.LENGTH_SHORT).show();
+    public void onPictureSaved(String imagePath) {
+        Toast.makeText(this, "Saved: " + imagePath, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPictureSaveFailed() {
+        Toast.makeText(this, "Image saving failed.", Toast.LENGTH_SHORT).show();
     }
 
     private void saveImage() {

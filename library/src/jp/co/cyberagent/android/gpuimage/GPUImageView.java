@@ -99,9 +99,9 @@ public class GPUImageView extends FrameLayout {
     /**
      * Sets the background color
      *
-     * @param red red color value
+     * @param red   red color value
      * @param green green color value
-     * @param blue red color value
+     * @param blue  red color value
      */
     public void setBackgroundColor(float red, float green, float blue) {
         mGPUImage.setBackgroundColor(red, green, blue);
@@ -185,6 +185,21 @@ public class GPUImageView extends FrameLayout {
     }
 
     /**
+     * Save current bitmap with applied filter to Pictures. Since this method creates a new bitmap
+     * from source and applying filters over again the result will be the same sizes with source
+     * instead of capture methods result's being views size on screen. And this will not be causing
+     * black space on screen, since it's not using current surfaceView to re-render bitmap
+     * in order to capture it.
+     *
+     * @param folderName the folder name
+     * @param fileName   the file name
+     * @param listener   the listener
+     */
+    public void saveBitmap(String folderName, String fileName, OnPictureSavedListener listener) {
+        new SaveTask(folderName, fileName, false, listener).execute();
+    }
+
+    /**
      * Save current image with applied filter to Pictures. It will be stored on
      * the default Picture folder on the phone below the given folderName and
      * fileName. <br>
@@ -192,8 +207,8 @@ public class GPUImageView extends FrameLayout {
      * listener.
      *
      * @param folderName the folder name
-     * @param fileName the file name
-     * @param listener the listener
+     * @param fileName   the file name
+     * @param listener   the listener
      */
     public void saveToPictures(final String folderName, final String fileName,
                                final OnPictureSavedListener listener) {
@@ -249,6 +264,7 @@ public class GPUImageView extends FrameLayout {
                 waiter.release();
             }
         });
+
         post(new Runnable() {
             @Override
             public void run() {
@@ -258,6 +274,7 @@ public class GPUImageView extends FrameLayout {
                 mGLSurfaceView.requestLayout();
             }
         });
+
         waiter.acquire();
 
         // Run one render pass
@@ -294,6 +311,7 @@ public class GPUImageView extends FrameLayout {
 
     /**
      * Capture the current image with the size as it is displayed and retrieve it as Bitmap.
+     *
      * @return current output as Bitmap
      * @throws InterruptedException
      */
@@ -403,6 +421,7 @@ public class GPUImageView extends FrameLayout {
         private final String mFileName;
         private final int mWidth;
         private final int mHeight;
+        private final boolean shouldReRender;
         private final OnPictureSavedListener mListener;
         private final Handler mHandler;
 
@@ -411,20 +430,35 @@ public class GPUImageView extends FrameLayout {
             this(folderName, fileName, 0, 0, listener);
         }
 
-        public SaveTask(final String folderName, final String fileName, int width, int height,
+        public SaveTask(final String folderName, final String fileName, boolean reRender,
                         final OnPictureSavedListener listener) {
+            this(folderName, fileName, reRender, 0, 0, listener);
+        }
+
+        public SaveTask(final String folderName, final String fileName, int width, int height, final OnPictureSavedListener listener) {
+            this(folderName, fileName, true, width, height, listener);
+        }
+
+        private SaveTask(String folderName, String fileName, boolean reRender, int width, int height, OnPictureSavedListener listener) {
             mFolderName = folderName;
             mFileName = fileName;
+            shouldReRender = reRender;
             mWidth = width;
             mHeight = height;
             mListener = listener;
             mHandler = new Handler();
         }
 
+        @SuppressWarnings("WrongThread")
         @Override
         protected Void doInBackground(final Void... params) {
             try {
-                Bitmap result = mWidth != 0 ? capture(mWidth, mHeight) : capture();
+                Bitmap result;
+                if (shouldReRender) {
+                    result = mWidth != 0 ? capture(mWidth, mHeight) : capture();
+                } else {
+                    result = getGPUImage().getCurrentBitmapWithFilter();
+                }
                 saveImage(mFolderName, mFileName, result);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -438,25 +472,25 @@ public class GPUImageView extends FrameLayout {
             File file = new File(path, folderName + "/" + fileName);
             try {
                 file.getParentFile().mkdirs();
-                image.compress(Bitmap.CompressFormat.JPEG, 80, new FileOutputStream(file));
-                MediaScannerConnection.scanFile(getContext(),
-                        new String[]{
-                                file.toString()
-                        }, null,
-                        new MediaScannerConnection.OnScanCompletedListener() {
+                boolean imageSaved = image.compress(Bitmap.CompressFormat.JPEG, 80, new FileOutputStream(file));
+                if (mListener != null) {
+                    if (imageSaved) {
+                        final String imagePath = file.getAbsolutePath();
+                        mHandler.post(new Runnable() {
                             @Override
-                            public void onScanCompleted(final String path, final Uri uri) {
-                                if (mListener != null) {
-                                    mHandler.post(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-                                            mListener.onPictureSaved(uri);
-                                        }
-                                    });
-                                }
+                            public void run() {
+                                mListener.onPictureSaved(imagePath);
                             }
                         });
+                    } else {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mListener.onPictureSaveFailed();
+                            }
+                        });
+                    }
+                }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -464,6 +498,8 @@ public class GPUImageView extends FrameLayout {
     }
 
     public interface OnPictureSavedListener {
-        void onPictureSaved(Uri uri);
+        void onPictureSaved(String imagePath);
+
+        void onPictureSaveFailed();
     }
 }

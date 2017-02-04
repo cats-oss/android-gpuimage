@@ -103,9 +103,9 @@ public class GPUImage {
     /**
      * Sets the background color
      *
-     * @param red red color value
+     * @param red   red color value
      * @param green green color value
-     * @param blue red color value
+     * @param blue  red color value
      */
     public void setBackgroundColor(float red, float green, float blue) {
         mRenderer.setBackgroundColor(red, green, blue);
@@ -132,13 +132,13 @@ public class GPUImage {
     /**
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
      *
-     * @param camera the camera
-     * @param degrees by how many degrees the image should be rotated
+     * @param camera         the camera
+     * @param degrees        by how many degrees the image should be rotated
      * @param flipHorizontal if the image should be flipped horizontally
-     * @param flipVertical if the image should be flipped vertically
+     * @param flipVertical   if the image should be flipped vertically
      */
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
-            final boolean flipVertical) {
+                            final boolean flipVertical) {
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
             setUpCameraGingerbread(camera);
@@ -204,6 +204,15 @@ public class GPUImage {
     }
 
     /**
+     * Returns current rotation
+     *
+     * @return
+     */
+    public Rotation getRotation() {
+        return mRenderer.getRotation();
+    }
+
+    /**
      * Sets the rotation of the displayed image.
      *
      * @param rotation new rotation
@@ -264,6 +273,35 @@ public class GPUImage {
     }
 
     /**
+     * Returns current bitmap with applied filter and required rotation
+     *
+     * @return
+     */
+    public Bitmap getCurrentBitmapWithFilter() {
+        Rotation rotation = getRotation();
+
+        GPUImageRenderer renderer = new GPUImageRenderer(mFilter);
+        renderer.setRotation(rotation, mRenderer.isFlippedHorizontally(), mRenderer.isFlippedVertically());
+        renderer.setScaleType(mScaleType);
+
+        int width, height;
+        if (rotation == Rotation.ROTATION_90 || rotation == Rotation.ROTATION_270) {
+            width = mCurrentBitmap.getHeight();
+            height = mCurrentBitmap.getWidth();
+        } else {
+            width = mCurrentBitmap.getWidth();
+            height = mCurrentBitmap.getHeight();
+        }
+
+        PixelBuffer buffer = new PixelBuffer(width, height);
+        buffer.setRenderer(renderer);
+        renderer.setImageBitmap(mCurrentBitmap, false);
+        Bitmap result = buffer.getBitmap();
+
+        return result;
+    }
+
+    /**
      * Gets the current displayed image with applied filter as a Bitmap.
      *
      * @return the current image with filter applied
@@ -285,13 +323,13 @@ public class GPUImage {
 
                 @Override
                 public void run() {
-                    synchronized(mFilter) {
+                    synchronized (mFilter) {
                         mFilter.destroy();
                         mFilter.notify();
                     }
                 }
             });
-            synchronized(mFilter) {
+            synchronized (mFilter) {
                 requestRender();
                 try {
                     mFilter.wait();
@@ -329,12 +367,12 @@ public class GPUImage {
      * bitmap. The order of the calls to the listener will be the same as the
      * filter order.
      *
-     * @param bitmap the bitmap on which the filters will be applied
-     * @param filters the filters which will be applied on the bitmap
+     * @param bitmap   the bitmap on which the filters will be applied
+     * @param filters  the filters which will be applied on the bitmap
      * @param listener the listener on which the results will be notified
      */
     public static void getBitmapForMultipleFilters(final Bitmap bitmap,
-            final List<GPUImageFilter> filters, final ResponseListener<Bitmap> listener) {
+                                                   final List<GPUImageFilter> filters, final ResponseListener<Bitmap> listener) {
         if (filters.isEmpty()) {
             return;
         }
@@ -355,7 +393,7 @@ public class GPUImage {
     /**
      * Deprecated: Please use
      * {@link GPUImageView#saveToPictures(String, String, jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener)}
-     *
+     * <p>
      * Save current image with applied filter to Pictures. It will be stored on
      * the default Picture folder on the phone below the given folderName and
      * fileName. <br>
@@ -363,33 +401,33 @@ public class GPUImage {
      * listener.
      *
      * @param folderName the folder name
-     * @param fileName the file name
-     * @param listener the listener
+     * @param fileName   the file name
+     * @param listener   the listener
      */
     @Deprecated
     public void saveToPictures(final String folderName, final String fileName,
-            final OnPictureSavedListener listener) {
+                               final OnPictureSavedListener listener) {
         saveToPictures(mCurrentBitmap, folderName, fileName, listener);
     }
 
     /**
      * Deprecated: Please use
      * {@link GPUImageView#saveToPictures(String, String, jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener)}
-     *
+     * <p>
      * Apply and save the given bitmap with applied filter to Pictures. It will
      * be stored on the default Picture folder on the phone below the given
      * folerName and fileName. <br>
      * This method is async and will notify when the image was saved through the
      * listener.
      *
-     * @param bitmap the bitmap
+     * @param bitmap     the bitmap
      * @param folderName the folder name
-     * @param fileName the file name
-     * @param listener the listener
+     * @param fileName   the file name
+     * @param listener   the listener
      */
     @Deprecated
     public void saveToPictures(final Bitmap bitmap, final String folderName, final String fileName,
-            final OnPictureSavedListener listener) {
+                               final OnPictureSavedListener listener) {
         new SaveTask(bitmap, folderName, fileName, listener).execute();
     }
 
@@ -438,7 +476,7 @@ public class GPUImage {
         private final Handler mHandler;
 
         public SaveTask(final Bitmap bitmap, final String folderName, final String fileName,
-                final OnPictureSavedListener listener) {
+                        final OnPictureSavedListener listener) {
             mBitmap = bitmap;
             mFolderName = folderName;
             mFileName = fileName;
@@ -461,8 +499,8 @@ public class GPUImage {
                 file.getParentFile().mkdirs();
                 image.compress(CompressFormat.JPEG, 80, new FileOutputStream(file));
                 MediaScannerConnection.scanFile(mContext,
-                        new String[] {
-                            file.toString()
+                        new String[]{
+                                file.toString()
                         }, null,
                         new MediaScannerConnection.OnScanCompletedListener() {
                             @Override
@@ -516,7 +554,7 @@ public class GPUImage {
         @Override
         protected int getImageOrientation() throws IOException {
             Cursor cursor = mContext.getContentResolver().query(mUri,
-                    new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null, null, null);
+                    new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
             if (cursor == null || cursor.getCount() != 1) {
                 return 0;
@@ -713,5 +751,5 @@ public class GPUImage {
         void response(T item);
     }
 
-    public enum ScaleType { CENTER_INSIDE, CENTER_CROP }
+    public enum ScaleType {CENTER_INSIDE, CENTER_CROP}
 }
