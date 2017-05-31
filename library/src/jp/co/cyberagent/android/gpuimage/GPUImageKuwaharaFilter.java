@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * Kuwahara image abstraction, drawn from the work of Kyprianidis, et. al. in their publication
@@ -129,7 +129,7 @@ public class GPUImageKuwaharaFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mRadiusLocation = GLES20.glGetUniformLocation(getProgram(), "radius");
+        mRadiusLocation = GLES30.glGetUniformLocation(getProgram(), "radius");
     }
 
     @Override

@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * Adjusts the individual RGB channels of an image
@@ -62,9 +62,9 @@ public class GPUImageRGBFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mRedLocation = GLES20.glGetUniformLocation(getProgram(), "red");
-        mGreenLocation = GLES20.glGetUniformLocation(getProgram(), "green");
-        mBlueLocation = GLES20.glGetUniformLocation(getProgram(), "blue");
+        mRedLocation = GLES30.glGetUniformLocation(getProgram(), "red");
+        mGreenLocation = GLES30.glGetUniformLocation(getProgram(), "green");
+        mBlueLocation = GLES30.glGetUniformLocation(getProgram(), "blue");
         mIsInitialized = true;
         setRed(mRed);
         setGreen(mGreen);

@@ -26,6 +26,7 @@ android {
     lintOptions {
         abortOnError true
     }
+    buildToolsVersion '25.0.0'
 }
 repositories {
     jcenter()

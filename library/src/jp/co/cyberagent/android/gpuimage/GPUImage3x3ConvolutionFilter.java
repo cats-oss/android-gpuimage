@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * Runs a 3x3 convolution kernel against the image
@@ -88,7 +88,7 @@ public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilt
     @Override
     public void onInit() {
         super.onInit();
-        mUniformConvolutionMatrix = GLES20.glGetUniformLocation(getProgram(), "convolutionMatrix");
+        mUniformConvolutionMatrix = GLES30.glGetUniformLocation(getProgram(), "convolutionMatrix");
         setConvolutionKernel(mConvolutionKernel);
     }
 

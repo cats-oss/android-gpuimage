@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * Adjusts the alpha channel of the incoming image
@@ -51,7 +51,7 @@ public class GPUImageOpacityFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mOpacityLocation = GLES20.glGetUniformLocation(getProgram(), "opacity");
+        mOpacityLocation = GLES30.glGetUniformLocation(getProgram(), "opacity");
     }
 
     @Override
