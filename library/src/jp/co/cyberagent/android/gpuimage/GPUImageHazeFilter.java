@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * The haze filter can be used to add or remove haze.
@@ -64,8 +64,8 @@ public class GPUImageHazeFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mDistanceLocation = GLES20.glGetUniformLocation(getProgram(), "distance");
-        mSlopeLocation = GLES20.glGetUniformLocation(getProgram(), "slope");
+        mDistanceLocation = GLES30.glGetUniformLocation(getProgram(), "distance");
+        mSlopeLocation = GLES30.glGetUniformLocation(getProgram(), "slope");
     }
 
     @Override

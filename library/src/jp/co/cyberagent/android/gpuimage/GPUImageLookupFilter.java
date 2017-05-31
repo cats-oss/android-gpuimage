@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 public class GPUImageLookupFilter extends GPUImageTwoInputFilter {
 
@@ -72,7 +72,7 @@ public class GPUImageLookupFilter extends GPUImageTwoInputFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mIntensityLocation = GLES20.glGetUniformLocation(getProgram(), "intensity");
+        mIntensityLocation = GLES30.glGetUniformLocation(getProgram(), "intensity");
     }
 
     @Override
