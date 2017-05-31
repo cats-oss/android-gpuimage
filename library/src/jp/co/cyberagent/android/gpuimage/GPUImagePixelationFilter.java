@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 /**
  * Applies a grayscale effect to the image.
  */
@@ -54,9 +54,9 @@ public class GPUImagePixelationFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mImageWidthFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageWidthFactor");
-        mImageHeightFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageHeightFactor");
-        mPixelLocation = GLES20.glGetUniformLocation(getProgram(), "pixel");
+        mImageWidthFactorLocation = GLES30.glGetUniformLocation(getProgram(), "imageWidthFactor");
+        mImageHeightFactorLocation = GLES30.glGetUniformLocation(getProgram(), "imageHeightFactor");
+        mPixelLocation = GLES30.glGetUniformLocation(getProgram(), "pixel");
         setPixel(mPixel);
     }
 

@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 public class GPUImageHueFilter extends GPUImageFilter {
     public static final String HUE_FRAGMENT_SHADER = "" +
@@ -79,7 +79,7 @@ public class GPUImageHueFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mHueLocation = GLES20.glGetUniformLocation(getProgram(), "hueAdjust");
+        mHueLocation = GLES30.glGetUniformLocation(getProgram(), "hueAdjust");
     }
 
     @Override

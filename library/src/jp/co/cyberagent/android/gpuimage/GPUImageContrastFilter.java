@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * Changes the contrast of the image.<br>
@@ -52,7 +52,7 @@ public class GPUImageContrastFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mContrastLocation = GLES20.glGetUniformLocation(getProgram(), "contrast");
+        mContrastLocation = GLES30.glGetUniformLocation(getProgram(), "contrast");
     }
 
     @Override

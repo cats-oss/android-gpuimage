@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * saturation: The degree of saturation or desaturation to apply to the image (0.0 - 2.0, with 1.0 as the default)
@@ -56,7 +56,7 @@ public class GPUImageSaturationFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mSaturationLocation = GLES20.glGetUniformLocation(getProgram(), "saturation");
+        mSaturationLocation = GLES30.glGetUniformLocation(getProgram(), "saturation");
     }
 
     @Override

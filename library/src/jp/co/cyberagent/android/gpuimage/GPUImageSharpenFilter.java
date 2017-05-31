@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * Sharpens the picture. <br>
@@ -100,9 +100,9 @@ public class GPUImageSharpenFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mSharpnessLocation = GLES20.glGetUniformLocation(getProgram(), "sharpness");
-        mImageWidthFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageWidthFactor");
-        mImageHeightFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageHeightFactor");
+        mSharpnessLocation = GLES30.glGetUniformLocation(getProgram(), "sharpness");
+        mImageWidthFactorLocation = GLES30.glGetUniformLocation(getProgram(), "imageWidthFactor");
+        mImageHeightFactorLocation = GLES30.glGetUniformLocation(getProgram(), "imageHeightFactor");
         setSharpness(mSharpness);
     }
 
