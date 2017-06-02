@@ -47,8 +47,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-import jp.co.cyberagent.android.gpuimage.videosupport.VideoFrameCallback;
-import jp.co.cyberagent.android.gpuimage.videosupport.VideoSource;
+import jp.co.cyberagent.android.gpuimage.videosupport.VideoSourceRenderer;
 
 /**
  * The main accessor for GPUImage functionality. This class helps to do common
@@ -126,7 +125,7 @@ public class GPUImage {
         }
     }
 
-    public void setUpVideoSource(VideoSource videoSource){
+    public void setUpVideoSource(VideoSourceRenderer videoSource){
         videoSource.setVideoRenderer(mRenderer);
     }
 
