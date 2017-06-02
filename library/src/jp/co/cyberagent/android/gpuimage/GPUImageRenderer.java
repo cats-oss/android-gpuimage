@@ -27,7 +27,7 @@ import android.opengl.GLES30;
 import android.opengl.GLSurfaceView.Renderer;
 
 import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
-import jp.co.cyberagent.android.gpuimage.videosupport.VideoCallback;
+import jp.co.cyberagent.android.gpuimage.videosupport.VideoFrameCallback;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -42,7 +42,7 @@ import java.util.Queue;
 import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
 
 @TargetApi(11)
-public class GPUImageRenderer implements Renderer, PreviewCallback, VideoCallback
+public class GPUImageRenderer implements Renderer, PreviewCallback, VideoFrameCallback
 {
     public static final int NO_IMAGE = -1;
     static final float CUBE[] = {
