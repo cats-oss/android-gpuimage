@@ -27,6 +27,7 @@ import android.opengl.GLES30;
 import android.opengl.GLSurfaceView.Renderer;
 
 import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
+import jp.co.cyberagent.android.gpuimage.videosupport.VideoCallback;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -41,7 +42,8 @@ import java.util.Queue;
 import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
 
 @TargetApi(11)
-public class GPUImageRenderer implements Renderer, PreviewCallback {
+public class GPUImageRenderer implements Renderer, PreviewCallback, VideoCallback
+{
     public static final int NO_IMAGE = -1;
     static final float CUBE[] = {
             -1.0f, -1.0f,
@@ -163,6 +165,31 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                     if (mImageWidth != previewSize.width) {
                         mImageWidth = previewSize.width;
                         mImageHeight = previewSize.height;
+                        adjustImageScaling();
+                    }
+                }
+            });
+        }
+    }
+
+
+    @Override
+    public void onVideoFrame(final byte[] data, final int width, final int height) {
+
+        if (mGLRgbBuffer == null) {
+            mGLRgbBuffer = IntBuffer.allocate(width * height);
+        }
+        if (mRunOnDraw.isEmpty()) {
+            runOnDraw(new Runnable() {
+                @Override
+                public void run() {
+                    GPUImageNativeLibrary.YUVtoRBGA(data, width, height,
+                            mGLRgbBuffer.array());
+                    mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, width, height, mGLTextureId);
+
+                    if (mImageWidth != width) {
+                        mImageWidth = width;
+                        mImageHeight = height;
                         adjustImageScaling();
                     }
                 }
