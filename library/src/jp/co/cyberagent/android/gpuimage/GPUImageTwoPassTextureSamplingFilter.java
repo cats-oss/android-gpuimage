@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 public class GPUImageTwoPassTextureSamplingFilter extends GPUImageTwoPassFilter {
     public GPUImageTwoPassTextureSamplingFilter(String firstVertexShader, String firstFragmentShader,
@@ -34,15 +34,15 @@ public class GPUImageTwoPassTextureSamplingFilter extends GPUImageTwoPassFilter 
     protected void initTexelOffsets() {
         float ratio = getHorizontalTexelOffsetRatio();
         GPUImageFilter filter = mFilters.get(0);
-        int texelWidthOffsetLocation = GLES20.glGetUniformLocation(filter.getProgram(), "texelWidthOffset");
-        int texelHeightOffsetLocation = GLES20.glGetUniformLocation(filter.getProgram(), "texelHeightOffset");
+        int texelWidthOffsetLocation = GLES30.glGetUniformLocation(filter.getProgram(), "texelWidthOffset");
+        int texelHeightOffsetLocation = GLES30.glGetUniformLocation(filter.getProgram(), "texelHeightOffset");
         filter.setFloat(texelWidthOffsetLocation, ratio / mOutputWidth);
         filter.setFloat(texelHeightOffsetLocation, 0);
 
         ratio = getVerticalTexelOffsetRatio();
         filter = mFilters.get(1);
-        texelWidthOffsetLocation = GLES20.glGetUniformLocation(filter.getProgram(), "texelWidthOffset");
-        texelHeightOffsetLocation = GLES20.glGetUniformLocation(filter.getProgram(), "texelHeightOffset");
+        texelWidthOffsetLocation = GLES30.glGetUniformLocation(filter.getProgram(), "texelWidthOffset");
+        texelHeightOffsetLocation = GLES30.glGetUniformLocation(filter.getProgram(), "texelHeightOffset");
         filter.setFloat(texelWidthOffsetLocation, 0);
         filter.setFloat(texelHeightOffsetLocation, ratio / mOutputHeight);
     }

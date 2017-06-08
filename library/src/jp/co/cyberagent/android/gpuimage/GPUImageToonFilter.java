@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * This uses Sobel edge detection to place a black border around objects,
@@ -88,8 +88,8 @@ public class GPUImageToonFilter extends GPUImage3x3TextureSamplingFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mThresholdLocation = GLES20.glGetUniformLocation(getProgram(), "threshold");
-        mQuantizationLevelsLocation = GLES20.glGetUniformLocation(getProgram(), "quantizationLevels");
+        mThresholdLocation = GLES30.glGetUniformLocation(getProgram(), "threshold");
+        mQuantizationLevelsLocation = GLES30.glGetUniformLocation(getProgram(), "quantizationLevels");
     }
 
     @Override

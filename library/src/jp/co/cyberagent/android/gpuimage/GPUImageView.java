@@ -23,7 +23,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.os.*;
 import android.util.AttributeSet;
@@ -309,7 +309,7 @@ public class GPUImageView extends FrameLayout {
             @Override
             public void run() {
                 final IntBuffer pixelBuffer = IntBuffer.allocate(width * height);
-                GLES20.glReadPixels(0, 0, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
+                GLES30.glReadPixels(0, 0, width, height, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, pixelBuffer);
                 int[] pixelArray = pixelBuffer.array();
 
                 // Convert upside down mirror-reversed image to right-side up normal image.

@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * Converts the image to a single-color version, based on the luminance of each pixel
@@ -73,8 +73,8 @@ public class GPUImageMonochromeFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mIntensityLocation = GLES20.glGetUniformLocation(getProgram(), "intensity");
-        mFilterColorLocation = GLES20.glGetUniformLocation(getProgram(), "filterColor");
+        mIntensityLocation = GLES30.glGetUniformLocation(getProgram(), "intensity");
+        mFilterColorLocation = GLES30.glGetUniformLocation(getProgram(), "filterColor");
     }
 
     @Override

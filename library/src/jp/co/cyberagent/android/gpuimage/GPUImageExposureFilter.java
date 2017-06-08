@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * exposure: The adjusted exposure (-10.0 - 10.0, with 0.0 as the default)
@@ -50,7 +50,7 @@ public class GPUImageExposureFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mExposureLocation = GLES20.glGetUniformLocation(getProgram(), "exposure");
+        mExposureLocation = GLES30.glGetUniformLocation(getProgram(), "exposure");
     }
 
     @Override
