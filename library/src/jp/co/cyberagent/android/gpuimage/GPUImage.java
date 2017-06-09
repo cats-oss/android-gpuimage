@@ -126,6 +126,8 @@ public class GPUImage {
     }
 
     public void setUpVideoSource(VideoSourceRenderer videoSource){
+        mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+
         videoSource.setVideoRenderer(mRenderer);
     }
 
