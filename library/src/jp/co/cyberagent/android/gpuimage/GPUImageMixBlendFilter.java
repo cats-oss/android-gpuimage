@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 public class GPUImageMixBlendFilter extends GPUImageTwoInputFilter {
 
@@ -35,7 +35,7 @@ public class GPUImageMixBlendFilter extends GPUImageTwoInputFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mMixLocation = GLES20.glGetUniformLocation(getProgram(), "mixturePercent");
+        mMixLocation = GLES30.glGetUniformLocation(getProgram(), "mixturePercent");
     }
 
     @Override

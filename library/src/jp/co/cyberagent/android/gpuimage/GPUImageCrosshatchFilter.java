@@ -16,7 +16,7 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * crossHatchSpacing: The fractional width of the image to use as the spacing for the crosshatch. The default is 0.03.
@@ -85,8 +85,8 @@ public class GPUImageCrosshatchFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mCrossHatchSpacingLocation = GLES20.glGetUniformLocation(getProgram(), "crossHatchSpacing");
-        mLineWidthLocation = GLES20.glGetUniformLocation(getProgram(), "lineWidth");
+        mCrossHatchSpacingLocation = GLES30.glGetUniformLocation(getProgram(), "crossHatchSpacing");
+        mLineWidthLocation = GLES30.glGetUniformLocation(getProgram(), "lineWidth");
     }
 
     @Override

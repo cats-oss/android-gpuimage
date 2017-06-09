@@ -1,6 +1,6 @@
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.Matrix;
 
 import java.nio.ByteBuffer;
@@ -48,8 +48,8 @@ public class GPUImageTransformFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        transformMatrixUniform = GLES20.glGetUniformLocation(getProgram(), "transformMatrix");
-        orthographicMatrixUniform = GLES20.glGetUniformLocation(getProgram(), "orthographicMatrix");
+        transformMatrixUniform = GLES30.glGetUniformLocation(getProgram(), "transformMatrix");
+        orthographicMatrixUniform = GLES30.glGetUniformLocation(getProgram(), "orthographicMatrix");
 
         setUniformMatrix4f(transformMatrixUniform, transform3D);
         setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);

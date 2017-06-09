@@ -1,6 +1,6 @@
 package jp.co.cyberagent.android.gpuimage;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 public class GPUImageHalftoneFilter extends GPUImageFilter {
     public static final String HALFTONE_FRAGMENT_SHADER = "" +
@@ -44,8 +44,8 @@ public class GPUImageHalftoneFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mFractionalWidthOfPixelLocation = GLES20.glGetUniformLocation(getProgram(), "fractionalWidthOfPixel");
-        mAspectRatioLocation = GLES20.glGetUniformLocation(getProgram(), "aspectRatio");
+        mFractionalWidthOfPixelLocation = GLES30.glGetUniformLocation(getProgram(), "fractionalWidthOfPixel");
+        mAspectRatioLocation = GLES30.glGetUniformLocation(getProgram(), "aspectRatio");
         setFractionalWidthOfAPixel(mFractionalWidthOfAPixel);
     }
 

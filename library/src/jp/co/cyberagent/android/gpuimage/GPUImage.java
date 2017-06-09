@@ -39,10 +39,15 @@ import android.provider.MediaStore;
 import android.view.Display;
 import android.view.WindowManager;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.Semaphore;
+
+import jp.co.cyberagent.android.gpuimage.videosupport.VideoSourceRenderer;
 
 /**
  * The main accessor for GPUImage functionality. This class helps to do common
@@ -92,7 +97,7 @@ public class GPUImage {
      */
     public void setGLSurfaceView(final GLSurfaceView view) {
         mGlSurfaceView = view;
-        mGlSurfaceView.setEGLContextClientVersion(2);
+        mGlSurfaceView.setEGLContextClientVersion(3);
         mGlSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         mGlSurfaceView.getHolder().setFormat(PixelFormat.RGBA_8888);
         mGlSurfaceView.setRenderer(mRenderer);
@@ -118,6 +123,12 @@ public class GPUImage {
         if (mGlSurfaceView != null) {
             mGlSurfaceView.requestRender();
         }
+    }
+
+    public void setUpVideoSource(VideoSourceRenderer videoSource){
+        mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+
+        videoSource.setVideoRenderer(mRenderer);
     }
 
     /**
