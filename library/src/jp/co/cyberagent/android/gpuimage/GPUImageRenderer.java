@@ -28,8 +28,6 @@ import android.opengl.GLSurfaceView.Renderer;
 
 import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -37,6 +35,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
 
@@ -76,6 +77,9 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private float mBackgroundRed = 0;
     private float mBackgroundGreen = 0;
     private float mBackgroundBlue = 0;
+
+    private Camera mCamera;
+    private Size mCameraPreviewSize;
 
     public GPUImageRenderer(final GPUImageFilter filter) {
         mFilter = filter;
@@ -147,22 +151,25 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
-        final Size previewSize = camera.getParameters().getPreviewSize();
+        if(mCamera != camera){
+            mCamera = camera;
+            mCameraPreviewSize = camera.getParameters().getPreviewSize();
+        }
         if (mGLRgbBuffer == null) {
-            mGLRgbBuffer = IntBuffer.allocate(previewSize.width * previewSize.height);
+            mGLRgbBuffer = IntBuffer.allocate(mCameraPreviewSize.width * mCameraPreviewSize.height);
         }
         if (mRunOnDraw.isEmpty()) {
             runOnDraw(new Runnable() {
                 @Override
                 public void run() {
-                    GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
+                    GPUImageNativeLibrary.YUVtoRBGA(data, mCameraPreviewSize.width, mCameraPreviewSize.height,
                             mGLRgbBuffer.array());
-                    mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, previewSize, mGLTextureId);
+                    mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, mCameraPreviewSize, mGLTextureId);
                     camera.addCallbackBuffer(data);
 
-                    if (mImageWidth != previewSize.width) {
-                        mImageWidth = previewSize.width;
-                        mImageHeight = previewSize.height;
+                    if (mImageWidth != mCameraPreviewSize.width) {
+                        mImageWidth = mCameraPreviewSize.width;
+                        mImageHeight = mCameraPreviewSize.height;
                         adjustImageScaling();
                     }
                 }
