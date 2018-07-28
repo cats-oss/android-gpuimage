@@ -11,14 +11,23 @@ android {
         versionCode = VERSION_CODE
         versionName = VERSION_NAME
 
-        ndk {
-            moduleName "gpuimage-library"
-            stl "gnustl_shared"
-            abiFilters "all"
-            ldLibs "log"
-        }
     }
 
+    defaultConfig {
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+                abiFilters 'armeabi-v7a'
+                arguments '-DANDROID_STL=gnustl_shared'
+            }
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
+
+        }
+    }
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
