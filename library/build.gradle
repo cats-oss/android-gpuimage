@@ -2,13 +2,12 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
-    buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
 
-        versionCode = VERSION_CODE
+        versionCode = VERSION_CODE as int
         versionName = VERSION_NAME
         externalNativeBuild {
             cmake { cppFlags "" }
@@ -24,7 +23,7 @@ android {
 
     android.libraryVariants.all { variant ->
         if (variant.buildType.isDebuggable()) {
-            return; // Skip debug builds.
+            return // Skip debug builds.
         }
         task("javadoc${variant.name.capitalize()}", type: Javadoc) {
             description "Generates Javadoc for $variant.name."
