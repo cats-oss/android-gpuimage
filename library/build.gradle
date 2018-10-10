@@ -10,14 +10,12 @@ android {
 
         versionCode = VERSION_CODE
         versionName = VERSION_NAME
-
-        ndk {
-            moduleName "gpuimage-library"
-            stl "gnustl_shared"
-            abiFilters "all"
-            ldLibs "log"
+        externalNativeBuild {
+            cmake { cppFlags "" }
         }
     }
+    externalNativeBuild {
+        cmake { path "src/main/cpp/CMakeLists.txt" }
     }
 
     lintOptions {
