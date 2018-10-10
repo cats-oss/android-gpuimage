@@ -21,7 +21,7 @@ import android.opengl.GLES20;
 /**
  * Adjusts the white balance of incoming image. <br>
  * <br>
- * temperature: 
+ * temperature:
  * tint:
  */
 public class GPUImageWhiteBalanceFilter extends GPUImageFilter {
@@ -61,7 +61,7 @@ public class GPUImageWhiteBalanceFilter extends GPUImageFilter {
     public GPUImageWhiteBalanceFilter() {
         this(5000.0f, 0.0f);
     }
-    
+
     public GPUImageWhiteBalanceFilter(final float temperature, final float tint) {
         super(NO_FILTER_VERTEX_SHADER, WHITE_BALANCE_FRAGMENT_SHADER);
         mTemperature = temperature;
@@ -81,11 +81,11 @@ public class GPUImageWhiteBalanceFilter extends GPUImageFilter {
 
     public void setTemperature(final float temperature) {
         mTemperature = temperature;
-        setFloat(mTemperatureLocation, mTemperature < 5000 ? (float)(0.0004 * (mTemperature-5000.0)) : (float)(0.00006 * (mTemperature-5000.0)));
+        setFloat(mTemperatureLocation, mTemperature < 5000 ? (float) (0.0004 * (mTemperature - 5000.0)) : (float) (0.00006 * (mTemperature - 5000.0)));
     }
-    
+
     public void setTint(final float tint) {
         mTint = tint;
-        setFloat(mTintLocation, (float)(mTint/100.0));
+        setFloat(mTintLocation, (float) (mTint / 100.0));
     }
 }

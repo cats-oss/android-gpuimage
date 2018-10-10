@@ -61,7 +61,7 @@ public class GPUImageMonochromeFilter extends GPUImageFilter {
     private float[] mColor;
 
     public GPUImageMonochromeFilter() {
-        this(1.0f, new float[] {0.6f, 0.45f, 0.3f, 1.0f});
+        this(1.0f, new float[]{0.6f, 0.45f, 0.3f, 1.0f});
     }
 
     public GPUImageMonochromeFilter(final float intensity, final float[] color) {
@@ -81,21 +81,21 @@ public class GPUImageMonochromeFilter extends GPUImageFilter {
     public void onInitialized() {
         super.onInitialized();
         setIntensity(1.0f);
-        setColor(new float[]{ 0.6f, 0.45f, 0.3f, 1.f });
+        setColor(new float[]{0.6f, 0.45f, 0.3f, 1.f});
     }
 
     public void setIntensity(final float intensity) {
         mIntensity = intensity;
         setFloat(mIntensityLocation, mIntensity);
     }
-    
+
     public void setColor(final float[] color) {
         mColor = color;
         setColorRed(mColor[0], mColor[1], mColor[2]);
-        
+
     }
-    
+
     public void setColorRed(final float red, final float green, final float blue) {
-        setFloatVec3(mFilterColorLocation, new float[]{ red, green, blue });
+        setFloatVec3(mFilterColorLocation, new float[]{red, green, blue});
     }
 }

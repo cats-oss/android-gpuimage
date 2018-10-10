@@ -16,12 +16,13 @@
 
 package jp.co.cyberagent.android.gpuimage.sample.utils;
 
-import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraHelperImpl;
-import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
+
+import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraHelperImpl;
+import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
 
 public class CameraHelperBase implements CameraHelperImpl {
 

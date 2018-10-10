@@ -20,7 +20,7 @@ import android.opengl.GLES20;
 
 /**
  * The haze filter can be used to add or remove haze.
- *
+ * <p>
  * This is similar to a UV filter.
  */
 public class GPUImageHazeFilter extends GPUImageFilter {

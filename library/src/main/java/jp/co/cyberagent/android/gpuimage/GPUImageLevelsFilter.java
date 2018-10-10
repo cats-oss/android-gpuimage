@@ -5,27 +5,27 @@ import android.opengl.GLES20;
 /**
  * Created by vashisthg 30/05/14.
  */
-public class GPUImageLevelsFilter extends GPUImageFilter{
+public class GPUImageLevelsFilter extends GPUImageFilter {
 
     private static final String LOGTAG = GPUImageLevelsFilter.class.getSimpleName();
 
     public static final String LEVELS_FRAGMET_SHADER =
 
             " varying highp vec2 textureCoordinate;\n" +
-            " \n" +
-            " uniform sampler2D inputImageTexture;\n" +
-            " uniform mediump vec3 levelMinimum;\n" +
-            " uniform mediump vec3 levelMiddle;\n" +
-            " uniform mediump vec3 levelMaximum;\n" +
-            " uniform mediump vec3 minOutput;\n" +
-            " uniform mediump vec3 maxOutput;\n" +
-            " \n" +
-            " void main()\n" +
-            " {\n" +
-            "     mediump vec4 textureColor = texture2D(inputImageTexture, textureCoordinate);\n" +
-            "     \n" +
-            "     gl_FragColor = vec4( mix(minOutput, maxOutput, pow(min(max(textureColor.rgb -levelMinimum, vec3(0.0)) / (levelMaximum - levelMinimum  ), vec3(1.0)), 1.0 /levelMiddle)) , textureColor.a);\n" +
-            " }\n";
+                    " \n" +
+                    " uniform sampler2D inputImageTexture;\n" +
+                    " uniform mediump vec3 levelMinimum;\n" +
+                    " uniform mediump vec3 levelMiddle;\n" +
+                    " uniform mediump vec3 levelMaximum;\n" +
+                    " uniform mediump vec3 minOutput;\n" +
+                    " uniform mediump vec3 maxOutput;\n" +
+                    " \n" +
+                    " void main()\n" +
+                    " {\n" +
+                    "     mediump vec4 textureColor = texture2D(inputImageTexture, textureCoordinate);\n" +
+                    "     \n" +
+                    "     gl_FragColor = vec4( mix(minOutput, maxOutput, pow(min(max(textureColor.rgb -levelMinimum, vec3(0.0)) / (levelMaximum - levelMinimum  ), vec3(1.0)), 1.0 /levelMiddle)) , textureColor.a);\n" +
+                    " }\n";
 
     private int mMinLocation;
     private float[] mMin;
@@ -39,7 +39,7 @@ public class GPUImageLevelsFilter extends GPUImageFilter{
     private float[] mMaxOutput;
 
     public GPUImageLevelsFilter() {
-        this(new float[] {0.0f,0.0f,0.0f}, new float[] {1.0f, 1.0f, 1.0f }, new float[] {1.0f, 1.0f ,1.0f}, new float[] {0.0f, 0.0f, 0.0f}, new float[] {1.0f,1.0f,1.0f});
+        this(new float[]{0.0f, 0.0f, 0.0f}, new float[]{1.0f, 1.0f, 1.0f}, new float[]{1.0f, 1.0f, 1.0f}, new float[]{0.0f, 0.0f, 0.0f}, new float[]{1.0f, 1.0f, 1.0f});
     }
 
     private GPUImageLevelsFilter(final float[] min, final float[] mid, final float[] max, final float[] minOUt, final float[] maxOut) {
@@ -70,7 +70,7 @@ public class GPUImageLevelsFilter extends GPUImageFilter{
     }
 
 
-    public void updateUniforms () {
+    public void updateUniforms() {
         setFloatVec3(mMinLocation, mMin);
         setFloatVec3(mMidLocation, mMid);
         setFloatVec3(mMaxLocation, mMax);
@@ -78,17 +78,17 @@ public class GPUImageLevelsFilter extends GPUImageFilter{
         setFloatVec3(mMaxOutputLocation, mMaxOutput);
     }
 
-    public void setMin(float min, float mid , float max ,float minOut , float maxOut) {
+    public void setMin(float min, float mid, float max, float minOut, float maxOut) {
         setRedMin(min, mid, max, minOut, maxOut);
         setGreenMin(min, mid, max, minOut, maxOut);
         setBlueMin(min, mid, max, minOut, maxOut);
     }
 
-    public void setMin(float min, float mid , float max ) {
+    public void setMin(float min, float mid, float max) {
         setMin(min, mid, max, 0.0f, 1.0f);
     }
 
-    public void setRedMin(float min, float mid , float max ,float minOut , float maxOut) {
+    public void setRedMin(float min, float mid, float max, float minOut, float maxOut) {
         mMin[0] = min;
         mMid[0] = mid;
         mMax[0] = max;
@@ -97,11 +97,11 @@ public class GPUImageLevelsFilter extends GPUImageFilter{
         updateUniforms();
     }
 
-    public void setRedMin(float min, float mid , float max ){
+    public void setRedMin(float min, float mid, float max) {
         setRedMin(min, mid, max, 0, 1);
     }
 
-    public void setGreenMin(float min, float mid , float max ,float minOut , float maxOut) {
+    public void setGreenMin(float min, float mid, float max, float minOut, float maxOut) {
         mMin[1] = min;
         mMid[1] = mid;
         mMax[1] = max;
@@ -110,11 +110,11 @@ public class GPUImageLevelsFilter extends GPUImageFilter{
         updateUniforms();
     }
 
-    public void setGreenMin(float min, float mid , float max ){
+    public void setGreenMin(float min, float mid, float max) {
         setGreenMin(min, mid, max, 0, 1);
     }
 
-    public void setBlueMin(float min, float mid , float max ,float minOut , float maxOut) {
+    public void setBlueMin(float min, float mid, float max, float minOut, float maxOut) {
         mMin[2] = min;
         mMid[2] = mid;
         mMax[2] = max;
@@ -123,7 +123,7 @@ public class GPUImageLevelsFilter extends GPUImageFilter{
         updateUniforms();
     }
 
-    public void setBlueMin(float min, float mid , float max ){
+    public void setBlueMin(float min, float mid, float max) {
         setBlueMin(min, mid, max, 0, 1);
     }
 }

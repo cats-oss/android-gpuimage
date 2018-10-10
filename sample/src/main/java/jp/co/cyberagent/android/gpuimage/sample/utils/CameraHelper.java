@@ -16,13 +16,14 @@
 
 package jp.co.cyberagent.android.gpuimage.sample.utils;
 
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.GINGERBREAD;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.view.Surface;
+
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.GINGERBREAD;
 
 public class CameraHelper {
     private final CameraHelperImpl mImpl;
@@ -82,7 +83,7 @@ public class CameraHelper {
     }
 
     public void setCameraDisplayOrientation(final Activity activity,
-            final int cameraId, final Camera camera) {
+                                            final int cameraId, final Camera camera) {
         int result = getCameraDisplayOrientation(activity, cameraId);
         camera.setDisplayOrientation(result);
     }

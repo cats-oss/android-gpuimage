@@ -96,12 +96,13 @@ public class GPUImageChromaKeyBlendFilter extends GPUImageTwoInputFilter {
         setFloat(mThresholdSensitivityLocation, mThresholdSensitivity);
     }
 
-    /** The color to be replaced is specified using individual red, green, and blue components (normalized to 1.0).
+    /**
+     * The color to be replaced is specified using individual red, green, and blue components (normalized to 1.0).
      * The default is green: (0.0, 1.0, 0.0).
      *
-     * @param redComponent Red component of color to be replaced
+     * @param redComponent   Red component of color to be replaced
      * @param greenComponent Green component of color to be replaced
-     * @param blueComponent Blue component of color to be replaced
+     * @param blueComponent  Blue component of color to be replaced
      */
     public void setColorToReplace(float redComponent, float greenComponent, float blueComponent) {
         mColorToReplace = new float[]{redComponent, greenComponent, blueComponent};

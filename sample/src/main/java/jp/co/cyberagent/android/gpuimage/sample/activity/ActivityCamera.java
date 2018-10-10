@@ -165,7 +165,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
 
                                     @Override
                                     public void onPictureSaved(final Uri
-                                            uri) {
+                                                                       uri) {
                                         pictureFile.delete();
                                         camera.startPreview();
                                         view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -222,7 +222,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
 
     @Override
     public void onProgressChanged(final SeekBar seekBar, final int progress,
-            final boolean fromUser) {
+                                  final boolean fromUser) {
         if (mFilterAdjuster != null) {
             mFilterAdjuster.adjust(progress);
         }
@@ -274,7 +274,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
             mGPUImage.setUpCamera(mCameraInstance, orientation, flipHorizontal, false);
         }
 
-        /** A safe way to get an instance of the Camera object. */
+        /**
+         * A safe way to get an instance of the Camera object.
+         */
         private Camera getCameraInstance(final int id) {
             Camera c = null;
             try {

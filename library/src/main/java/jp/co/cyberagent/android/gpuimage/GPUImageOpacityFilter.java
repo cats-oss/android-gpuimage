@@ -21,7 +21,7 @@ import android.opengl.GLES20;
 /**
  * Adjusts the alpha channel of the incoming image
  * opacity: The value to multiply the incoming alpha channel for each pixel by (0.0 - 1.0, with 1.0 as the default)
-*/
+ */
 public class GPUImageOpacityFilter extends GPUImageFilter {
     public static final String OPACITY_FRAGMENT_SHADER = "" +
             "  varying highp vec2 textureCoordinate;\n" +

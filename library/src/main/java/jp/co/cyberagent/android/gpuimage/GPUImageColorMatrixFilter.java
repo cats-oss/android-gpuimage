@@ -44,7 +44,7 @@ public class GPUImageColorMatrixFilter extends GPUImageFilter {
     private int mIntensityLocation;
 
     public GPUImageColorMatrixFilter() {
-        this(1.0f, new float[] {
+        this(1.0f, new float[]{
                 1.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 1.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f,

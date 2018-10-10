@@ -18,7 +18,7 @@ package jp.co.cyberagent.android.gpuimage;
 
 /**
  * A hardware-accelerated 9-hit box blur of an image
- *
+ * <p>
  * scaling: for the size of the applied blur, default of 1.0
  */
 public class GPUImageBoxBlurFilter extends GPUImageTwoPassTextureSamplingFilter {

@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <android.opengl.GLSurfaceView
         android:id="@+id/surfaceView"
@@ -24,7 +24,7 @@
         android:layout_alignParentBottom="true"
         android:background="#000000"
         android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <SeekBar
             android:id="@+id/seekBar"

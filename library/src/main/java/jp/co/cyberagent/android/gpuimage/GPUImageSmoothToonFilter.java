@@ -17,8 +17,8 @@
 package jp.co.cyberagent.android.gpuimage;
 
 /**
- *  This uses a similar process as the GPUImageToonFilter, only it precedes the toon effect
- *  with a Gaussian blur to smooth out noise.
+ * This uses a similar process as the GPUImageToonFilter, only it precedes the toon effect
+ * with a Gaussian blur to smooth out noise.
  */
 public class GPUImageSmoothToonFilter extends GPUImageFilterGroup {
     GPUImageGaussianBlurFilter blurFilter;
