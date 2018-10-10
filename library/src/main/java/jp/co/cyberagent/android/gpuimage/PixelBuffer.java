@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 CyberAgent
+ * Copyright (C) 2018 CyberAgent, Inc.
  * Copyright (C) 2010 jsemler 
  * 
  * Original publication without License
