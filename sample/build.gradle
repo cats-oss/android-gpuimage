@@ -8,8 +8,17 @@ android {
         targetSdkVersion TARGET_SDK_VERSION as int
     }
 
-    lintOptions {
-        abortOnError true
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+            debuggable false
+            zipAlignEnabled true
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 }
 repositories {

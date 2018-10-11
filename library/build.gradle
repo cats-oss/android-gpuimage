@@ -17,8 +17,17 @@ android {
         cmake { path "src/main/cpp/CMakeLists.txt" }
     }
 
-    lintOptions {
-        abortOnError false
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+            debuggable false
+            zipAlignEnabled true
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 
     android.libraryVariants.all { variant ->
