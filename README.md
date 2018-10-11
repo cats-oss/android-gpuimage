@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:2.0.0'
 }
 ```
 
