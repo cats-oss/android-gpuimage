@@ -7,6 +7,14 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 ## Requirements
 * Android 2.2 or higher (OpenGL ES 2.0)
 
+## Milestone
+For Core Library
+- [ ] GLTextureView support
+
+For Sample
+- [x] Migrate to AndroidX
+- [ ] Use Camera2 for Oreo or later
+
 ## Usage
 
 ### Gradle dependency
