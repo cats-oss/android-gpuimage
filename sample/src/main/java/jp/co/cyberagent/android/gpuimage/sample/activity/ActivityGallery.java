@@ -16,7 +16,6 @@
 
 package jp.co.cyberagent.android.gpuimage.sample.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +25,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
@@ -33,7 +33,7 @@ import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjust
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 import jp.co.cyberagent.android.gpuimage.sample.R;
 
-public class ActivityGallery extends Activity implements OnSeekBarChangeListener,
+public class ActivityGallery extends AppCompatActivity implements OnSeekBarChangeListener,
         OnClickListener, GPUImageView.OnPictureSavedListener {
 
     private static final int REQUEST_PICK_IMAGE = 1;

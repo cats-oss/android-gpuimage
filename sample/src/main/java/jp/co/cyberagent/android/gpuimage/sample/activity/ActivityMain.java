@@ -17,18 +17,18 @@
 package jp.co.cyberagent.android.gpuimage.sample.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import jp.co.cyberagent.android.gpuimage.sample.R;
 
-public class ActivityMain extends Activity implements OnClickListener {
+public class ActivityMain extends AppCompatActivity implements OnClickListener {
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {

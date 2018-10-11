@@ -16,7 +16,6 @@
 
 package jp.co.cyberagent.android.gpuimage.sample.activity;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
@@ -38,7 +37,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
+import androidx.appcompat.app.AppCompatActivity;
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
@@ -48,7 +49,7 @@ import jp.co.cyberagent.android.gpuimage.sample.R;
 import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper;
 import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
 
-public class ActivityCamera extends Activity implements OnSeekBarChangeListener, OnClickListener {
+public class ActivityCamera extends AppCompatActivity implements OnSeekBarChangeListener, OnClickListener {
 
     private GPUImage mGPUImage;
     private CameraHelper mCameraHelper;
@@ -196,7 +197,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         }
 
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         File mediaFile;
         if (type == MEDIA_TYPE_IMAGE) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
