@@ -16,7 +16,6 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
@@ -32,7 +31,6 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -143,12 +141,8 @@ public class GPUImage {
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
                             final boolean flipVertical) {
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            setUpCameraGingerbread(camera);
-        } else {
-            camera.setPreviewCallback(mRenderer);
-            camera.startPreview();
-        }
+        camera.setPreviewCallback(mRenderer);
+        camera.startPreview();
         Rotation rotation = Rotation.NORMAL;
         switch (degrees) {
             case 90:
@@ -162,11 +156,6 @@ public class GPUImage {
                 break;
         }
         mRenderer.setRotationCamera(rotation, flipHorizontal, flipVertical);
-    }
-
-    @TargetApi(11)
-    private void setUpCameraGingerbread(final Camera camera) {
-        mRenderer.setUpSurfaceTexture(camera);
     }
 
     /**

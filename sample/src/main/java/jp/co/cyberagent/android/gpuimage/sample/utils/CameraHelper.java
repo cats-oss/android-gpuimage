@@ -22,18 +22,11 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.view.Surface;
 
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.GINGERBREAD;
-
 public class CameraHelper {
     private final CameraHelperImpl mImpl;
 
     public CameraHelper(final Context context) {
-        if (SDK_INT >= GINGERBREAD) {
-            mImpl = new CameraHelperGB();
-        } else {
-            mImpl = new CameraHelperBase(context);
-        }
+        mImpl = new CameraHelperBase(context);
     }
 
     public interface CameraHelperImpl {
