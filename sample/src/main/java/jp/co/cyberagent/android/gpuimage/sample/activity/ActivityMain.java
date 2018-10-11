@@ -21,11 +21,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.PermissionChecker;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import jp.co.cyberagent.android.gpuimage.sample.R;
 
 public class ActivityMain extends Activity implements OnClickListener {
@@ -40,10 +40,9 @@ public class ActivityMain extends Activity implements OnClickListener {
 
     @Override
     public void onClick(final View v) {
-        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.CAMERA)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
-                    v.getId());
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, v.getId());
         } else {
             startActivity(v.getId());
         }
