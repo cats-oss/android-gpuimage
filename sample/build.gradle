@@ -24,10 +24,11 @@ android {
 repositories {
     google()
     jcenter()
+//    maven { url  "https://dl.bintray.com/cats-oss/maven" }
 }
 
 dependencies {
     implementation project(':library')
-//    implementation 'jp.co.cyberagent.android.gpuimage:jp.co.cyberagent.android.gpuimage-library:+@aar'
+//    implementation 'jp.co.cyberagent.android:gpuimage:+'
     implementation 'androidx.appcompat:appcompat:1.0.0'
 }
