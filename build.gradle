@@ -7,6 +7,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.0-alpha13'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
 
@@ -14,9 +16,9 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url("https://oss.sonatype.org/content/repositories/snapshots/") }
     }
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
