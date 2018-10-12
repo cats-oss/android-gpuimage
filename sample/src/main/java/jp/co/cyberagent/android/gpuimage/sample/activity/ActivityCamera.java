@@ -104,12 +104,13 @@ public class ActivityCamera extends AppCompatActivity implements OnSeekBarChange
                 break;
 
             case R.id.button_capture:
-                if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
-                        Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                String mode = mCamera.mCameraInstance.getParameters().getFocusMode();
+                if (Parameters.FOCUS_MODE_FIXED.equals(mode)) {
+                    takePicture();
+                } else if (Parameters.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mode)) {
                     takePicture();
                 } else {
                     mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
-
                         @Override
                         public void onAutoFocus(final boolean success, final Camera camera) {
                             takePicture();
