@@ -1,6 +1,0 @@
-<resources>
-
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar" />
-    <style name="AppTheme.Fullscreen" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen" />
-
-</resources>

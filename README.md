@@ -7,17 +7,25 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 ## Requirements
 * Android 2.2 or higher (OpenGL ES 2.0)
 
+## Milestone
+For Core Library
+- [ ] GLTextureView support
+
+For Sample
+- [x] Migrate to AndroidX
+- [ ] Use Camera2 for Oreo or Higher
+
 ## Usage
 
 ### Gradle dependency
 
 ```groovy
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
-    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
+    compile 'jp.co.cyberagent.android:gpuimage:2.0.0'
 }
 ```
 
@@ -59,7 +67,7 @@ gradle clean assemble
 ```
 
 ## License
-    Copyright 2012 CyberAgent, Inc.
+    Copyright 2018 CyberAgent, Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
