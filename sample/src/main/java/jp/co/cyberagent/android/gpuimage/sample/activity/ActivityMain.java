@@ -23,12 +23,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import jp.co.cyberagent.android.gpuimage.sample.R;
 
 public class ActivityMain extends AppCompatActivity implements OnClickListener {
+
+    private static final int REQUEST_CAMERA = 1;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -40,35 +43,35 @@ public class ActivityMain extends AppCompatActivity implements OnClickListener {
 
     @Override
     public void onClick(final View v) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, v.getId());
-        } else {
-            startActivity(v.getId());
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        if (grantResults.length != 1 || grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            startActivity(requestCode);
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    private void startActivity(int id) {
-        switch (id) {
+        switch (v.getId()) {
             case R.id.button_gallery:
                 startActivity(new Intent(this, ActivityGallery.class));
                 break;
+
             case R.id.button_camera:
-                startActivity(new Intent(this, ActivityCamera.class));
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_DENIED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
+                            REQUEST_CAMERA);
+                } else {
+                    startActivity(new Intent(this, ActivityCamera.class));
+                }
                 break;
 
             default:
                 break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CAMERA &&
+                grantResults.length != 1 ||
+                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startActivity(new Intent(this, ActivityCamera.class));
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 }
