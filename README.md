@@ -1,5 +1,4 @@
 # GPUImage for Android
-# GPUImage for Android
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Download](https://api.bintray.com/packages/cats-oss/maven/gpuimage/images/download.svg) ](https://bintray.com/cats-oss/maven/gpuimage/_latestVersion)
 [![Build Status](https://app.bitrise.io/app/df8b14fac28135e7/status.svg?token=CRtPiCjKs6E0sJVQC5y3GQ&branch=dev-2.0.0)](https://app.bitrise.io/app/df8b14fac28135e7)
