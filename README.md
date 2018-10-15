@@ -13,7 +13,7 @@ For Core Library
 
 For Sample
 - [x] Migrate to AndroidX
-- [ ] Use Camera2 for Oreo or later
+- [ ] Use Camera2 for Oreo or Higher
 
 ## Usage
 
@@ -21,11 +21,11 @@ For Sample
 
 ```groovy
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
-    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:2.0.0'
+    compile 'jp.co.cyberagent.android:gpuimage:2.0.0'
 }
 ```
 
