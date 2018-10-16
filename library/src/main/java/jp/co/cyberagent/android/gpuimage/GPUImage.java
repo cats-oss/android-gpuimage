@@ -144,8 +144,7 @@ public class GPUImage {
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
                             final boolean flipVertical) {
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        camera.setPreviewCallback(mRenderer);
-        camera.startPreview();
+        mRenderer.setUpSurfaceTexture(camera);
         Rotation rotation = Rotation.NORMAL;
         switch (degrees) {
             case 90:
