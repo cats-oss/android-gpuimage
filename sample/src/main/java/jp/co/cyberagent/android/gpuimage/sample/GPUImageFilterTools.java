@@ -118,6 +118,7 @@ public class GPUImageFilterTools {
         filters.addFilter("Grayscale", FilterType.GRAYSCALE);
         filters.addFilter("Sharpness", FilterType.SHARPEN);
         filters.addFilter("Sobel Edge Detection", FilterType.SOBEL_EDGE_DETECTION);
+        filters.addFilter("Threshold Edge Detection", FilterType.THRESHOLD_EDGE_DETECTION);
         filters.addFilter("3x3 Convolution", FilterType.THREE_X_THREE_CONVOLUTION);
         filters.addFilter("Emboss", FilterType.EMBOSS);
         filters.addFilter("Posterize", FilterType.POSTERIZE);
@@ -226,7 +227,9 @@ public class GPUImageFilterTools {
                 sharpness.setSharpness(2.0f);
                 return sharpness;
             case SOBEL_EDGE_DETECTION:
-                return new GPUImageSobelEdgeDetection();
+                return new GPUImageSobelEdgeDetectionFilter();
+            case THRESHOLD_EDGE_DETECTION:
+                return new GPUImageThresholdEdgeDetectionFilter();
             case THREE_X_THREE_CONVOLUTION:
                 GPUImage3x3ConvolutionFilter convolution = new GPUImage3x3ConvolutionFilter();
                 convolution.setConvolutionKernel(new float[]{
@@ -401,7 +404,7 @@ public class GPUImageFilterTools {
     }
 
     private enum FilterType {
-        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION,
+        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THRESHOLD_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION,
         SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE, TONE_CURVE, BLEND_COLOR_BURN, BLEND_COLOR_DODGE, BLEND_DARKEN, BLEND_DIFFERENCE,
         BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
         BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA,
@@ -433,8 +436,10 @@ public class GPUImageFilterTools {
                 adjuster = new GammaAdjuster().filter(filter);
             } else if (filter instanceof GPUImageBrightnessFilter) {
                 adjuster = new BrightnessAdjuster().filter(filter);
-            } else if (filter instanceof GPUImageSobelEdgeDetection) {
+            } else if (filter instanceof GPUImageSobelEdgeDetectionFilter) {
                 adjuster = new SobelAdjuster().filter(filter);
+            } else if (filter instanceof GPUImageThresholdEdgeDetectionFilter) {
+                adjuster = new ThresholdAdjuster().filter(filter);
             } else if (filter instanceof GPUImageEmbossFilter) {
                 adjuster = new EmbossAdjuster().filter(filter);
             } else if (filter instanceof GPUImage3x3TextureSamplingFilter) {
@@ -574,10 +579,18 @@ public class GPUImageFilterTools {
             }
         }
 
-        private class SobelAdjuster extends Adjuster<GPUImageSobelEdgeDetection> {
+        private class SobelAdjuster extends Adjuster<GPUImageSobelEdgeDetectionFilter> {
             @Override
             public void adjust(final int percentage) {
                 getFilter().setLineSize(range(percentage, 0.0f, 5.0f));
+            }
+        }
+
+        private class ThresholdAdjuster extends Adjuster<GPUImageThresholdEdgeDetectionFilter> {
+            @Override
+            public void adjust(final int percentage) {
+                getFilter().setLineSize(range(percentage, 0.0f, 5.0f));
+                getFilter().setThreshold(0.9f);
             }
         }
 
