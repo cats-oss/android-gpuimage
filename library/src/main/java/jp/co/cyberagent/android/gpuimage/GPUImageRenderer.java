@@ -36,13 +36,16 @@ import java.util.Queue;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter;
+import jp.co.cyberagent.android.gpuimage.util.OpenGlUtils;
+import jp.co.cyberagent.android.gpuimage.util.Rotation;
 import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
 
 import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
 
 public class GPUImageRenderer implements Renderer, PreviewCallback {
     public static final int NO_IMAGE = -1;
-    static final float CUBE[] = {
+    public static final float CUBE[] = {
             -1.0f, -1.0f,
             1.0f, -1.0f,
             -1.0f, 1.0f,

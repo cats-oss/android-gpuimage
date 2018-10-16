@@ -16,8 +16,6 @@
 
 package jp.co.cyberagent.android.gpuimage.util;
 
-import jp.co.cyberagent.android.gpuimage.Rotation;
-
 public class TextureRotationUtil {
 
     public static final float TEXTURE_NO_ROTATION[] = {
