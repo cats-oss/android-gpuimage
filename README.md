@@ -52,6 +52,31 @@ public void onCreate(final Bundle savedInstanceState) {
 }
 ```
 
+Using GPUImageView
+```xml
+<jp.co.cyberagent.android.gpuimage.GPUImageView
+    android:id="@+id/gpuimageview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:surface_type="texture_view" /> <!-- surface_view or texture_view -->
+```
+
+```java
+@Override
+public void onCreate(final Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity);
+
+    Uri imageUri = ...;
+    mGPUImageView = findViewById(R.id.gpuimageview);
+    mGPUImageView.setImage(imageUri); // this loads image on the current thread, should be run in a thread
+    mGPUImageView.setFilter(new GPUImageSepiaFilter());
+
+    // Later when image should be saved saved:
+    mGPUImageView.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
+}
+```
+
 Without preview:
 
 ```java
