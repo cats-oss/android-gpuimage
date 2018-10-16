@@ -12,7 +12,7 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 
 ## Milestone
 For Core Library
-- [ ] GLTextureView support
+- [x] GLTextureView support
 
 For Sample
 - [x] Migrate to AndroidX
