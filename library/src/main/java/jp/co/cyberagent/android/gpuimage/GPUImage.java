@@ -45,6 +45,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter;
+import jp.co.cyberagent.android.gpuimage.util.Rotation;
+
 /**
  * The main accessor for GPUImage functionality. This class helps to do common
  * tasks through a simple interface.
