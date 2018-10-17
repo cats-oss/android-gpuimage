@@ -17,8 +17,10 @@
 package jp.co.cyberagent.android.gpuimage;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.hardware.Camera;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.opengl.GLES20;
@@ -30,6 +32,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -43,9 +46,13 @@ import java.util.concurrent.Semaphore;
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.util.Rotation;
 
+import static jp.co.cyberagent.android.gpuimage.GPUImage.SURFACE_TYPE_SURFACE_VIEW;
+import static jp.co.cyberagent.android.gpuimage.GPUImage.SURFACE_TYPE_TEXTURE_VIEW;
+
 public class GPUImageView extends FrameLayout {
 
-    private GLSurfaceView mGLSurfaceView;
+    private int mSurfaceType = SURFACE_TYPE_SURFACE_VIEW;
+    private View mSurfaceView;
     private GPUImage mGPUImage;
     private GPUImageFilter mFilter;
     public Size mForceSize = null;
@@ -62,10 +69,23 @@ public class GPUImageView extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        mGLSurfaceView = new GPUImageGLSurfaceView(context, attrs);
-        addView(mGLSurfaceView);
+        if (attrs != null) {
+            TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.GPUImageView, 0, 0);
+            try {
+                mSurfaceType = a.getInt(R.styleable.GPUImageView_surface_type, mSurfaceType);
+            } finally {
+                a.recycle();
+            }
+        }
         mGPUImage = new GPUImage(getContext());
-        mGPUImage.setGLSurfaceView(mGLSurfaceView);
+        if (mSurfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
+            mSurfaceView = new GPUImageGLTextureView(context, attrs);
+            mGPUImage.setGLTextureView((GLTextureView) mSurfaceView);
+        } else {
+            mSurfaceView = new GPUImageGLSurfaceView(context, attrs);
+            mGPUImage.setGLSurfaceView((GLSurfaceView) mSurfaceView);
+        }
+        addView(mSurfaceView);
     }
 
     @Override
@@ -102,6 +122,28 @@ public class GPUImageView extends FrameLayout {
     }
 
     /**
+     * Sets the up camera to be connected to GPUImage to get a filtered preview.
+     *
+     * @param camera the camera
+     */
+    public void setUpCamera(final Camera camera) {
+        mGPUImage.setUpCamera(camera);
+    }
+
+    /**
+     * Sets the up camera to be connected to GPUImage to get a filtered preview.
+     *
+     * @param camera         the camera
+     * @param degrees        by how many degrees the image should be rotated
+     * @param flipHorizontal if the image should be flipped horizontally
+     * @param flipVertical   if the image should be flipped vertically
+     */
+    public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
+                            final boolean flipVertical) {
+        mGPUImage.setUpCamera(camera, degrees, flipHorizontal, flipVertical);
+    }
+
+    /**
      * Sets the background color
      *
      * @param red   red color value
@@ -115,7 +157,7 @@ public class GPUImageView extends FrameLayout {
     // TODO Should be an xml attribute. But then GPUImage can not be distributed as .jar anymore.
     public void setRatio(float ratio) {
         mRatio = ratio;
-        mGLSurfaceView.requestLayout();
+        mSurfaceView.requestLayout();
         mGPUImage.deleteImage();
     }
 
@@ -186,7 +228,11 @@ public class GPUImageView extends FrameLayout {
     }
 
     public void requestRender() {
-        mGLSurfaceView.requestRender();
+        if (mSurfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) mSurfaceView).requestRender();
+        } else if (mSurfaceView instanceof GLTextureView) {
+            ((GLTextureView) mSurfaceView).requestRender();
+        }
     }
 
     /**
@@ -259,8 +305,7 @@ public class GPUImageView extends FrameLayout {
             public void run() {
                 // Show loading
                 addView(new LoadingView(getContext()));
-
-                mGLSurfaceView.requestLayout();
+                mSurfaceView.requestLayout();
             }
         });
         waiter.acquire();
@@ -281,7 +326,7 @@ public class GPUImageView extends FrameLayout {
         post(new Runnable() {
             @Override
             public void run() {
-                mGLSurfaceView.requestLayout();
+                mSurfaceView.requestLayout();
             }
         });
         requestRender();
@@ -306,8 +351,8 @@ public class GPUImageView extends FrameLayout {
     public Bitmap capture() throws InterruptedException {
         final Semaphore waiter = new Semaphore(0);
 
-        final int width = mGLSurfaceView.getMeasuredWidth();
-        final int height = mGLSurfaceView.getMeasuredHeight();
+        final int width = mSurfaceView.getMeasuredWidth();
+        final int height = mSurfaceView.getMeasuredHeight();
 
         // Take picture on OpenGL thread
         final int[] pixelMirroredArray = new int[width * height];
@@ -336,17 +381,25 @@ public class GPUImageView extends FrameLayout {
     }
 
     /**
-     * Pauses the GLSurfaceView.
+     * Pauses the Surface.
      */
     public void onPause() {
-        mGLSurfaceView.onPause();
+        if (mSurfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) mSurfaceView).onPause();
+        } else if (mSurfaceView instanceof GLTextureView) {
+            ((GLTextureView) mSurfaceView).onPause();
+        }
     }
 
     /**
-     * Resumes the GLSurfaceView.
+     * Resumes the Surface.
      */
     public void onResume() {
-        mGLSurfaceView.onResume();
+        if (mSurfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) mSurfaceView).onResume();
+        } else if (mSurfaceView instanceof GLTextureView) {
+            ((GLTextureView) mSurfaceView).onResume();
+        }
     }
 
     public static class Size {
@@ -365,6 +418,26 @@ public class GPUImageView extends FrameLayout {
         }
 
         public GPUImageGLSurfaceView(Context context, AttributeSet attrs) {
+            super(context, attrs);
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            if (mForceSize != null) {
+                super.onMeasure(MeasureSpec.makeMeasureSpec(mForceSize.width, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(mForceSize.height, MeasureSpec.EXACTLY));
+            } else {
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            }
+        }
+    }
+
+    private class GPUImageGLTextureView extends GLTextureView {
+        public GPUImageGLTextureView(Context context) {
+            super(context);
+        }
+
+        public GPUImageGLTextureView(Context context, AttributeSet attrs) {
             super(context, attrs);
         }
 

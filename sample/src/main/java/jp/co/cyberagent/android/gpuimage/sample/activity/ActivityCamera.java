@@ -16,8 +16,6 @@
 
 package jp.co.cyberagent.android.gpuimage.sample.activity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
@@ -40,7 +38,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
-import jp.co.cyberagent.android.gpuimage.GPUImage;
+import jp.co.cyberagent.android.gpuimage.GPUImageView;
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools;
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster;
@@ -51,7 +49,7 @@ import jp.co.cyberagent.android.gpuimage.sample.utils.CameraHelper.CameraInfo2;
 
 public class ActivityCamera extends AppCompatActivity implements OnSeekBarChangeListener, OnClickListener {
 
-    private GPUImage mGPUImage;
+    private GPUImageView mGPUImageView;
     private CameraHelper mCameraHelper;
     private CameraLoader mCamera;
     private GPUImageFilter mFilter;
@@ -65,9 +63,7 @@ public class ActivityCamera extends AppCompatActivity implements OnSeekBarChange
         findViewById(R.id.button_choose_filter).setOnClickListener(this);
         findViewById(R.id.button_capture).setOnClickListener(this);
 
-        mGPUImage = new GPUImage(this);
-        mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
-
+        mGPUImageView = findViewById(R.id.surfaceView);
         mCameraHelper = new CameraHelper(this);
         mCamera = new CameraLoader();
 
@@ -157,17 +153,13 @@ public class ActivityCamera extends AppCompatActivity implements OnSeekBarChange
                         }
 
                         data = null;
-                        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath());
                         // mGPUImage.setImage(bitmap);
                         final GLSurfaceView view = (GLSurfaceView) findViewById(R.id.surfaceView);
                         view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-                        mGPUImage.saveToPictures(bitmap, "GPUImage",
-                                System.currentTimeMillis() + ".jpg",
-                                new GPUImage.OnPictureSavedListener() {
-
+                        mGPUImageView.saveToPictures("GPUImage", System.currentTimeMillis() + ".jpg",
+                                new GPUImageView.OnPictureSavedListener() {
                                     @Override
-                                    public void onPictureSaved(final Uri
-                                                                       uri) {
+                                    public void onPictureSaved(Uri uri) {
                                         pictureFile.delete();
                                         camera.startPreview();
                                         view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -217,7 +209,7 @@ public class ActivityCamera extends AppCompatActivity implements OnSeekBarChange
         if (mFilter == null
                 || (filter != null && !mFilter.getClass().equals(filter.getClass()))) {
             mFilter = filter;
-            mGPUImage.setFilter(mFilter);
+            mGPUImageView.setFilter(mFilter);
             mFilterAdjuster = new FilterAdjuster(mFilter);
         }
     }
@@ -273,7 +265,7 @@ public class ActivityCamera extends AppCompatActivity implements OnSeekBarChange
             CameraInfo2 cameraInfo = new CameraInfo2();
             mCameraHelper.getCameraInfo(mCurrentCameraId, cameraInfo);
             boolean flipHorizontal = cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT;
-            mGPUImage.setUpCamera(mCameraInstance, orientation, flipHorizontal, false);
+            mGPUImageView.setUpCamera(mCameraInstance, orientation, flipHorizontal, false);
         }
 
         /**
