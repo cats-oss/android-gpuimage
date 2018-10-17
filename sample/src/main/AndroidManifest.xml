@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".activity.ActivityMain"
+            android:name=".activity.MainActivity"
             android:label="@string/title_activity_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,9 +30,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ActivityGallery" />
+        <activity android:name=".activity.GalleryActivity" />
         <activity
-            android:name=".activity.ActivityCamera"
+            android:name=".activity.CameraActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
