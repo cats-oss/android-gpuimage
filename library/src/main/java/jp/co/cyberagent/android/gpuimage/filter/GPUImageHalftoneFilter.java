@@ -26,11 +26,11 @@ public class GPUImageHalftoneFilter extends GPUImageFilter {
             "  gl_FragColor = vec4(vec3(checkForPresenceWithinDot), 1.0);\n" +
             "}";
 
-    private int mFractionalWidthOfPixelLocation;
-    private int mAspectRatioLocation;
+    private int fractionalWidthOfPixelLocation;
+    private int aspectRatioLocation;
 
-    private float mFractionalWidthOfAPixel;
-    private float mAspectRatio;
+    private float fractionalWidthOfAPixel;
+    private float aspectRatio;
 
     public GPUImageHalftoneFilter() {
         this(0.01f);
@@ -38,15 +38,15 @@ public class GPUImageHalftoneFilter extends GPUImageFilter {
 
     public GPUImageHalftoneFilter(float fractionalWidthOfAPixel) {
         super(NO_FILTER_VERTEX_SHADER, HALFTONE_FRAGMENT_SHADER);
-        mFractionalWidthOfAPixel = fractionalWidthOfAPixel;
+        this.fractionalWidthOfAPixel = fractionalWidthOfAPixel;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mFractionalWidthOfPixelLocation = GLES20.glGetUniformLocation(getProgram(), "fractionalWidthOfPixel");
-        mAspectRatioLocation = GLES20.glGetUniformLocation(getProgram(), "aspectRatio");
-        setFractionalWidthOfAPixel(mFractionalWidthOfAPixel);
+        fractionalWidthOfPixelLocation = GLES20.glGetUniformLocation(getProgram(), "fractionalWidthOfPixel");
+        aspectRatioLocation = GLES20.glGetUniformLocation(getProgram(), "aspectRatio");
+        setFractionalWidthOfAPixel(fractionalWidthOfAPixel);
     }
 
     @Override
@@ -56,12 +56,12 @@ public class GPUImageHalftoneFilter extends GPUImageFilter {
     }
 
     public void setFractionalWidthOfAPixel(final float fractionalWidthOfAPixel) {
-        mFractionalWidthOfAPixel = fractionalWidthOfAPixel;
-        setFloat(mFractionalWidthOfPixelLocation, mFractionalWidthOfAPixel);
+        this.fractionalWidthOfAPixel = fractionalWidthOfAPixel;
+        setFloat(fractionalWidthOfPixelLocation, this.fractionalWidthOfAPixel);
     }
 
     public void setAspectRatio(final float aspectRatio) {
-        mAspectRatio = aspectRatio;
-        setFloat(mAspectRatioLocation, mAspectRatio);
+        this.aspectRatio = aspectRatio;
+        setFloat(aspectRatioLocation, this.aspectRatio);
     }
 }

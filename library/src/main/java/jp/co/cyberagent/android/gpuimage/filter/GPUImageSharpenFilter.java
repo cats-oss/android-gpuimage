@@ -83,10 +83,10 @@ public class GPUImageSharpenFilter extends GPUImageFilter {
             "    gl_FragColor = vec4((textureColor * centerMultiplier - (leftTextureColor * edgeMultiplier + rightTextureColor * edgeMultiplier + topTextureColor * edgeMultiplier + bottomTextureColor * edgeMultiplier)), texture2D(inputImageTexture, bottomTextureCoordinate).w);\n" +
             "}";
 
-    private int mSharpnessLocation;
-    private float mSharpness;
-    private int mImageWidthFactorLocation;
-    private int mImageHeightFactorLocation;
+    private int sharpnessLocation;
+    private float sharpness;
+    private int imageWidthFactorLocation;
+    private int imageHeightFactorLocation;
 
     public GPUImageSharpenFilter() {
         this(0.0f);
@@ -94,27 +94,27 @@ public class GPUImageSharpenFilter extends GPUImageFilter {
 
     public GPUImageSharpenFilter(final float sharpness) {
         super(SHARPEN_VERTEX_SHADER, SHARPEN_FRAGMENT_SHADER);
-        mSharpness = sharpness;
+        this.sharpness = sharpness;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mSharpnessLocation = GLES20.glGetUniformLocation(getProgram(), "sharpness");
-        mImageWidthFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageWidthFactor");
-        mImageHeightFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageHeightFactor");
-        setSharpness(mSharpness);
+        sharpnessLocation = GLES20.glGetUniformLocation(getProgram(), "sharpness");
+        imageWidthFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageWidthFactor");
+        imageHeightFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageHeightFactor");
+        setSharpness(sharpness);
     }
 
     @Override
     public void onOutputSizeChanged(final int width, final int height) {
         super.onOutputSizeChanged(width, height);
-        setFloat(mImageWidthFactorLocation, 1.0f / width);
-        setFloat(mImageHeightFactorLocation, 1.0f / height);
+        setFloat(imageWidthFactorLocation, 1.0f / width);
+        setFloat(imageHeightFactorLocation, 1.0f / height);
     }
 
     public void setSharpness(final float sharpness) {
-        mSharpness = sharpness;
-        setFloat(mSharpnessLocation, mSharpness);
+        this.sharpness = sharpness;
+        setFloat(sharpnessLocation, this.sharpness);
     }
 }

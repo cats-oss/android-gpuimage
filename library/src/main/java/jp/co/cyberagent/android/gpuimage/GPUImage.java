@@ -59,14 +59,14 @@ public class GPUImage {
     static final int SURFACE_TYPE_SURFACE_VIEW = 0;
     static final int SURFACE_TYPE_TEXTURE_VIEW = 1;
 
-    private final Context mContext;
-    private final GPUImageRenderer mRenderer;
-    private int mSurfaceType = SURFACE_TYPE_SURFACE_VIEW;
-    private GLSurfaceView mGlSurfaceView;
-    private GLTextureView mGlTextureView;
-    private GPUImageFilter mFilter;
-    private Bitmap mCurrentBitmap;
-    private ScaleType mScaleType = ScaleType.CENTER_CROP;
+    private final Context context;
+    private final GPUImageRenderer renderer;
+    private int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
+    private GLSurfaceView glSurfaceView;
+    private GLTextureView glTextureView;
+    private GPUImageFilter filter;
+    private Bitmap currentBitmap;
+    private ScaleType scaleType = ScaleType.CENTER_CROP;
 
     /**
      * Instantiates a new GPUImage object.
@@ -78,9 +78,9 @@ public class GPUImage {
             throw new IllegalStateException("OpenGL ES 2.0 is not supported on this phone.");
         }
 
-        mContext = context;
-        mFilter = new GPUImageFilter();
-        mRenderer = new GPUImageRenderer(mFilter);
+        this.context = context;
+        filter = new GPUImageFilter();
+        renderer = new GPUImageRenderer(filter);
     }
 
     /**
@@ -103,14 +103,14 @@ public class GPUImage {
      * @param view the GLSurfaceView
      */
     public void setGLSurfaceView(final GLSurfaceView view) {
-        mSurfaceType = SURFACE_TYPE_SURFACE_VIEW;
-        mGlSurfaceView = view;
-        mGlSurfaceView.setEGLContextClientVersion(2);
-        mGlSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        mGlSurfaceView.getHolder().setFormat(PixelFormat.RGBA_8888);
-        mGlSurfaceView.setRenderer(mRenderer);
-        mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        mGlSurfaceView.requestRender();
+        surfaceType = SURFACE_TYPE_SURFACE_VIEW;
+        glSurfaceView = view;
+        glSurfaceView.setEGLContextClientVersion(2);
+        glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        glSurfaceView.getHolder().setFormat(PixelFormat.RGBA_8888);
+        glSurfaceView.setRenderer(renderer);
+        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        glSurfaceView.requestRender();
     }
 
     /**
@@ -119,14 +119,14 @@ public class GPUImage {
      * @param view the GLTextureView
      */
     public void setGLTextureView(final GLTextureView view) {
-        mSurfaceType = SURFACE_TYPE_TEXTURE_VIEW;
-        mGlTextureView = view;
-        mGlTextureView.setEGLContextClientVersion(2);
-        mGlTextureView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        mGlTextureView.setOpaque(false);
-        mGlTextureView.setRenderer(mRenderer);
-        mGlTextureView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        mGlTextureView.requestRender();
+        surfaceType = SURFACE_TYPE_TEXTURE_VIEW;
+        glTextureView = view;
+        glTextureView.setEGLContextClientVersion(2);
+        glTextureView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        glTextureView.setOpaque(false);
+        glTextureView.setRenderer(renderer);
+        glTextureView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        glTextureView.requestRender();
     }
 
     /**
@@ -137,20 +137,20 @@ public class GPUImage {
      * @param blue  red color value
      */
     public void setBackgroundColor(float red, float green, float blue) {
-        mRenderer.setBackgroundColor(red, green, blue);
+        renderer.setBackgroundColor(red, green, blue);
     }
 
     /**
      * Request the preview to be rendered again.
      */
     public void requestRender() {
-        if (mSurfaceType == SURFACE_TYPE_SURFACE_VIEW) {
-            if (mGlSurfaceView != null) {
-                mGlSurfaceView.requestRender();
+        if (surfaceType == SURFACE_TYPE_SURFACE_VIEW) {
+            if (glSurfaceView != null) {
+                glSurfaceView.requestRender();
             }
-        } else if (mSurfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
-            if (mGlTextureView != null) {
-                mGlTextureView.requestRender();
+        } else if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
+            if (glTextureView != null) {
+                glTextureView.requestRender();
             }
         }
     }
@@ -174,12 +174,12 @@ public class GPUImage {
      */
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
                             final boolean flipVertical) {
-        if (mSurfaceType == SURFACE_TYPE_SURFACE_VIEW) {
-            mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        } else if (mSurfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
-            mGlTextureView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        if (surfaceType == SURFACE_TYPE_SURFACE_VIEW) {
+            glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        } else if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
+            glTextureView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         }
-        mRenderer.setUpSurfaceTexture(camera);
+        renderer.setUpSurfaceTexture(camera);
         Rotation rotation = Rotation.NORMAL;
         switch (degrees) {
             case 90:
@@ -192,7 +192,7 @@ public class GPUImage {
                 rotation = Rotation.ROTATION_270;
                 break;
         }
-        mRenderer.setRotationCamera(rotation, flipHorizontal, flipVertical);
+        renderer.setRotationCamera(rotation, flipHorizontal, flipVertical);
     }
 
     /**
@@ -202,8 +202,8 @@ public class GPUImage {
      * @param filter the new filter
      */
     public void setFilter(final GPUImageFilter filter) {
-        mFilter = filter;
-        mRenderer.setFilter(mFilter);
+        this.filter = filter;
+        renderer.setFilter(this.filter);
         requestRender();
     }
 
@@ -213,8 +213,8 @@ public class GPUImage {
      * @param bitmap the new image
      */
     public void setImage(final Bitmap bitmap) {
-        mCurrentBitmap = bitmap;
-        mRenderer.setImageBitmap(bitmap, false);
+        currentBitmap = bitmap;
+        renderer.setImageBitmap(bitmap, false);
         requestRender();
     }
 
@@ -225,10 +225,10 @@ public class GPUImage {
      * @param scaleType The new ScaleType
      */
     public void setScaleType(ScaleType scaleType) {
-        mScaleType = scaleType;
-        mRenderer.setScaleType(scaleType);
-        mRenderer.deleteImage();
-        mCurrentBitmap = null;
+        this.scaleType = scaleType;
+        renderer.setScaleType(scaleType);
+        renderer.deleteImage();
+        currentBitmap = null;
         requestRender();
     }
 
@@ -238,7 +238,7 @@ public class GPUImage {
      * @param rotation new rotation
      */
     public void setRotation(Rotation rotation) {
-        mRenderer.setRotation(rotation);
+        renderer.setRotation(rotation);
     }
 
     /**
@@ -247,15 +247,15 @@ public class GPUImage {
      * @param rotation new rotation
      */
     public void setRotation(Rotation rotation, boolean flipHorizontal, boolean flipVertical) {
-        mRenderer.setRotation(rotation, flipHorizontal, flipVertical);
+        renderer.setRotation(rotation, flipHorizontal, flipVertical);
     }
 
     /**
      * Deletes the current image.
      */
     public void deleteImage() {
-        mRenderer.deleteImage();
-        mCurrentBitmap = null;
+        renderer.deleteImage();
+        currentBitmap = null;
         requestRender();
     }
 
@@ -281,7 +281,7 @@ public class GPUImage {
         String[] projection = {
                 MediaStore.Images.Media.DATA,
         };
-        Cursor cursor = mContext.getContentResolver()
+        Cursor cursor = context.getContentResolver()
                 .query(uri, projection, null, null, null);
         int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         String path = null;
@@ -298,7 +298,7 @@ public class GPUImage {
      * @return the current image with filter applied
      */
     public Bitmap getBitmapWithFilterApplied() {
-        return getBitmapWithFilterApplied(mCurrentBitmap);
+        return getBitmapWithFilterApplied(currentBitmap);
     }
 
     /**
@@ -308,43 +308,43 @@ public class GPUImage {
      * @return the bitmap with filter applied
      */
     public Bitmap getBitmapWithFilterApplied(final Bitmap bitmap) {
-        if (mGlSurfaceView != null || mGlTextureView != null) {
-            mRenderer.deleteImage();
-            mRenderer.runOnDraw(new Runnable() {
+        if (glSurfaceView != null || glTextureView != null) {
+            renderer.deleteImage();
+            renderer.runOnDraw(new Runnable() {
 
                 @Override
                 public void run() {
-                    synchronized (mFilter) {
-                        mFilter.destroy();
-                        mFilter.notify();
+                    synchronized (filter) {
+                        filter.destroy();
+                        filter.notify();
                     }
                 }
             });
-            synchronized (mFilter) {
+            synchronized (filter) {
                 requestRender();
                 try {
-                    mFilter.wait();
+                    filter.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        GPUImageRenderer renderer = new GPUImageRenderer(mFilter);
+        GPUImageRenderer renderer = new GPUImageRenderer(filter);
         renderer.setRotation(Rotation.NORMAL,
-                mRenderer.isFlippedHorizontally(), mRenderer.isFlippedVertically());
-        renderer.setScaleType(mScaleType);
+                this.renderer.isFlippedHorizontally(), this.renderer.isFlippedVertically());
+        renderer.setScaleType(scaleType);
         PixelBuffer buffer = new PixelBuffer(bitmap.getWidth(), bitmap.getHeight());
         buffer.setRenderer(renderer);
         renderer.setImageBitmap(bitmap, false);
         Bitmap result = buffer.getBitmap();
-        mFilter.destroy();
+        filter.destroy();
         renderer.deleteImage();
         buffer.destroy();
 
-        mRenderer.setFilter(mFilter);
-        if (mCurrentBitmap != null) {
-            mRenderer.setImageBitmap(mCurrentBitmap, false);
+        this.renderer.setFilter(filter);
+        if (currentBitmap != null) {
+            this.renderer.setImageBitmap(currentBitmap, false);
         }
         requestRender();
 
@@ -398,7 +398,7 @@ public class GPUImage {
     @Deprecated
     public void saveToPictures(final String folderName, final String fileName,
                                final OnPictureSavedListener listener) {
-        saveToPictures(mCurrentBitmap, folderName, fileName, listener);
+        saveToPictures(currentBitmap, folderName, fileName, listener);
     }
 
     /**
@@ -428,30 +428,30 @@ public class GPUImage {
      * @param runnable The runnable to be run on the OpenGL thread.
      */
     void runOnGLThread(Runnable runnable) {
-        mRenderer.runOnDrawEnd(runnable);
+        renderer.runOnDrawEnd(runnable);
     }
 
     private int getOutputWidth() {
-        if (mRenderer != null && mRenderer.getFrameWidth() != 0) {
-            return mRenderer.getFrameWidth();
-        } else if (mCurrentBitmap != null) {
-            return mCurrentBitmap.getWidth();
+        if (renderer != null && renderer.getFrameWidth() != 0) {
+            return renderer.getFrameWidth();
+        } else if (currentBitmap != null) {
+            return currentBitmap.getWidth();
         } else {
             WindowManager windowManager =
-                    (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                    (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             Display display = windowManager.getDefaultDisplay();
             return display.getWidth();
         }
     }
 
     private int getOutputHeight() {
-        if (mRenderer != null && mRenderer.getFrameHeight() != 0) {
-            return mRenderer.getFrameHeight();
-        } else if (mCurrentBitmap != null) {
-            return mCurrentBitmap.getHeight();
+        if (renderer != null && renderer.getFrameHeight() != 0) {
+            return renderer.getFrameHeight();
+        } else if (currentBitmap != null) {
+            return currentBitmap.getHeight();
         } else {
             WindowManager windowManager =
-                    (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                    (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             Display display = windowManager.getDefaultDisplay();
             return display.getHeight();
         }
@@ -460,25 +460,25 @@ public class GPUImage {
     @Deprecated
     private class SaveTask extends AsyncTask<Void, Void, Void> {
 
-        private final Bitmap mBitmap;
-        private final String mFolderName;
-        private final String mFileName;
-        private final OnPictureSavedListener mListener;
-        private final Handler mHandler;
+        private final Bitmap bitmap;
+        private final String folderName;
+        private final String fileName;
+        private final OnPictureSavedListener listener;
+        private final Handler handler;
 
         public SaveTask(final Bitmap bitmap, final String folderName, final String fileName,
                         final OnPictureSavedListener listener) {
-            mBitmap = bitmap;
-            mFolderName = folderName;
-            mFileName = fileName;
-            mListener = listener;
-            mHandler = new Handler();
+            this.bitmap = bitmap;
+            this.folderName = folderName;
+            this.fileName = fileName;
+            this.listener = listener;
+            handler = new Handler();
         }
 
         @Override
         protected Void doInBackground(final Void... params) {
-            Bitmap result = getBitmapWithFilterApplied(mBitmap);
-            saveImage(mFolderName, mFileName, result);
+            Bitmap result = getBitmapWithFilterApplied(bitmap);
+            saveImage(folderName, fileName, result);
             return null;
         }
 
@@ -489,19 +489,19 @@ public class GPUImage {
             try {
                 file.getParentFile().mkdirs();
                 image.compress(CompressFormat.JPEG, 80, new FileOutputStream(file));
-                MediaScannerConnection.scanFile(mContext,
+                MediaScannerConnection.scanFile(context,
                         new String[]{
                                 file.toString()
                         }, null,
                         new MediaScannerConnection.OnScanCompletedListener() {
                             @Override
                             public void onScanCompleted(final String path, final Uri uri) {
-                                if (mListener != null) {
-                                    mHandler.post(new Runnable() {
+                                if (listener != null) {
+                                    handler.post(new Runnable() {
 
                                         @Override
                                         public void run() {
-                                            mListener.onPictureSaved(uri);
+                                            listener.onPictureSaved(uri);
                                         }
                                     });
                                 }
@@ -533,7 +533,7 @@ public class GPUImage {
                 if (mUri.getScheme().startsWith("http") || mUri.getScheme().startsWith("https")) {
                     inputStream = new URL(mUri.toString()).openStream();
                 } else {
-                    inputStream = mContext.getContentResolver().openInputStream(mUri);
+                    inputStream = context.getContentResolver().openInputStream(mUri);
                 }
                 return BitmapFactory.decodeStream(inputStream, null, options);
             } catch (Exception e) {
@@ -544,7 +544,7 @@ public class GPUImage {
 
         @Override
         protected int getImageOrientation() throws IOException {
-            Cursor cursor = mContext.getContentResolver().query(mUri,
+            Cursor cursor = context.getContentResolver().query(mUri,
                     new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
             if (cursor == null || cursor.getCount() != 1) {
@@ -593,36 +593,36 @@ public class GPUImage {
 
     private abstract class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
-        private final GPUImage mGPUImage;
-        private int mOutputWidth;
-        private int mOutputHeight;
+        private final GPUImage gpuImage;
+        private int outputWidth;
+        private int outputHeight;
 
         @SuppressWarnings("deprecation")
         public LoadImageTask(final GPUImage gpuImage) {
-            mGPUImage = gpuImage;
+            this.gpuImage = gpuImage;
         }
 
         @Override
         protected Bitmap doInBackground(Void... params) {
-            if (mRenderer != null && mRenderer.getFrameWidth() == 0) {
+            if (renderer != null && renderer.getFrameWidth() == 0) {
                 try {
-                    synchronized (mRenderer.mSurfaceChangedWaiter) {
-                        mRenderer.mSurfaceChangedWaiter.wait(3000);
+                    synchronized (renderer.surfaceChangedWaiter) {
+                        renderer.surfaceChangedWaiter.wait(3000);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            mOutputWidth = getOutputWidth();
-            mOutputHeight = getOutputHeight();
+            outputWidth = getOutputWidth();
+            outputHeight = getOutputHeight();
             return loadResizedImage();
         }
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
-            mGPUImage.deleteImage();
-            mGPUImage.setImage(bitmap);
+            gpuImage.deleteImage();
+            gpuImage.setImage(bitmap);
         }
 
         protected abstract Bitmap decode(BitmapFactory.Options options);
@@ -632,7 +632,7 @@ public class GPUImage {
             options.inJustDecodeBounds = true;
             decode(options);
             int scale = 1;
-            while (checkSize(options.outWidth / scale > mOutputWidth, options.outHeight / scale > mOutputHeight)) {
+            while (checkSize(options.outWidth / scale > outputWidth, options.outHeight / scale > outputHeight)) {
                 scale++;
             }
 
@@ -666,10 +666,10 @@ public class GPUImage {
                 System.gc();
             }
 
-            if (mScaleType == ScaleType.CENTER_CROP) {
+            if (scaleType == ScaleType.CENTER_CROP) {
                 // Crop it
-                int diffWidth = newSize[0] - mOutputWidth;
-                int diffHeight = newSize[1] - mOutputHeight;
+                int diffWidth = newSize[0] - outputWidth;
+                int diffHeight = newSize[1] - outputHeight;
                 workBitmap = Bitmap.createBitmap(bitmap, diffWidth / 2, diffHeight / 2,
                         newSize[0] - diffWidth, newSize[1] - diffHeight);
                 if (workBitmap != bitmap) {
@@ -691,24 +691,24 @@ public class GPUImage {
             float newWidth;
             float newHeight;
 
-            float withRatio = (float) width / mOutputWidth;
-            float heightRatio = (float) height / mOutputHeight;
+            float withRatio = (float) width / outputWidth;
+            float heightRatio = (float) height / outputHeight;
 
-            boolean adjustWidth = mScaleType == ScaleType.CENTER_CROP
+            boolean adjustWidth = scaleType == ScaleType.CENTER_CROP
                     ? withRatio > heightRatio : withRatio < heightRatio;
 
             if (adjustWidth) {
-                newHeight = mOutputHeight;
+                newHeight = outputHeight;
                 newWidth = (newHeight / height) * width;
             } else {
-                newWidth = mOutputWidth;
+                newWidth = outputWidth;
                 newHeight = (newWidth / width) * height;
             }
             return new int[]{Math.round(newWidth), Math.round(newHeight)};
         }
 
         private boolean checkSize(boolean widthBigger, boolean heightBigger) {
-            if (mScaleType == ScaleType.CENTER_CROP) {
+            if (scaleType == ScaleType.CENTER_CROP) {
                 return widthBigger && heightBigger;
             } else {
                 return widthBigger || heightBigger;

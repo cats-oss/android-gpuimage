@@ -36,8 +36,8 @@ public class GPUImageOpacityFilter extends GPUImageFilter {
             "      gl_FragColor = vec4(textureColor.rgb, textureColor.a * opacity);\n" +
             "  }\n";
 
-    private int mOpacityLocation;
-    private float mOpacity;
+    private int opacityLocation;
+    private float opacity;
 
     public GPUImageOpacityFilter() {
         this(1.0f);
@@ -45,23 +45,23 @@ public class GPUImageOpacityFilter extends GPUImageFilter {
 
     public GPUImageOpacityFilter(final float opacity) {
         super(NO_FILTER_VERTEX_SHADER, OPACITY_FRAGMENT_SHADER);
-        mOpacity = opacity;
+        this.opacity = opacity;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mOpacityLocation = GLES20.glGetUniformLocation(getProgram(), "opacity");
+        opacityLocation = GLES20.glGetUniformLocation(getProgram(), "opacity");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setOpacity(mOpacity);
+        setOpacity(opacity);
     }
 
     public void setOpacity(final float opacity) {
-        mOpacity = opacity;
-        setFloat(mOpacityLocation, mOpacity);
+        this.opacity = opacity;
+        setFloat(opacityLocation, this.opacity);
     }
 }

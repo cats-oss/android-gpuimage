@@ -57,8 +57,8 @@ public class GPUImageLookupFilter extends GPUImageTwoInputFilter {
             "     gl_FragColor = mix(textureColor, vec4(newColor.rgb, textureColor.w), intensity);\n" +
             " }";
 
-    private int mIntensityLocation;
-    private float mIntensity;
+    private int intensityLocation;
+    private float intensity;
 
     public GPUImageLookupFilter() {
         this(1.0f);
@@ -66,23 +66,23 @@ public class GPUImageLookupFilter extends GPUImageTwoInputFilter {
 
     public GPUImageLookupFilter(final float intensity) {
         super(LOOKUP_FRAGMENT_SHADER);
-        mIntensity = intensity;
+        this.intensity = intensity;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mIntensityLocation = GLES20.glGetUniformLocation(getProgram(), "intensity");
+        intensityLocation = GLES20.glGetUniformLocation(getProgram(), "intensity");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setIntensity(mIntensity);
+        setIntensity(intensity);
     }
 
     public void setIntensity(final float intensity) {
-        mIntensity = intensity;
-        setFloat(mIntensityLocation, mIntensity);
+        this.intensity = intensity;
+        setFloat(intensityLocation, this.intensity);
     }
 }

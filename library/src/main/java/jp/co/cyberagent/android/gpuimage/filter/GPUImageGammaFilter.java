@@ -35,8 +35,8 @@ public class GPUImageGammaFilter extends GPUImageFilter {
             "     gl_FragColor = vec4(pow(textureColor.rgb, vec3(gamma)), textureColor.w);\n" +
             " }";
 
-    private int mGammaLocation;
-    private float mGamma;
+    private int gammaLocation;
+    private float gamma;
 
     public GPUImageGammaFilter() {
         this(1.2f);
@@ -44,23 +44,23 @@ public class GPUImageGammaFilter extends GPUImageFilter {
 
     public GPUImageGammaFilter(final float gamma) {
         super(NO_FILTER_VERTEX_SHADER, GAMMA_FRAGMENT_SHADER);
-        mGamma = gamma;
+        this.gamma = gamma;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mGammaLocation = GLES20.glGetUniformLocation(getProgram(), "gamma");
+        gammaLocation = GLES20.glGetUniformLocation(getProgram(), "gamma");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setGamma(mGamma);
+        setGamma(gamma);
     }
 
     public void setGamma(final float gamma) {
-        mGamma = gamma;
-        setFloat(mGammaLocation, mGamma);
+        this.gamma = gamma;
+        setFloat(gammaLocation, this.gamma);
     }
 }

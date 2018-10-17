@@ -35,8 +35,8 @@ public class GPUImageExposureFilter extends GPUImageFilter {
             "     gl_FragColor = vec4(textureColor.rgb * pow(2.0, exposure), textureColor.w);\n" +
             " } ";
 
-    private int mExposureLocation;
-    private float mExposure;
+    private int exposureLocation;
+    private float exposure;
 
     public GPUImageExposureFilter() {
         this(1.0f);
@@ -44,23 +44,23 @@ public class GPUImageExposureFilter extends GPUImageFilter {
 
     public GPUImageExposureFilter(final float exposure) {
         super(NO_FILTER_VERTEX_SHADER, EXPOSURE_FRAGMENT_SHADER);
-        mExposure = exposure;
+        this.exposure = exposure;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mExposureLocation = GLES20.glGetUniformLocation(getProgram(), "exposure");
+        exposureLocation = GLES20.glGetUniformLocation(getProgram(), "exposure");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setExposure(mExposure);
+        setExposure(exposure);
     }
 
     public void setExposure(final float exposure) {
-        mExposure = exposure;
-        setFloat(mExposureLocation, mExposure);
+        this.exposure = exposure;
+        setFloat(exposureLocation, this.exposure);
     }
 }

@@ -45,10 +45,10 @@ public class GPUImageHighlightShadowFilter extends GPUImageFilter {
             " 	gl_FragColor = vec4(result.rgb, source.a);\n" +
             " }";
 
-    private int mShadowsLocation;
-    private float mShadows;
-    private int mHighlightsLocation;
-    private float mHighlights;
+    private int shadowsLocation;
+    private float shadows;
+    private int highlightsLocation;
+    private float highlights;
 
     public GPUImageHighlightShadowFilter() {
         this(0.0f, 1.0f);
@@ -56,31 +56,31 @@ public class GPUImageHighlightShadowFilter extends GPUImageFilter {
 
     public GPUImageHighlightShadowFilter(final float shadows, final float highlights) {
         super(NO_FILTER_VERTEX_SHADER, HIGHLIGHT_SHADOW_FRAGMENT_SHADER);
-        mHighlights = highlights;
-        mShadows = shadows;
+        this.highlights = highlights;
+        this.shadows = shadows;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mHighlightsLocation = GLES20.glGetUniformLocation(getProgram(), "highlights");
-        mShadowsLocation = GLES20.glGetUniformLocation(getProgram(), "shadows");
+        highlightsLocation = GLES20.glGetUniformLocation(getProgram(), "highlights");
+        shadowsLocation = GLES20.glGetUniformLocation(getProgram(), "shadows");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setHighlights(mHighlights);
-        setShadows(mShadows);
+        setHighlights(highlights);
+        setShadows(shadows);
     }
 
     public void setHighlights(final float highlights) {
-        mHighlights = highlights;
-        setFloat(mHighlightsLocation, mHighlights);
+        this.highlights = highlights;
+        setFloat(highlightsLocation, this.highlights);
     }
 
     public void setShadows(final float shadows) {
-        mShadows = shadows;
-        setFloat(mShadowsLocation, mShadows);
+        this.shadows = shadows;
+        setFloat(shadowsLocation, this.shadows);
     }
 }

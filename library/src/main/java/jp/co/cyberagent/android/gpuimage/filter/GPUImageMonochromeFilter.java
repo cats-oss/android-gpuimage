@@ -55,10 +55,10 @@ public class GPUImageMonochromeFilter extends GPUImageFilter {
             " 	gl_FragColor = vec4( mix(textureColor.rgb, outputColor.rgb, intensity), textureColor.a);\n" +
             "  }";
 
-    private int mIntensityLocation;
-    private float mIntensity;
-    private int mFilterColorLocation;
-    private float[] mColor;
+    private int intensityLocation;
+    private float intensity;
+    private int filterColorLocation;
+    private float[] color;
 
     public GPUImageMonochromeFilter() {
         this(1.0f, new float[]{0.6f, 0.45f, 0.3f, 1.0f});
@@ -66,15 +66,15 @@ public class GPUImageMonochromeFilter extends GPUImageFilter {
 
     public GPUImageMonochromeFilter(final float intensity, final float[] color) {
         super(NO_FILTER_VERTEX_SHADER, MONOCHROME_FRAGMENT_SHADER);
-        mIntensity = intensity;
-        mColor = color;
+        this.intensity = intensity;
+        this.color = color;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mIntensityLocation = GLES20.glGetUniformLocation(getProgram(), "intensity");
-        mFilterColorLocation = GLES20.glGetUniformLocation(getProgram(), "filterColor");
+        intensityLocation = GLES20.glGetUniformLocation(getProgram(), "intensity");
+        filterColorLocation = GLES20.glGetUniformLocation(getProgram(), "filterColor");
     }
 
     @Override
@@ -85,17 +85,17 @@ public class GPUImageMonochromeFilter extends GPUImageFilter {
     }
 
     public void setIntensity(final float intensity) {
-        mIntensity = intensity;
-        setFloat(mIntensityLocation, mIntensity);
+        this.intensity = intensity;
+        setFloat(intensityLocation, this.intensity);
     }
 
     public void setColor(final float[] color) {
-        mColor = color;
-        setColorRed(mColor[0], mColor[1], mColor[2]);
+        this.color = color;
+        setColorRed(this.color[0], this.color[1], this.color[2]);
 
     }
 
     public void setColorRed(final float red, final float green, final float blue) {
-        setFloatVec3(mFilterColorLocation, new float[]{red, green, blue});
+        setFloatVec3(filterColorLocation, new float[]{red, green, blue});
     }
 }

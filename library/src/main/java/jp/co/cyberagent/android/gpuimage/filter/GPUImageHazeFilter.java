@@ -46,10 +46,10 @@ public class GPUImageHazeFilter extends GPUImageFilter {
             "	 gl_FragColor = c; //consider using premultiply(c);\n" +
             "}\n";
 
-    private float mDistance;
-    private int mDistanceLocation;
-    private float mSlope;
-    private int mSlopeLocation;
+    private float distance;
+    private int distanceLocation;
+    private float slope;
+    private int slopeLocation;
 
     public GPUImageHazeFilter() {
         this(0.2f, 0.0f);
@@ -57,22 +57,22 @@ public class GPUImageHazeFilter extends GPUImageFilter {
 
     public GPUImageHazeFilter(float distance, float slope) {
         super(NO_FILTER_VERTEX_SHADER, HAZE_FRAGMENT_SHADER);
-        mDistance = distance;
-        mSlope = slope;
+        this.distance = distance;
+        this.slope = slope;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mDistanceLocation = GLES20.glGetUniformLocation(getProgram(), "distance");
-        mSlopeLocation = GLES20.glGetUniformLocation(getProgram(), "slope");
+        distanceLocation = GLES20.glGetUniformLocation(getProgram(), "distance");
+        slopeLocation = GLES20.glGetUniformLocation(getProgram(), "slope");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setDistance(mDistance);
-        setSlope(mSlope);
+        setDistance(distance);
+        setSlope(slope);
     }
 
     /**
@@ -81,8 +81,8 @@ public class GPUImageHazeFilter extends GPUImageFilter {
      * @param distance -0.3 to 0.3 are best, default 0
      */
     public void setDistance(float distance) {
-        mDistance = distance;
-        setFloat(mDistanceLocation, distance);
+        this.distance = distance;
+        setFloat(distanceLocation, distance);
     }
 
     /**
@@ -91,7 +91,7 @@ public class GPUImageHazeFilter extends GPUImageFilter {
      * @param slope -0.3 to 0.3 are best, default 0
      */
     public void setSlope(float slope) {
-        mSlope = slope;
-        setFloat(mSlopeLocation, slope);
+        this.slope = slope;
+        setFloat(slopeLocation, slope);
     }
 }

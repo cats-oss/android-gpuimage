@@ -27,16 +27,16 @@ public class GPUImageLevelsFilter extends GPUImageFilter {
                     "     gl_FragColor = vec4( mix(minOutput, maxOutput, pow(min(max(textureColor.rgb -levelMinimum, vec3(0.0)) / (levelMaximum - levelMinimum  ), vec3(1.0)), 1.0 /levelMiddle)) , textureColor.a);\n" +
                     " }\n";
 
-    private int mMinLocation;
-    private float[] mMin;
-    private int mMidLocation;
-    private float[] mMid;
-    private int mMaxLocation;
-    private float[] mMax;
-    private int mMinOutputLocation;
-    private float[] mMinOutput;
-    private int mMaxOutputLocation;
-    private float[] mMaxOutput;
+    private int minLocation;
+    private float[] min;
+    private int midLocation;
+    private float[] mid;
+    private int maxLocation;
+    private float[] max;
+    private int minOutputLocation;
+    private float[] minOutput;
+    private int maxOutputLocation;
+    private float[] maxOutput;
 
     public GPUImageLevelsFilter() {
         this(new float[]{0.0f, 0.0f, 0.0f}, new float[]{1.0f, 1.0f, 1.0f}, new float[]{1.0f, 1.0f, 1.0f}, new float[]{0.0f, 0.0f, 0.0f}, new float[]{1.0f, 1.0f, 1.0f});
@@ -45,22 +45,22 @@ public class GPUImageLevelsFilter extends GPUImageFilter {
     private GPUImageLevelsFilter(final float[] min, final float[] mid, final float[] max, final float[] minOUt, final float[] maxOut) {
         super(NO_FILTER_VERTEX_SHADER, LEVELS_FRAGMET_SHADER);
 
-        mMin = min;
-        mMid = mid;
-        mMax = max;
-        mMinOutput = minOUt;
-        mMaxOutput = maxOut;
+        this.min = min;
+        this.mid = mid;
+        this.max = max;
+        minOutput = minOUt;
+        maxOutput = maxOut;
         setMin(0.0f, 1.0f, 1.0f, 0.0f, 1.0f);
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mMinLocation = GLES20.glGetUniformLocation(getProgram(), "levelMinimum");
-        mMidLocation = GLES20.glGetUniformLocation(getProgram(), "levelMiddle");
-        mMaxLocation = GLES20.glGetUniformLocation(getProgram(), "levelMaximum");
-        mMinOutputLocation = GLES20.glGetUniformLocation(getProgram(), "minOutput");
-        mMaxOutputLocation = GLES20.glGetUniformLocation(getProgram(), "maxOutput");
+        minLocation = GLES20.glGetUniformLocation(getProgram(), "levelMinimum");
+        midLocation = GLES20.glGetUniformLocation(getProgram(), "levelMiddle");
+        maxLocation = GLES20.glGetUniformLocation(getProgram(), "levelMaximum");
+        minOutputLocation = GLES20.glGetUniformLocation(getProgram(), "minOutput");
+        maxOutputLocation = GLES20.glGetUniformLocation(getProgram(), "maxOutput");
     }
 
     @Override
@@ -71,11 +71,11 @@ public class GPUImageLevelsFilter extends GPUImageFilter {
 
 
     public void updateUniforms() {
-        setFloatVec3(mMinLocation, mMin);
-        setFloatVec3(mMidLocation, mMid);
-        setFloatVec3(mMaxLocation, mMax);
-        setFloatVec3(mMinOutputLocation, mMinOutput);
-        setFloatVec3(mMaxOutputLocation, mMaxOutput);
+        setFloatVec3(minLocation, min);
+        setFloatVec3(midLocation, mid);
+        setFloatVec3(maxLocation, max);
+        setFloatVec3(minOutputLocation, minOutput);
+        setFloatVec3(maxOutputLocation, maxOutput);
     }
 
     public void setMin(float min, float mid, float max, float minOut, float maxOut) {
@@ -89,11 +89,11 @@ public class GPUImageLevelsFilter extends GPUImageFilter {
     }
 
     public void setRedMin(float min, float mid, float max, float minOut, float maxOut) {
-        mMin[0] = min;
-        mMid[0] = mid;
-        mMax[0] = max;
-        mMinOutput[0] = minOut;
-        mMaxOutput[0] = maxOut;
+        this.min[0] = min;
+        this.mid[0] = mid;
+        this.max[0] = max;
+        minOutput[0] = minOut;
+        maxOutput[0] = maxOut;
         updateUniforms();
     }
 
@@ -102,11 +102,11 @@ public class GPUImageLevelsFilter extends GPUImageFilter {
     }
 
     public void setGreenMin(float min, float mid, float max, float minOut, float maxOut) {
-        mMin[1] = min;
-        mMid[1] = mid;
-        mMax[1] = max;
-        mMinOutput[1] = minOut;
-        mMaxOutput[1] = maxOut;
+        this.min[1] = min;
+        this.mid[1] = mid;
+        this.max[1] = max;
+        minOutput[1] = minOut;
+        maxOutput[1] = maxOut;
         updateUniforms();
     }
 
@@ -115,11 +115,11 @@ public class GPUImageLevelsFilter extends GPUImageFilter {
     }
 
     public void setBlueMin(float min, float mid, float max, float minOut, float maxOut) {
-        mMin[2] = min;
-        mMid[2] = mid;
-        mMax[2] = max;
-        mMinOutput[2] = minOut;
-        mMaxOutput[2] = maxOut;
+        this.min[2] = min;
+        this.mid[2] = mid;
+        this.max[2] = max;
+        minOutput[2] = minOut;
+        maxOutput[2] = maxOut;
         updateUniforms();
     }
 

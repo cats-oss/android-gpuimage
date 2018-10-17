@@ -42,34 +42,34 @@ public class GPUImagePixelationFilter extends GPUImageFilter {
             "  gl_FragColor = vec4(tc, 1.0);\n" +
             "}";
 
-    private int mImageWidthFactorLocation;
-    private int mImageHeightFactorLocation;
-    private float mPixel;
-    private int mPixelLocation;
+    private int imageWidthFactorLocation;
+    private int imageHeightFactorLocation;
+    private float pixel;
+    private int pixelLocation;
 
     public GPUImagePixelationFilter() {
         super(NO_FILTER_VERTEX_SHADER, PIXELATION_FRAGMENT_SHADER);
-        mPixel = 1.0f;
+        pixel = 1.0f;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mImageWidthFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageWidthFactor");
-        mImageHeightFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageHeightFactor");
-        mPixelLocation = GLES20.glGetUniformLocation(getProgram(), "pixel");
-        setPixel(mPixel);
+        imageWidthFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageWidthFactor");
+        imageHeightFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageHeightFactor");
+        pixelLocation = GLES20.glGetUniformLocation(getProgram(), "pixel");
+        setPixel(pixel);
     }
 
     @Override
     public void onOutputSizeChanged(final int width, final int height) {
         super.onOutputSizeChanged(width, height);
-        setFloat(mImageWidthFactorLocation, 1.0f / width);
-        setFloat(mImageHeightFactorLocation, 1.0f / height);
+        setFloat(imageWidthFactorLocation, 1.0f / width);
+        setFloat(imageHeightFactorLocation, 1.0f / height);
     }
 
     public void setPixel(final float pixel) {
-        mPixel = pixel;
-        setFloat(mPixelLocation, mPixel);
+        this.pixel = pixel;
+        setFloat(pixelLocation, this.pixel);
     }
 }

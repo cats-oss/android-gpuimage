@@ -35,8 +35,8 @@ public class GPUImageBrightnessFilter extends GPUImageFilter {
             "     gl_FragColor = vec4((textureColor.rgb + vec3(brightness)), textureColor.w);\n" +
             " }";
 
-    private int mBrightnessLocation;
-    private float mBrightness;
+    private int brightnessLocation;
+    private float brightness;
 
     public GPUImageBrightnessFilter() {
         this(0.0f);
@@ -44,23 +44,23 @@ public class GPUImageBrightnessFilter extends GPUImageFilter {
 
     public GPUImageBrightnessFilter(final float brightness) {
         super(NO_FILTER_VERTEX_SHADER, BRIGHTNESS_FRAGMENT_SHADER);
-        mBrightness = brightness;
+        this.brightness = brightness;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mBrightnessLocation = GLES20.glGetUniformLocation(getProgram(), "brightness");
+        brightnessLocation = GLES20.glGetUniformLocation(getProgram(), "brightness");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setBrightness(mBrightness);
+        setBrightness(brightness);
     }
 
     public void setBrightness(final float brightness) {
-        mBrightness = brightness;
-        setFloat(mBrightnessLocation, mBrightness);
+        this.brightness = brightness;
+        setFloat(brightnessLocation, this.brightness);
     }
 }

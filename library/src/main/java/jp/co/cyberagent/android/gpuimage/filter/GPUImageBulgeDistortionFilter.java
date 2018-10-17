@@ -49,14 +49,14 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
             "gl_FragColor = texture2D(inputImageTexture, textureCoordinateToUse );    \n" +
             "}\n";
 
-    private float mScale;
-    private int mScaleLocation;
-    private float mRadius;
-    private int mRadiusLocation;
-    private PointF mCenter;
-    private int mCenterLocation;
-    private float mAspectRatio;
-    private int mAspectRatioLocation;
+    private float scale;
+    private int scaleLocation;
+    private float radius;
+    private int radiusLocation;
+    private PointF center;
+    private int centerLocation;
+    private float aspectRatio;
+    private int aspectRatioLocation;
 
     public GPUImageBulgeDistortionFilter() {
         this(0.25f, 0.5f, new PointF(0.5f, 0.5f));
@@ -64,38 +64,38 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
 
     public GPUImageBulgeDistortionFilter(float radius, float scale, PointF center) {
         super(NO_FILTER_VERTEX_SHADER, BULGE_FRAGMENT_SHADER);
-        mRadius = radius;
-        mScale = scale;
-        mCenter = center;
+        this.radius = radius;
+        this.scale = scale;
+        this.center = center;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mScaleLocation = GLES20.glGetUniformLocation(getProgram(), "scale");
-        mRadiusLocation = GLES20.glGetUniformLocation(getProgram(), "radius");
-        mCenterLocation = GLES20.glGetUniformLocation(getProgram(), "center");
-        mAspectRatioLocation = GLES20.glGetUniformLocation(getProgram(), "aspectRatio");
+        scaleLocation = GLES20.glGetUniformLocation(getProgram(), "scale");
+        radiusLocation = GLES20.glGetUniformLocation(getProgram(), "radius");
+        centerLocation = GLES20.glGetUniformLocation(getProgram(), "center");
+        aspectRatioLocation = GLES20.glGetUniformLocation(getProgram(), "aspectRatio");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setRadius(mRadius);
-        setScale(mScale);
-        setCenter(mCenter);
+        setRadius(radius);
+        setScale(scale);
+        setCenter(center);
     }
 
     @Override
     public void onOutputSizeChanged(int width, int height) {
-        mAspectRatio = (float) height / width;
-        setAspectRatio(mAspectRatio);
+        aspectRatio = (float) height / width;
+        setAspectRatio(aspectRatio);
         super.onOutputSizeChanged(width, height);
     }
 
     private void setAspectRatio(float aspectRatio) {
-        mAspectRatio = aspectRatio;
-        setFloat(mAspectRatioLocation, aspectRatio);
+        this.aspectRatio = aspectRatio;
+        setFloat(aspectRatioLocation, aspectRatio);
     }
 
     /**
@@ -104,8 +104,8 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
      * @param radius from 0.0 to 1.0, default 0.25
      */
     public void setRadius(float radius) {
-        mRadius = radius;
-        setFloat(mRadiusLocation, radius);
+        this.radius = radius;
+        setFloat(radiusLocation, radius);
     }
 
     /**
@@ -114,8 +114,8 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
      * @param scale from -1.0 to 1.0, default 0.5
      */
     public void setScale(float scale) {
-        mScale = scale;
-        setFloat(mScaleLocation, scale);
+        this.scale = scale;
+        setFloat(scaleLocation, scale);
     }
 
     /**
@@ -124,7 +124,7 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
      * @param center default (0.5, 0.5)
      */
     public void setCenter(PointF center) {
-        mCenter = center;
-        setPoint(mCenterLocation, center);
+        this.center = center;
+        setPoint(centerLocation, center);
     }
 }

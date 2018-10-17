@@ -42,13 +42,13 @@ public void onCreate(final Bundle savedInstanceState) {
     setContentView(R.layout.activity);
 
     Uri imageUri = ...;
-    mGPUImage = new GPUImage(this);
-    mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
-    mGPUImage.setImage(imageUri); // this loads image on the current thread, should be run in a thread
-    mGPUImage.setFilter(new GPUImageSepiaFilter());
+    gpuImage = new GPUImage(this);
+    gpuImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
+    gpuImage.setImage(imageUri); // this loads image on the current thread, should be run in a thread
+    gpuImage.setFilter(new GPUImageSepiaFilter());
 
     // Later when image should be saved saved:
-    mGPUImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
+    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
 }
 ```
 
@@ -68,23 +68,26 @@ public void onCreate(final Bundle savedInstanceState) {
     setContentView(R.layout.activity);
 
     Uri imageUri = ...;
-    mGPUImageView = findViewById(R.id.gpuimageview);
-    mGPUImageView.setImage(imageUri); // this loads image on the current thread, should be run in a thread
-    mGPUImageView.setFilter(new GPUImageSepiaFilter());
+    gpuImageView = findViewById(R.id.gpuimageview);
+    gpuImageView.setImage(imageUri); // this loads image on the current thread, should be run in a thread
+    gpuImageView.setFilter(new GPUImageSepiaFilter());
 
     // Later when image should be saved saved:
-    mGPUImageView.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
+    gpuImageView.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
 }
 ```
 
 Without preview:
 
 ```java
-Uri imageUri = ...;
-mGPUImage = new GPUImage(context);
-mGPUImage.setFilter(new GPUImageSobelEdgeDetection());
-mGPUImage.setImage(imageUri);
-mGPUImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
+public void onCreate(final Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
+    Uri imageUri = ...;
+    gpuImage = new GPUImage(context);
+    gpuImage.setFilter(new GPUImageSobelEdgeDetection());
+    gpuImage.setImage(imageUri);
+    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
+}
 ```
 
 ### Gradle

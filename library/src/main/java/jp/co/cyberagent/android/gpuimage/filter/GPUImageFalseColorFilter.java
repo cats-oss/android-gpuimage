@@ -39,10 +39,10 @@ public class GPUImageFalseColorFilter extends GPUImageFilter {
             "gl_FragColor = vec4( mix(firstColor.rgb, secondColor.rgb, luminance), textureColor.a);\n" +
             "}\n";
 
-    private float[] mFirstColor;
-    private int mFirstColorLocation;
-    private float[] mSecondColor;
-    private int mSecondColorLocation;
+    private float[] firstColor;
+    private int firstColorLocation;
+    private float[] secondColor;
+    private int secondColorLocation;
 
     public GPUImageFalseColorFilter() {
         this(0f, 0f, 0.5f, 1f, 0f, 0f);
@@ -54,31 +54,31 @@ public class GPUImageFalseColorFilter extends GPUImageFilter {
 
     public GPUImageFalseColorFilter(float[] firstColor, float[] secondColor) {
         super(NO_FILTER_VERTEX_SHADER, FALSECOLOR_FRAGMENT_SHADER);
-        mFirstColor = firstColor;
-        mSecondColor = secondColor;
+        this.firstColor = firstColor;
+        this.secondColor = secondColor;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mFirstColorLocation = GLES20.glGetUniformLocation(getProgram(), "firstColor");
-        mSecondColorLocation = GLES20.glGetUniformLocation(getProgram(), "secondColor");
+        firstColorLocation = GLES20.glGetUniformLocation(getProgram(), "firstColor");
+        secondColorLocation = GLES20.glGetUniformLocation(getProgram(), "secondColor");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setFirstColor(mFirstColor);
-        setSecondColor(mSecondColor);
+        setFirstColor(firstColor);
+        setSecondColor(secondColor);
     }
 
     public void setFirstColor(final float[] firstColor) {
-        mFirstColor = firstColor;
-        setFloatVec3(mFirstColorLocation, firstColor);
+        this.firstColor = firstColor;
+        setFloatVec3(firstColorLocation, firstColor);
     }
 
     public void setSecondColor(final float[] secondColor) {
-        mSecondColor = secondColor;
-        setFloatVec3(mSecondColorLocation, secondColor);
+        this.secondColor = secondColor;
+        setFloatVec3(secondColorLocation, secondColor);
     }
 }

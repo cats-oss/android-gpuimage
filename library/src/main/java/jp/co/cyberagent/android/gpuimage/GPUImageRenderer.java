@@ -52,44 +52,44 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
             1.0f, 1.0f,
     };
 
-    private GPUImageFilter mFilter;
+    private GPUImageFilter filter;
 
-    public final Object mSurfaceChangedWaiter = new Object();
+    public final Object surfaceChangedWaiter = new Object();
 
-    private int mGLTextureId = NO_IMAGE;
-    private SurfaceTexture mSurfaceTexture = null;
-    private final FloatBuffer mGLCubeBuffer;
-    private final FloatBuffer mGLTextureBuffer;
-    private IntBuffer mGLRgbBuffer;
+    private int glTextureId = NO_IMAGE;
+    private SurfaceTexture surfaceTexture = null;
+    private final FloatBuffer glCubeBuffer;
+    private final FloatBuffer glTextureBuffer;
+    private IntBuffer glRgbBuffer;
 
-    private int mOutputWidth;
-    private int mOutputHeight;
-    private int mImageWidth;
-    private int mImageHeight;
-    private int mAddedPadding;
+    private int outputWidth;
+    private int outputHeight;
+    private int imageWidth;
+    private int imageHeight;
+    private int addedPadding;
 
-    private final Queue<Runnable> mRunOnDraw;
-    private final Queue<Runnable> mRunOnDrawEnd;
-    private Rotation mRotation;
-    private boolean mFlipHorizontal;
-    private boolean mFlipVertical;
-    private GPUImage.ScaleType mScaleType = GPUImage.ScaleType.CENTER_CROP;
+    private final Queue<Runnable> runOnDraw;
+    private final Queue<Runnable> runOnDrawEnd;
+    private Rotation rotation;
+    private boolean flipHorizontal;
+    private boolean flipVertical;
+    private GPUImage.ScaleType scaleType = GPUImage.ScaleType.CENTER_CROP;
 
-    private float mBackgroundRed = 0;
-    private float mBackgroundGreen = 0;
-    private float mBackgroundBlue = 0;
+    private float backgroundRed = 0;
+    private float backgroundGreen = 0;
+    private float backgroundBlue = 0;
 
     public GPUImageRenderer(final GPUImageFilter filter) {
-        mFilter = filter;
-        mRunOnDraw = new LinkedList<Runnable>();
-        mRunOnDrawEnd = new LinkedList<Runnable>();
+        this.filter = filter;
+        runOnDraw = new LinkedList<>();
+        runOnDrawEnd = new LinkedList<>();
 
-        mGLCubeBuffer = ByteBuffer.allocateDirect(CUBE.length * 4)
+        glCubeBuffer = ByteBuffer.allocateDirect(CUBE.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        mGLCubeBuffer.put(CUBE).position(0);
+        glCubeBuffer.put(CUBE).position(0);
 
-        mGLTextureBuffer = ByteBuffer.allocateDirect(TEXTURE_NO_ROTATION.length * 4)
+        glTextureBuffer = ByteBuffer.allocateDirect(TEXTURE_NO_ROTATION.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
         setRotation(Rotation.NORMAL, false, false);
@@ -97,32 +97,32 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
 
     @Override
     public void onSurfaceCreated(final GL10 unused, final EGLConfig config) {
-        GLES20.glClearColor(mBackgroundRed, mBackgroundGreen, mBackgroundBlue, 1);
+        GLES20.glClearColor(backgroundRed, backgroundGreen, backgroundBlue, 1);
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-        mFilter.init();
+        filter.init();
     }
 
     @Override
     public void onSurfaceChanged(final GL10 gl, final int width, final int height) {
-        mOutputWidth = width;
-        mOutputHeight = height;
+        outputWidth = width;
+        outputHeight = height;
         GLES20.glViewport(0, 0, width, height);
-        GLES20.glUseProgram(mFilter.getProgram());
-        mFilter.onOutputSizeChanged(width, height);
+        GLES20.glUseProgram(filter.getProgram());
+        filter.onOutputSizeChanged(width, height);
         adjustImageScaling();
-        synchronized (mSurfaceChangedWaiter) {
-            mSurfaceChangedWaiter.notifyAll();
+        synchronized (surfaceChangedWaiter) {
+            surfaceChangedWaiter.notifyAll();
         }
     }
 
     @Override
     public void onDrawFrame(final GL10 gl) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        runAll(mRunOnDraw);
-        mFilter.onDraw(mGLTextureId, mGLCubeBuffer, mGLTextureBuffer);
-        runAll(mRunOnDrawEnd);
-        if (mSurfaceTexture != null) {
-            mSurfaceTexture.updateTexImage();
+        runAll(runOnDraw);
+        filter.onDraw(glTextureId, glCubeBuffer, glTextureBuffer);
+        runAll(runOnDrawEnd);
+        if (surfaceTexture != null) {
+            surfaceTexture.updateTexImage();
         }
     }
 
@@ -134,9 +134,9 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
      * @param blue  red color value
      */
     public void setBackgroundColor(float red, float green, float blue) {
-        mBackgroundRed = red;
-        mBackgroundGreen = green;
-        mBackgroundBlue = blue;
+        backgroundRed = red;
+        backgroundGreen = green;
+        backgroundBlue = blue;
     }
 
     private void runAll(Queue<Runnable> queue) {
@@ -150,21 +150,21 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
         final Size previewSize = camera.getParameters().getPreviewSize();
-        if (mGLRgbBuffer == null) {
-            mGLRgbBuffer = IntBuffer.allocate(previewSize.width * previewSize.height);
+        if (glRgbBuffer == null) {
+            glRgbBuffer = IntBuffer.allocate(previewSize.width * previewSize.height);
         }
-        if (mRunOnDraw.isEmpty()) {
+        if (runOnDraw.isEmpty()) {
             runOnDraw(new Runnable() {
                 @Override
                 public void run() {
                     GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
-                            mGLRgbBuffer.array());
-                    mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, previewSize, mGLTextureId);
+                            glRgbBuffer.array());
+                    glTextureId = OpenGlUtils.loadTexture(glRgbBuffer, previewSize, glTextureId);
                     camera.addCallbackBuffer(data);
 
-                    if (mImageWidth != previewSize.width) {
-                        mImageWidth = previewSize.width;
-                        mImageHeight = previewSize.height;
+                    if (imageWidth != previewSize.width) {
+                        imageWidth = previewSize.width;
+                        imageHeight = previewSize.height;
                         adjustImageScaling();
                     }
                 }
@@ -178,9 +178,9 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
             public void run() {
                 int[] textures = new int[1];
                 GLES20.glGenTextures(1, textures, 0);
-                mSurfaceTexture = new SurfaceTexture(textures[0]);
+                surfaceTexture = new SurfaceTexture(textures[0]);
                 try {
-                    camera.setPreviewTexture(mSurfaceTexture);
+                    camera.setPreviewTexture(surfaceTexture);
                     camera.setPreviewCallback(GPUImageRenderer.this);
                     camera.startPreview();
                 } catch (IOException e) {
@@ -195,14 +195,14 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
 
             @Override
             public void run() {
-                final GPUImageFilter oldFilter = mFilter;
-                mFilter = filter;
+                final GPUImageFilter oldFilter = GPUImageRenderer.this.filter;
+                GPUImageRenderer.this.filter = filter;
                 if (oldFilter != null) {
                     oldFilter.destroy();
                 }
-                mFilter.init();
-                GLES20.glUseProgram(mFilter.getProgram());
-                mFilter.onOutputSizeChanged(mOutputWidth, mOutputHeight);
+                GPUImageRenderer.this.filter.init();
+                GLES20.glUseProgram(GPUImageRenderer.this.filter.getProgram());
+                GPUImageRenderer.this.filter.onOutputSizeChanged(outputWidth, outputHeight);
             }
         });
     }
@@ -213,9 +213,9 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
             @Override
             public void run() {
                 GLES20.glDeleteTextures(1, new int[]{
-                        mGLTextureId
+                        glTextureId
                 }, 0);
-                mGLTextureId = NO_IMAGE;
+                glTextureId = NO_IMAGE;
             }
         });
     }
@@ -240,55 +240,55 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
                     Canvas can = new Canvas(resizedBitmap);
                     can.drawARGB(0x00, 0x00, 0x00, 0x00);
                     can.drawBitmap(bitmap, 0, 0, null);
-                    mAddedPadding = 1;
+                    addedPadding = 1;
                 } else {
-                    mAddedPadding = 0;
+                    addedPadding = 0;
                 }
 
-                mGLTextureId = OpenGlUtils.loadTexture(
-                        resizedBitmap != null ? resizedBitmap : bitmap, mGLTextureId, recycle);
+                glTextureId = OpenGlUtils.loadTexture(
+                        resizedBitmap != null ? resizedBitmap : bitmap, glTextureId, recycle);
                 if (resizedBitmap != null) {
                     resizedBitmap.recycle();
                 }
-                mImageWidth = bitmap.getWidth();
-                mImageHeight = bitmap.getHeight();
+                imageWidth = bitmap.getWidth();
+                imageHeight = bitmap.getHeight();
                 adjustImageScaling();
             }
         });
     }
 
     public void setScaleType(GPUImage.ScaleType scaleType) {
-        mScaleType = scaleType;
+        this.scaleType = scaleType;
     }
 
     protected int getFrameWidth() {
-        return mOutputWidth;
+        return outputWidth;
     }
 
     protected int getFrameHeight() {
-        return mOutputHeight;
+        return outputHeight;
     }
 
     private void adjustImageScaling() {
-        float outputWidth = mOutputWidth;
-        float outputHeight = mOutputHeight;
-        if (mRotation == Rotation.ROTATION_270 || mRotation == Rotation.ROTATION_90) {
-            outputWidth = mOutputHeight;
-            outputHeight = mOutputWidth;
+        float outputWidth = this.outputWidth;
+        float outputHeight = this.outputHeight;
+        if (rotation == Rotation.ROTATION_270 || rotation == Rotation.ROTATION_90) {
+            outputWidth = this.outputHeight;
+            outputHeight = this.outputWidth;
         }
 
-        float ratio1 = outputWidth / mImageWidth;
-        float ratio2 = outputHeight / mImageHeight;
+        float ratio1 = outputWidth / imageWidth;
+        float ratio2 = outputHeight / imageHeight;
         float ratioMax = Math.max(ratio1, ratio2);
-        int imageWidthNew = Math.round(mImageWidth * ratioMax);
-        int imageHeightNew = Math.round(mImageHeight * ratioMax);
+        int imageWidthNew = Math.round(imageWidth * ratioMax);
+        int imageHeightNew = Math.round(imageHeight * ratioMax);
 
         float ratioWidth = imageWidthNew / outputWidth;
         float ratioHeight = imageHeightNew / outputHeight;
 
         float[] cube = CUBE;
-        float[] textureCords = TextureRotationUtil.getRotation(mRotation, mFlipHorizontal, mFlipVertical);
-        if (mScaleType == GPUImage.ScaleType.CENTER_CROP) {
+        float[] textureCords = TextureRotationUtil.getRotation(rotation, flipHorizontal, flipVertical);
+        if (scaleType == GPUImage.ScaleType.CENTER_CROP) {
             float distHorizontal = (1 - 1 / ratioWidth) / 2;
             float distVertical = (1 - 1 / ratioHeight) / 2;
             textureCords = new float[]{
@@ -306,10 +306,10 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
             };
         }
 
-        mGLCubeBuffer.clear();
-        mGLCubeBuffer.put(cube).position(0);
-        mGLTextureBuffer.clear();
-        mGLTextureBuffer.put(textureCords).position(0);
+        glCubeBuffer.clear();
+        glCubeBuffer.put(cube).position(0);
+        glTextureBuffer.clear();
+        glTextureBuffer.put(textureCords).position(0);
     }
 
     private float addDistance(float coordinate, float distance) {
@@ -322,38 +322,38 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
     }
 
     public void setRotation(final Rotation rotation) {
-        mRotation = rotation;
+        this.rotation = rotation;
         adjustImageScaling();
     }
 
     public void setRotation(final Rotation rotation,
                             final boolean flipHorizontal, final boolean flipVertical) {
-        mFlipHorizontal = flipHorizontal;
-        mFlipVertical = flipVertical;
+        this.flipHorizontal = flipHorizontal;
+        this.flipVertical = flipVertical;
         setRotation(rotation);
     }
 
     public Rotation getRotation() {
-        return mRotation;
+        return rotation;
     }
 
     public boolean isFlippedHorizontally() {
-        return mFlipHorizontal;
+        return flipHorizontal;
     }
 
     public boolean isFlippedVertically() {
-        return mFlipVertical;
+        return flipVertical;
     }
 
     protected void runOnDraw(final Runnable runnable) {
-        synchronized (mRunOnDraw) {
-            mRunOnDraw.add(runnable);
+        synchronized (runOnDraw) {
+            runOnDraw.add(runnable);
         }
     }
 
     protected void runOnDrawEnd(final Runnable runnable) {
-        synchronized (mRunOnDrawEnd) {
-            mRunOnDrawEnd.add(runnable);
+        synchronized (runOnDrawEnd) {
+            runOnDrawEnd.add(runnable);
         }
     }
 }

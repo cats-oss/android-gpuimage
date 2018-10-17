@@ -43,8 +43,8 @@ public class GPUImageSobelThresholdFilter extends
             "    gl_FragColor = vec4(vec3(mag), 1.0);\n" +
             "}\n";
 
-    private int mUniformThresholdLocation;
-    private float mThreshold = 0.9f;
+    private int uniformThresholdLocation;
+    private float threshold;
 
     public GPUImageSobelThresholdFilter() {
         this(0.9f);
@@ -52,23 +52,23 @@ public class GPUImageSobelThresholdFilter extends
 
     public GPUImageSobelThresholdFilter(float threshold) {
         super(SOBEL_THRESHOLD_EDGE_DETECTION);
-        mThreshold = threshold;
+        this.threshold = threshold;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mUniformThresholdLocation = GLES20.glGetUniformLocation(getProgram(), "threshold");
+        uniformThresholdLocation = GLES20.glGetUniformLocation(getProgram(), "threshold");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setThreshold(mThreshold);
+        setThreshold(threshold);
     }
 
     public void setThreshold(final float threshold) {
-        mThreshold = threshold;
-        setFloat(mUniformThresholdLocation, threshold);
+        this.threshold = threshold;
+        setFloat(uniformThresholdLocation, threshold);
     }
 }
