@@ -40,13 +40,13 @@ public class GPUImageRGBFilter extends GPUImageFilter {
             "      gl_FragColor = vec4(textureColor.r * red, textureColor.g * green, textureColor.b * blue, 1.0);\n" +
             "  }\n";
 
-    private int mRedLocation;
-    private float mRed;
-    private int mGreenLocation;
-    private float mGreen;
-    private int mBlueLocation;
-    private float mBlue;
-    private boolean mIsInitialized = false;
+    private int redLocation;
+    private float red;
+    private int greenLocation;
+    private float green;
+    private int blueLocation;
+    private float blue;
+    private boolean isInitialized = false;
 
     public GPUImageRGBFilter() {
         this(1.0f, 1.0f, 1.0f);
@@ -54,41 +54,41 @@ public class GPUImageRGBFilter extends GPUImageFilter {
 
     public GPUImageRGBFilter(final float red, final float green, final float blue) {
         super(NO_FILTER_VERTEX_SHADER, RGB_FRAGMENT_SHADER);
-        mRed = red;
-        mGreen = green;
-        mBlue = blue;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mRedLocation = GLES20.glGetUniformLocation(getProgram(), "red");
-        mGreenLocation = GLES20.glGetUniformLocation(getProgram(), "green");
-        mBlueLocation = GLES20.glGetUniformLocation(getProgram(), "blue");
-        mIsInitialized = true;
-        setRed(mRed);
-        setGreen(mGreen);
-        setBlue(mBlue);
+        redLocation = GLES20.glGetUniformLocation(getProgram(), "red");
+        greenLocation = GLES20.glGetUniformLocation(getProgram(), "green");
+        blueLocation = GLES20.glGetUniformLocation(getProgram(), "blue");
+        isInitialized = true;
+        setRed(red);
+        setGreen(green);
+        setBlue(blue);
     }
 
     public void setRed(final float red) {
-        mRed = red;
-        if (mIsInitialized) {
-            setFloat(mRedLocation, mRed);
+        this.red = red;
+        if (isInitialized) {
+            setFloat(redLocation, this.red);
         }
     }
 
     public void setGreen(final float green) {
-        mGreen = green;
-        if (mIsInitialized) {
-            setFloat(mGreenLocation, mGreen);
+        this.green = green;
+        if (isInitialized) {
+            setFloat(greenLocation, this.green);
         }
     }
 
     public void setBlue(final float blue) {
-        mBlue = blue;
-        if (mIsInitialized) {
-            setFloat(mBlueLocation, mBlue);
+        this.blue = blue;
+        if (isInitialized) {
+            setFloat(blueLocation, this.blue);
         }
     }
 }

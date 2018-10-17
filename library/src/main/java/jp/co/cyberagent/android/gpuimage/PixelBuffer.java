@@ -36,61 +36,61 @@ import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
 import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
 
 public class PixelBuffer {
-    final static String TAG = "PixelBuffer";
-    final static boolean LIST_CONFIGS = false;
+    private final static String TAG = "PixelBuffer";
+    private final static boolean LIST_CONFIGS = false;
 
-    GLSurfaceView.Renderer mRenderer; // borrow this interface
-    int mWidth, mHeight;
-    Bitmap mBitmap;
+    private GLSurfaceView.Renderer renderer; // borrow this interface
+    private int width, height;
+    private Bitmap bitmap;
 
-    EGL10 mEGL;
-    EGLDisplay mEGLDisplay;
-    EGLConfig[] mEGLConfigs;
-    EGLConfig mEGLConfig;
-    EGLContext mEGLContext;
-    EGLSurface mEGLSurface;
-    GL10 mGL;
+    private EGL10 egl10;
+    private EGLDisplay eglDisplay;
+    private EGLConfig[] eglConfigs;
+    private EGLConfig eglConfig;
+    private EGLContext eglContext;
+    private EGLSurface eglSurface;
+    private GL10 gl10;
 
-    String mThreadOwner;
+    private String mThreadOwner;
 
     public PixelBuffer(final int width, final int height) {
-        mWidth = width;
-        mHeight = height;
+        this.width = width;
+        this.height = height;
 
         int[] version = new int[2];
         int[] attribList = new int[]{
-                EGL_WIDTH, mWidth,
-                EGL_HEIGHT, mHeight,
+                EGL_WIDTH, this.width,
+                EGL_HEIGHT, this.height,
                 EGL_NONE
         };
 
         // No error checking performed, minimum required code to elucidate logic
-        mEGL = (EGL10) EGLContext.getEGL();
-        mEGLDisplay = mEGL.eglGetDisplay(EGL_DEFAULT_DISPLAY);
-        mEGL.eglInitialize(mEGLDisplay, version);
-        mEGLConfig = chooseConfig(); // Choosing a config is a little more
+        egl10 = (EGL10) EGLContext.getEGL();
+        eglDisplay = egl10.eglGetDisplay(EGL_DEFAULT_DISPLAY);
+        egl10.eglInitialize(eglDisplay, version);
+        eglConfig = chooseConfig(); // Choosing a config is a little more
         // complicated
 
-        // mEGLContext = mEGL.eglCreateContext(mEGLDisplay, mEGLConfig,
+        // eglContext = egl10.eglCreateContext(eglDisplay, eglConfig,
         // EGL_NO_CONTEXT, null);
         int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
         int[] attrib_list = {
                 EGL_CONTEXT_CLIENT_VERSION, 2,
                 EGL10.EGL_NONE
         };
-        mEGLContext = mEGL.eglCreateContext(mEGLDisplay, mEGLConfig, EGL_NO_CONTEXT, attrib_list);
+        eglContext = egl10.eglCreateContext(eglDisplay, eglConfig, EGL_NO_CONTEXT, attrib_list);
 
-        mEGLSurface = mEGL.eglCreatePbufferSurface(mEGLDisplay, mEGLConfig, attribList);
-        mEGL.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
+        eglSurface = egl10.eglCreatePbufferSurface(eglDisplay, eglConfig, attribList);
+        egl10.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
 
-        mGL = (GL10) mEGLContext.getGL();
+        gl10 = (GL10) eglContext.getGL();
 
         // Record thread owner of OpenGL context
         mThreadOwner = Thread.currentThread().getName();
     }
 
     public void setRenderer(final GLSurfaceView.Renderer renderer) {
-        mRenderer = renderer;
+        this.renderer = renderer;
 
         // Does this thread own the OpenGL context?
         if (!Thread.currentThread().getName().equals(mThreadOwner)) {
@@ -99,13 +99,13 @@ public class PixelBuffer {
         }
 
         // Call the renderer initialization routines
-        mRenderer.onSurfaceCreated(mGL, mEGLConfig);
-        mRenderer.onSurfaceChanged(mGL, mWidth, mHeight);
+        this.renderer.onSurfaceCreated(gl10, eglConfig);
+        this.renderer.onSurfaceChanged(gl10, width, height);
     }
 
     public Bitmap getBitmap() {
         // Do we have a renderer?
-        if (mRenderer == null) {
+        if (renderer == null) {
             Log.e(TAG, "getBitmap: Renderer was not set.");
             return null;
         }
@@ -118,21 +118,21 @@ public class PixelBuffer {
 
         // Call the renderer draw routine (it seems that some filters do not
         // work if this is only called once)
-        mRenderer.onDrawFrame(mGL);
-        mRenderer.onDrawFrame(mGL);
+        renderer.onDrawFrame(gl10);
+        renderer.onDrawFrame(gl10);
         convertToBitmap();
-        return mBitmap;
+        return bitmap;
     }
 
     public void destroy() {
-        mRenderer.onDrawFrame(mGL);
-        mRenderer.onDrawFrame(mGL);
-        mEGL.eglMakeCurrent(mEGLDisplay, EGL10.EGL_NO_SURFACE,
+        renderer.onDrawFrame(gl10);
+        renderer.onDrawFrame(gl10);
+        egl10.eglMakeCurrent(eglDisplay, EGL10.EGL_NO_SURFACE,
                 EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
 
-        mEGL.eglDestroySurface(mEGLDisplay, mEGLSurface);
-        mEGL.eglDestroyContext(mEGLDisplay, mEGLContext);
-        mEGL.eglTerminate(mEGLDisplay);
+        egl10.eglDestroySurface(eglDisplay, eglSurface);
+        egl10.eglDestroyContext(eglDisplay, eglContext);
+        egl10.eglTerminate(eglDisplay);
     }
 
     private EGLConfig chooseConfig() {
@@ -150,22 +150,22 @@ public class PixelBuffer {
         // No error checking performed, minimum required code to elucidate logic
         // Expand on this logic to be more selective in choosing a configuration
         int[] numConfig = new int[1];
-        mEGL.eglChooseConfig(mEGLDisplay, attribList, null, 0, numConfig);
+        egl10.eglChooseConfig(eglDisplay, attribList, null, 0, numConfig);
         int configSize = numConfig[0];
-        mEGLConfigs = new EGLConfig[configSize];
-        mEGL.eglChooseConfig(mEGLDisplay, attribList, mEGLConfigs, configSize, numConfig);
+        eglConfigs = new EGLConfig[configSize];
+        egl10.eglChooseConfig(eglDisplay, attribList, eglConfigs, configSize, numConfig);
 
         if (LIST_CONFIGS) {
             listConfig();
         }
 
-        return mEGLConfigs[0]; // Best match is probably the first configuration
+        return eglConfigs[0]; // Best match is probably the first configuration
     }
 
     private void listConfig() {
         Log.i(TAG, "Config List {");
 
-        for (EGLConfig config : mEGLConfigs) {
+        for (EGLConfig config : eglConfigs) {
             int d, s, r, g, b, a;
 
             // Expand on this logic to dump other attributes
@@ -184,27 +184,27 @@ public class PixelBuffer {
 
     private int getConfigAttrib(final EGLConfig config, final int attribute) {
         int[] value = new int[1];
-        return mEGL.eglGetConfigAttrib(mEGLDisplay, config,
+        return egl10.eglGetConfigAttrib(eglDisplay, config,
                 attribute, value) ? value[0] : 0;
     }
 
     private void convertToBitmap() {
-        int[] iat = new int[mWidth * mHeight];
-        IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
-        mGL.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
+        int[] iat = new int[width * height];
+        IntBuffer ib = IntBuffer.allocate(width * height);
+        gl10.glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, ib);
         int[] ia = ib.array();
 
         //Stupid !
         // Convert upside down mirror-reversed image to right-side up normal
         // image.
-        for (int i = 0; i < mHeight; i++) {
-            for (int j = 0; j < mWidth; j++) {
-                iat[(mHeight - i - 1) * mWidth + j] = ia[i * mWidth + j];
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                iat[(height - i - 1) * width + j] = ia[i * width + j];
             }
         }
 
 
-        mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-        mBitmap.copyPixelsFromBuffer(IntBuffer.wrap(iat));
+        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.copyPixelsFromBuffer(IntBuffer.wrap(iat));
     }
 }

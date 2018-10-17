@@ -53,10 +53,10 @@ public class GPUImageWhiteBalanceFilter extends GPUImageFilter {
             "	gl_FragColor = vec4(mix(rgb, processed, temperature), source.a);\n" +
             "}";
 
-    private int mTemperatureLocation;
-    private float mTemperature;
-    private int mTintLocation;
-    private float mTint;
+    private int temperatureLocation;
+    private float temperature;
+    private int tintLocation;
+    private float tint;
 
     public GPUImageWhiteBalanceFilter() {
         this(5000.0f, 0.0f);
@@ -64,28 +64,28 @@ public class GPUImageWhiteBalanceFilter extends GPUImageFilter {
 
     public GPUImageWhiteBalanceFilter(final float temperature, final float tint) {
         super(NO_FILTER_VERTEX_SHADER, WHITE_BALANCE_FRAGMENT_SHADER);
-        mTemperature = temperature;
-        mTint = tint;
+        this.temperature = temperature;
+        this.tint = tint;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mTemperatureLocation = GLES20.glGetUniformLocation(getProgram(), "temperature");
-        mTintLocation = GLES20.glGetUniformLocation(getProgram(), "tint");
+        temperatureLocation = GLES20.glGetUniformLocation(getProgram(), "temperature");
+        tintLocation = GLES20.glGetUniformLocation(getProgram(), "tint");
 
-        setTemperature(mTemperature);
-        setTint(mTint);
+        setTemperature(temperature);
+        setTint(tint);
     }
 
 
     public void setTemperature(final float temperature) {
-        mTemperature = temperature;
-        setFloat(mTemperatureLocation, mTemperature < 5000 ? (float) (0.0004 * (mTemperature - 5000.0)) : (float) (0.00006 * (mTemperature - 5000.0)));
+        this.temperature = temperature;
+        setFloat(temperatureLocation, this.temperature < 5000 ? (float) (0.0004 * (this.temperature - 5000.0)) : (float) (0.00006 * (this.temperature - 5000.0)));
     }
 
     public void setTint(final float tint) {
-        mTint = tint;
-        setFloat(mTintLocation, (float) (mTint / 100.0));
+        this.tint = tint;
+        setFloat(tintLocation, (float) (this.tint / 100.0));
     }
 }

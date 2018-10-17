@@ -51,12 +51,12 @@ import static jp.co.cyberagent.android.gpuimage.GPUImage.SURFACE_TYPE_TEXTURE_VI
 
 public class GPUImageView extends FrameLayout {
 
-    private int mSurfaceType = SURFACE_TYPE_SURFACE_VIEW;
-    private View mSurfaceView;
-    private GPUImage mGPUImage;
-    private GPUImageFilter mFilter;
-    public Size mForceSize = null;
-    private float mRatio = 0.0f;
+    private int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
+    private View surfaceView;
+    private GPUImage gpuImage;
+    private GPUImageFilter filter;
+    public Size forceSize = null;
+    private float ratio = 0.0f;
 
     public GPUImageView(Context context) {
         super(context);
@@ -72,36 +72,36 @@ public class GPUImageView extends FrameLayout {
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.GPUImageView, 0, 0);
             try {
-                mSurfaceType = a.getInt(R.styleable.GPUImageView_surface_type, mSurfaceType);
+                surfaceType = a.getInt(R.styleable.GPUImageView_surface_type, surfaceType);
             } finally {
                 a.recycle();
             }
         }
-        mGPUImage = new GPUImage(getContext());
-        if (mSurfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
-            mSurfaceView = new GPUImageGLTextureView(context, attrs);
-            mGPUImage.setGLTextureView((GLTextureView) mSurfaceView);
+        gpuImage = new GPUImage(getContext());
+        if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
+            surfaceView = new GPUImageGLTextureView(context, attrs);
+            gpuImage.setGLTextureView((GLTextureView) surfaceView);
         } else {
-            mSurfaceView = new GPUImageGLSurfaceView(context, attrs);
-            mGPUImage.setGLSurfaceView((GLSurfaceView) mSurfaceView);
+            surfaceView = new GPUImageGLSurfaceView(context, attrs);
+            gpuImage.setGLSurfaceView((GLSurfaceView) surfaceView);
         }
-        addView(mSurfaceView);
+        addView(surfaceView);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mRatio != 0.0f) {
+        if (ratio != 0.0f) {
             int width = MeasureSpec.getSize(widthMeasureSpec);
             int height = MeasureSpec.getSize(heightMeasureSpec);
 
             int newHeight;
             int newWidth;
-            if (width / mRatio < height) {
+            if (width / ratio < height) {
                 newWidth = width;
-                newHeight = Math.round(width / mRatio);
+                newHeight = Math.round(width / ratio);
             } else {
                 newHeight = height;
-                newWidth = Math.round(height * mRatio);
+                newWidth = Math.round(height * ratio);
             }
 
             int newWidthSpec = MeasureSpec.makeMeasureSpec(newWidth, MeasureSpec.EXACTLY);
@@ -118,7 +118,7 @@ public class GPUImageView extends FrameLayout {
      * @return used GPUImage instance
      */
     public GPUImage getGPUImage() {
-        return mGPUImage;
+        return gpuImage;
     }
 
     /**
@@ -127,7 +127,7 @@ public class GPUImageView extends FrameLayout {
      * @param camera the camera
      */
     public void setUpCamera(final Camera camera) {
-        mGPUImage.setUpCamera(camera);
+        gpuImage.setUpCamera(camera);
     }
 
     /**
@@ -140,7 +140,7 @@ public class GPUImageView extends FrameLayout {
      */
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
                             final boolean flipVertical) {
-        mGPUImage.setUpCamera(camera, degrees, flipHorizontal, flipVertical);
+        gpuImage.setUpCamera(camera, degrees, flipHorizontal, flipVertical);
     }
 
     /**
@@ -151,14 +151,14 @@ public class GPUImageView extends FrameLayout {
      * @param blue  red color value
      */
     public void setBackgroundColor(float red, float green, float blue) {
-        mGPUImage.setBackgroundColor(red, green, blue);
+        gpuImage.setBackgroundColor(red, green, blue);
     }
 
     // TODO Should be an xml attribute. But then GPUImage can not be distributed as .jar anymore.
     public void setRatio(float ratio) {
-        mRatio = ratio;
-        mSurfaceView.requestLayout();
-        mGPUImage.deleteImage();
+        this.ratio = ratio;
+        surfaceView.requestLayout();
+        gpuImage.deleteImage();
     }
 
     /**
@@ -167,7 +167,7 @@ public class GPUImageView extends FrameLayout {
      * @param scaleType the new ScaleType
      */
     public void setScaleType(GPUImage.ScaleType scaleType) {
-        mGPUImage.setScaleType(scaleType);
+        gpuImage.setScaleType(scaleType);
     }
 
     /**
@@ -176,7 +176,7 @@ public class GPUImageView extends FrameLayout {
      * @param rotation new rotation
      */
     public void setRotation(Rotation rotation) {
-        mGPUImage.setRotation(rotation);
+        gpuImage.setRotation(rotation);
         requestRender();
     }
 
@@ -186,8 +186,8 @@ public class GPUImageView extends FrameLayout {
      * @param filter Filter that should be applied on the image.
      */
     public void setFilter(GPUImageFilter filter) {
-        mFilter = filter;
-        mGPUImage.setFilter(filter);
+        this.filter = filter;
+        gpuImage.setFilter(filter);
         requestRender();
     }
 
@@ -197,7 +197,7 @@ public class GPUImageView extends FrameLayout {
      * @return the current filter
      */
     public GPUImageFilter getFilter() {
-        return mFilter;
+        return filter;
     }
 
     /**
@@ -206,7 +206,7 @@ public class GPUImageView extends FrameLayout {
      * @param bitmap the new image
      */
     public void setImage(final Bitmap bitmap) {
-        mGPUImage.setImage(bitmap);
+        gpuImage.setImage(bitmap);
     }
 
     /**
@@ -215,7 +215,7 @@ public class GPUImageView extends FrameLayout {
      * @param uri the uri of the new image
      */
     public void setImage(final Uri uri) {
-        mGPUImage.setImage(uri);
+        gpuImage.setImage(uri);
     }
 
     /**
@@ -224,14 +224,14 @@ public class GPUImageView extends FrameLayout {
      * @param file the file of the new image
      */
     public void setImage(final File file) {
-        mGPUImage.setImage(file);
+        gpuImage.setImage(file);
     }
 
     public void requestRender() {
-        if (mSurfaceView instanceof GLSurfaceView) {
-            ((GLSurfaceView) mSurfaceView).requestRender();
-        } else if (mSurfaceView instanceof GLTextureView) {
-            ((GLTextureView) mSurfaceView).requestRender();
+        if (surfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) surfaceView).requestRender();
+        } else if (surfaceView instanceof GLTextureView) {
+            ((GLTextureView) surfaceView).requestRender();
         }
     }
 
@@ -284,7 +284,7 @@ public class GPUImageView extends FrameLayout {
             throw new IllegalStateException("Do not call this method from the UI thread!");
         }
 
-        mForceSize = new Size(width, height);
+        forceSize = new Size(width, height);
 
         final Semaphore waiter = new Semaphore(0);
 
@@ -305,13 +305,13 @@ public class GPUImageView extends FrameLayout {
             public void run() {
                 // Show loading
                 addView(new LoadingView(getContext()));
-                mSurfaceView.requestLayout();
+                surfaceView.requestLayout();
             }
         });
         waiter.acquire();
 
         // Run one render pass
-        mGPUImage.runOnGLThread(new Runnable() {
+        gpuImage.runOnGLThread(new Runnable() {
             @Override
             public void run() {
                 waiter.release();
@@ -322,11 +322,11 @@ public class GPUImageView extends FrameLayout {
         Bitmap bitmap = capture();
 
 
-        mForceSize = null;
+        forceSize = null;
         post(new Runnable() {
             @Override
             public void run() {
-                mSurfaceView.requestLayout();
+                surfaceView.requestLayout();
             }
         });
         requestRender();
@@ -351,12 +351,12 @@ public class GPUImageView extends FrameLayout {
     public Bitmap capture() throws InterruptedException {
         final Semaphore waiter = new Semaphore(0);
 
-        final int width = mSurfaceView.getMeasuredWidth();
-        final int height = mSurfaceView.getMeasuredHeight();
+        final int width = surfaceView.getMeasuredWidth();
+        final int height = surfaceView.getMeasuredHeight();
 
         // Take picture on OpenGL thread
         final int[] pixelMirroredArray = new int[width * height];
-        mGPUImage.runOnGLThread(new Runnable() {
+        gpuImage.runOnGLThread(new Runnable() {
             @Override
             public void run() {
                 final IntBuffer pixelBuffer = IntBuffer.allocate(width * height);
@@ -384,10 +384,10 @@ public class GPUImageView extends FrameLayout {
      * Pauses the Surface.
      */
     public void onPause() {
-        if (mSurfaceView instanceof GLSurfaceView) {
-            ((GLSurfaceView) mSurfaceView).onPause();
-        } else if (mSurfaceView instanceof GLTextureView) {
-            ((GLTextureView) mSurfaceView).onPause();
+        if (surfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) surfaceView).onPause();
+        } else if (surfaceView instanceof GLTextureView) {
+            ((GLTextureView) surfaceView).onPause();
         }
     }
 
@@ -395,10 +395,10 @@ public class GPUImageView extends FrameLayout {
      * Resumes the Surface.
      */
     public void onResume() {
-        if (mSurfaceView instanceof GLSurfaceView) {
-            ((GLSurfaceView) mSurfaceView).onResume();
-        } else if (mSurfaceView instanceof GLTextureView) {
-            ((GLTextureView) mSurfaceView).onResume();
+        if (surfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) surfaceView).onResume();
+        } else if (surfaceView instanceof GLTextureView) {
+            ((GLTextureView) surfaceView).onResume();
         }
     }
 
@@ -423,9 +423,9 @@ public class GPUImageView extends FrameLayout {
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            if (mForceSize != null) {
-                super.onMeasure(MeasureSpec.makeMeasureSpec(mForceSize.width, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(mForceSize.height, MeasureSpec.EXACTLY));
+            if (forceSize != null) {
+                super.onMeasure(MeasureSpec.makeMeasureSpec(forceSize.width, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(forceSize.height, MeasureSpec.EXACTLY));
             } else {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
@@ -443,9 +443,9 @@ public class GPUImageView extends FrameLayout {
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            if (mForceSize != null) {
-                super.onMeasure(MeasureSpec.makeMeasureSpec(mForceSize.width, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(mForceSize.height, MeasureSpec.EXACTLY));
+            if (forceSize != null) {
+                super.onMeasure(MeasureSpec.makeMeasureSpec(forceSize.width, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(forceSize.height, MeasureSpec.EXACTLY));
             } else {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
@@ -478,12 +478,12 @@ public class GPUImageView extends FrameLayout {
     }
 
     private class SaveTask extends AsyncTask<Void, Void, Void> {
-        private final String mFolderName;
-        private final String mFileName;
-        private final int mWidth;
-        private final int mHeight;
-        private final OnPictureSavedListener mListener;
-        private final Handler mHandler;
+        private final String folderName;
+        private final String fileName;
+        private final int width;
+        private final int height;
+        private final OnPictureSavedListener listener;
+        private final Handler handler;
 
         public SaveTask(final String folderName, final String fileName,
                         final OnPictureSavedListener listener) {
@@ -492,19 +492,19 @@ public class GPUImageView extends FrameLayout {
 
         public SaveTask(final String folderName, final String fileName, int width, int height,
                         final OnPictureSavedListener listener) {
-            mFolderName = folderName;
-            mFileName = fileName;
-            mWidth = width;
-            mHeight = height;
-            mListener = listener;
-            mHandler = new Handler();
+            this.folderName = folderName;
+            this.fileName = fileName;
+            this.width = width;
+            this.height = height;
+            this.listener = listener;
+            handler = new Handler();
         }
 
         @Override
         protected Void doInBackground(final Void... params) {
             try {
-                Bitmap result = mWidth != 0 ? capture(mWidth, mHeight) : capture();
-                saveImage(mFolderName, mFileName, result);
+                Bitmap result = width != 0 ? capture(width, height) : capture();
+                saveImage(folderName, fileName, result);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -525,12 +525,12 @@ public class GPUImageView extends FrameLayout {
                         new MediaScannerConnection.OnScanCompletedListener() {
                             @Override
                             public void onScanCompleted(final String path, final Uri uri) {
-                                if (mListener != null) {
-                                    mHandler.post(new Runnable() {
+                                if (listener != null) {
+                                    handler.post(new Runnable() {
 
                                         @Override
                                         public void run() {
-                                            mListener.onPictureSaved(uri);
+                                            listener.onPictureSaved(uri);
                                         }
                                     });
                                 }

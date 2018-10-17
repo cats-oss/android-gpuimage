@@ -138,10 +138,10 @@ public class GPUImageColorBalanceFilter extends GPUImageFilter {
             "    }\n" +
             "}\n";
 
-    private int mShadowsLocation;
-    private int mMidtonesLocation;
-    private int mHighlightsLocation;
-    private int mPreserveLuminosityLocation;
+    private int shadowsLocation;
+    private int midtonesLocation;
+    private int highlightsLocation;
+    private int preserveLuminosityLocation;
 
     private float[] showdows;
     private float[] midtones;
@@ -160,10 +160,10 @@ public class GPUImageColorBalanceFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mShadowsLocation = GLES20.glGetUniformLocation(getProgram(), "shadowsShift");
-        mMidtonesLocation = GLES20.glGetUniformLocation(getProgram(), "midtonesShift");
-        mHighlightsLocation = GLES20.glGetUniformLocation(getProgram(), "highlightsShift");
-        mPreserveLuminosityLocation = GLES20.glGetUniformLocation(getProgram(), "preserveLuminosity");
+        shadowsLocation = GLES20.glGetUniformLocation(getProgram(), "shadowsShift");
+        midtonesLocation = GLES20.glGetUniformLocation(getProgram(), "midtonesShift");
+        highlightsLocation = GLES20.glGetUniformLocation(getProgram(), "highlightsShift");
+        preserveLuminosityLocation = GLES20.glGetUniformLocation(getProgram(), "preserveLuminosity");
     }
 
     @Override
@@ -177,21 +177,21 @@ public class GPUImageColorBalanceFilter extends GPUImageFilter {
 
     public void setShowdows(float[] showdows) {
         this.showdows = showdows;
-        setFloatVec3(mShadowsLocation, showdows);
+        setFloatVec3(shadowsLocation, showdows);
     }
 
     public void setMidtones(float[] midtones) {
         this.midtones = midtones;
-        setFloatVec3(mMidtonesLocation, midtones);
+        setFloatVec3(midtonesLocation, midtones);
     }
 
     public void setHighlights(float[] highlights) {
         this.highlights = highlights;
-        setFloatVec3(mHighlightsLocation, highlights);
+        setFloatVec3(highlightsLocation, highlights);
     }
 
     public void setPreserveLuminosity(boolean preserveLuminosity) {
         this.preserveLuminosity = preserveLuminosity;
-        setInteger(mPreserveLuminosityLocation, preserveLuminosity ? 1 : 0);
+        setInteger(preserveLuminosityLocation, preserveLuminosity ? 1 : 0);
     }
 }

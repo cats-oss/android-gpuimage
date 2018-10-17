@@ -111,9 +111,9 @@ public class GPUImageBilateralFilter extends GPUImageFilter {
 //			" gl_FragColor.r = distanceNormalizationFactor / 20.0;" + 
             " }";
 
-    private float mDistanceNormalizationFactor;
-    private int mDisFactorLocation;
-    private int mSingleStepOffsetLocation;
+    private float distanceNormalizationFactor;
+    private int disFactorLocation;
+    private int singleStepOffsetLocation;
 
     public GPUImageBilateralFilter() {
         this(8.0f);
@@ -121,29 +121,29 @@ public class GPUImageBilateralFilter extends GPUImageFilter {
 
     public GPUImageBilateralFilter(final float distanceNormalizationFactor) {
         super(BILATERAL_VERTEX_SHADER, BILATERAL_FRAGMENT_SHADER);
-        mDistanceNormalizationFactor = distanceNormalizationFactor;
+        this.distanceNormalizationFactor = distanceNormalizationFactor;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mDisFactorLocation = GLES20.glGetUniformLocation(getProgram(), "distanceNormalizationFactor");
-        mSingleStepOffsetLocation = GLES20.glGetUniformLocation(getProgram(), "singleStepOffset");
+        disFactorLocation = GLES20.glGetUniformLocation(getProgram(), "distanceNormalizationFactor");
+        singleStepOffsetLocation = GLES20.glGetUniformLocation(getProgram(), "singleStepOffset");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setDistanceNormalizationFactor(mDistanceNormalizationFactor);
+        setDistanceNormalizationFactor(distanceNormalizationFactor);
     }
 
     public void setDistanceNormalizationFactor(final float newValue) {
-        mDistanceNormalizationFactor = newValue;
-        setFloat(mDisFactorLocation, newValue);
+        distanceNormalizationFactor = newValue;
+        setFloat(disFactorLocation, newValue);
     }
 
     private void setTexelSize(final float w, final float h) {
-        setFloatVec2(mSingleStepOffsetLocation, new float[]{1.0f / w, 1.0f / h});
+        setFloatVec2(singleStepOffsetLocation, new float[]{1.0f / w, 1.0f / h});
     }
 
     @Override

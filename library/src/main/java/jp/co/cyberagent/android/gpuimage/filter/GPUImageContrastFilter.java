@@ -37,8 +37,8 @@ public class GPUImageContrastFilter extends GPUImageFilter {
             "     gl_FragColor = vec4(((textureColor.rgb - vec3(0.5)) * contrast + vec3(0.5)), textureColor.w);\n" +
             " }";
 
-    private int mContrastLocation;
-    private float mContrast;
+    private int contrastLocation;
+    private float contrast;
 
     public GPUImageContrastFilter() {
         this(1.2f);
@@ -46,23 +46,23 @@ public class GPUImageContrastFilter extends GPUImageFilter {
 
     public GPUImageContrastFilter(float contrast) {
         super(NO_FILTER_VERTEX_SHADER, CONTRAST_FRAGMENT_SHADER);
-        mContrast = contrast;
+        this.contrast = contrast;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mContrastLocation = GLES20.glGetUniformLocation(getProgram(), "contrast");
+        contrastLocation = GLES20.glGetUniformLocation(getProgram(), "contrast");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setContrast(mContrast);
+        setContrast(contrast);
     }
 
     public void setContrast(final float contrast) {
-        mContrast = contrast;
-        setFloat(mContrastLocation, mContrast);
+        this.contrast = contrast;
+        setFloat(contrastLocation, this.contrast);
     }
 }

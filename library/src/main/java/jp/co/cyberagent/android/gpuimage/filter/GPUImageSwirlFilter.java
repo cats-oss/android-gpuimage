@@ -51,12 +51,12 @@ public class GPUImageSwirlFilter extends GPUImageFilter {
             "\n" +
             "}\n";
 
-    private float mAngle;
-    private int mAngleLocation;
-    private float mRadius;
-    private int mRadiusLocation;
-    private PointF mCenter;
-    private int mCenterLocation;
+    private float angle;
+    private int angleLocation;
+    private float radius;
+    private int radiusLocation;
+    private PointF center;
+    private int centerLocation;
 
     public GPUImageSwirlFilter() {
         this(0.5f, 1.0f, new PointF(0.5f, 0.5f));
@@ -64,25 +64,25 @@ public class GPUImageSwirlFilter extends GPUImageFilter {
 
     public GPUImageSwirlFilter(float radius, float angle, PointF center) {
         super(NO_FILTER_VERTEX_SHADER, SWIRL_FRAGMENT_SHADER);
-        mRadius = radius;
-        mAngle = angle;
-        mCenter = center;
+        this.radius = radius;
+        this.angle = angle;
+        this.center = center;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mAngleLocation = GLES20.glGetUniformLocation(getProgram(), "angle");
-        mRadiusLocation = GLES20.glGetUniformLocation(getProgram(), "radius");
-        mCenterLocation = GLES20.glGetUniformLocation(getProgram(), "center");
+        angleLocation = GLES20.glGetUniformLocation(getProgram(), "angle");
+        radiusLocation = GLES20.glGetUniformLocation(getProgram(), "radius");
+        centerLocation = GLES20.glGetUniformLocation(getProgram(), "center");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setRadius(mRadius);
-        setAngle(mAngle);
-        setCenter(mCenter);
+        setRadius(radius);
+        setAngle(angle);
+        setCenter(center);
     }
 
     /**
@@ -91,8 +91,8 @@ public class GPUImageSwirlFilter extends GPUImageFilter {
      * @param radius from 0.0 to 1.0, default 0.5
      */
     public void setRadius(float radius) {
-        mRadius = radius;
-        setFloat(mRadiusLocation, radius);
+        this.radius = radius;
+        setFloat(radiusLocation, radius);
     }
 
     /**
@@ -101,8 +101,8 @@ public class GPUImageSwirlFilter extends GPUImageFilter {
      * @param angle minimum 0.0, default 1.0
      */
     public void setAngle(float angle) {
-        mAngle = angle;
-        setFloat(mAngleLocation, angle);
+        this.angle = angle;
+        setFloat(angleLocation, angle);
     }
 
     /**
@@ -111,7 +111,7 @@ public class GPUImageSwirlFilter extends GPUImageFilter {
      * @param center default (0.5, 0.5)
      */
     public void setCenter(PointF center) {
-        mCenter = center;
-        setPoint(mCenterLocation, center);
+        this.center = center;
+        setPoint(centerLocation, center);
     }
 }

@@ -41,8 +41,8 @@ public class GPUImageSaturationFilter extends GPUImageFilter {
             "     \n" +
             " }";
 
-    private int mSaturationLocation;
-    private float mSaturation;
+    private int saturationLocation;
+    private float saturation;
 
     public GPUImageSaturationFilter() {
         this(1.0f);
@@ -50,23 +50,23 @@ public class GPUImageSaturationFilter extends GPUImageFilter {
 
     public GPUImageSaturationFilter(final float saturation) {
         super(NO_FILTER_VERTEX_SHADER, SATURATION_FRAGMENT_SHADER);
-        mSaturation = saturation;
+        this.saturation = saturation;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mSaturationLocation = GLES20.glGetUniformLocation(getProgram(), "saturation");
+        saturationLocation = GLES20.glGetUniformLocation(getProgram(), "saturation");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setSaturation(mSaturation);
+        setSaturation(saturation);
     }
 
     public void setSaturation(final float saturation) {
-        mSaturation = saturation;
-        setFloat(mSaturationLocation, mSaturation);
+        this.saturation = saturation;
+        setFloat(saturationLocation, this.saturation);
     }
 }

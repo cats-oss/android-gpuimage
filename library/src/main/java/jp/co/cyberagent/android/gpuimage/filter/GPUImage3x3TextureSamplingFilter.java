@@ -60,13 +60,13 @@ public class GPUImage3x3TextureSamplingFilter extends GPUImageFilter {
             "    bottomRightTextureCoordinate = inputTextureCoordinate.xy + widthHeightStep;\n" +
             "}";
 
-    private int mUniformTexelWidthLocation;
-    private int mUniformTexelHeightLocation;
+    private int uniformTexelWidthLocation;
+    private int uniformTexelHeightLocation;
 
-    private boolean mHasOverriddenImageSizeFactor = false;
-    private float mTexelWidth;
-    private float mTexelHeight;
-    private float mLineSize = 1.0f;
+    private boolean hasOverriddenImageSizeFactor = false;
+    private float texelWidth;
+    private float texelHeight;
+    private float lineSize = 1.0f;
 
     public GPUImage3x3TextureSamplingFilter() {
         this(NO_FILTER_VERTEX_SHADER);
@@ -79,9 +79,9 @@ public class GPUImage3x3TextureSamplingFilter extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        mUniformTexelWidthLocation = GLES20.glGetUniformLocation(getProgram(), "texelWidth");
-        mUniformTexelHeightLocation = GLES20.glGetUniformLocation(getProgram(), "texelHeight");
-        if (mTexelWidth != 0) {
+        uniformTexelWidthLocation = GLES20.glGetUniformLocation(getProgram(), "texelWidth");
+        uniformTexelHeightLocation = GLES20.glGetUniformLocation(getProgram(), "texelHeight");
+        if (texelWidth != 0) {
             updateTexelValues();
         }
     }
@@ -89,32 +89,32 @@ public class GPUImage3x3TextureSamplingFilter extends GPUImageFilter {
     @Override
     public void onOutputSizeChanged(final int width, final int height) {
         super.onOutputSizeChanged(width, height);
-        if (!mHasOverriddenImageSizeFactor) {
-            setLineSize(mLineSize);
+        if (!hasOverriddenImageSizeFactor) {
+            setLineSize(lineSize);
         }
     }
 
     public void setTexelWidth(final float texelWidth) {
-        mHasOverriddenImageSizeFactor = true;
-        mTexelWidth = texelWidth;
-        setFloat(mUniformTexelWidthLocation, texelWidth);
+        hasOverriddenImageSizeFactor = true;
+        this.texelWidth = texelWidth;
+        setFloat(uniformTexelWidthLocation, texelWidth);
     }
 
     public void setTexelHeight(final float texelHeight) {
-        mHasOverriddenImageSizeFactor = true;
-        mTexelHeight = texelHeight;
-        setFloat(mUniformTexelHeightLocation, texelHeight);
+        hasOverriddenImageSizeFactor = true;
+        this.texelHeight = texelHeight;
+        setFloat(uniformTexelHeightLocation, texelHeight);
     }
 
     public void setLineSize(final float size) {
-        mLineSize = size;
-        mTexelWidth = size / getOutputWidth();
-        mTexelHeight = size / getOutputHeight();
+        lineSize = size;
+        texelWidth = size / getOutputWidth();
+        texelHeight = size / getOutputHeight();
         updateTexelValues();
     }
 
     private void updateTexelValues() {
-        setFloat(mUniformTexelWidthLocation, mTexelWidth);
-        setFloat(mUniformTexelHeightLocation, mTexelHeight);
+        setFloat(uniformTexelWidthLocation, texelWidth);
+        setFloat(uniformTexelHeightLocation, texelHeight);
     }
 }

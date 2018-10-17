@@ -46,14 +46,14 @@ public class GPUImageSphereRefractionFilter extends GPUImageFilter {
             "gl_FragColor = texture2D(inputImageTexture, (refractedVector.xy + 1.0) * 0.5) * checkForPresenceWithinSphere;     \n" +
             "}\n";
 
-    private PointF mCenter;
-    private int mCenterLocation;
-    private float mRadius;
-    private int mRadiusLocation;
-    private float mAspectRatio;
-    private int mAspectRatioLocation;
-    private float mRefractiveIndex;
-    private int mRefractiveIndexLocation;
+    private PointF center;
+    private int centerLocation;
+    private float radius;
+    private int radiusLocation;
+    private float aspectRatio;
+    private int aspectRatioLocation;
+    private float refractiveIndex;
+    private int refractiveIndexLocation;
 
     public GPUImageSphereRefractionFilter() {
         this(new PointF(0.5f, 0.5f), 0.25f, 0.71f);
@@ -61,38 +61,38 @@ public class GPUImageSphereRefractionFilter extends GPUImageFilter {
 
     public GPUImageSphereRefractionFilter(PointF center, float radius, float refractiveIndex) {
         super(NO_FILTER_VERTEX_SHADER, SPHERE_FRAGMENT_SHADER);
-        mCenter = center;
-        mRadius = radius;
-        mRefractiveIndex = refractiveIndex;
+        this.center = center;
+        this.radius = radius;
+        this.refractiveIndex = refractiveIndex;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mCenterLocation = GLES20.glGetUniformLocation(getProgram(), "center");
-        mRadiusLocation = GLES20.glGetUniformLocation(getProgram(), "radius");
-        mAspectRatioLocation = GLES20.glGetUniformLocation(getProgram(), "aspectRatio");
-        mRefractiveIndexLocation = GLES20.glGetUniformLocation(getProgram(), "refractiveIndex");
+        centerLocation = GLES20.glGetUniformLocation(getProgram(), "center");
+        radiusLocation = GLES20.glGetUniformLocation(getProgram(), "radius");
+        aspectRatioLocation = GLES20.glGetUniformLocation(getProgram(), "aspectRatio");
+        refractiveIndexLocation = GLES20.glGetUniformLocation(getProgram(), "refractiveIndex");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setRadius(mRadius);
-        setCenter(mCenter);
-        setRefractiveIndex(mRefractiveIndex);
+        setRadius(radius);
+        setCenter(center);
+        setRefractiveIndex(refractiveIndex);
     }
 
     @Override
     public void onOutputSizeChanged(int width, int height) {
-        mAspectRatio = (float) height / width;
-        setAspectRatio(mAspectRatio);
+        aspectRatio = (float) height / width;
+        setAspectRatio(aspectRatio);
         super.onOutputSizeChanged(width, height);
     }
 
     private void setAspectRatio(float aspectRatio) {
-        mAspectRatio = aspectRatio;
-        setFloat(mAspectRatioLocation, aspectRatio);
+        this.aspectRatio = aspectRatio;
+        setFloat(aspectRatioLocation, aspectRatio);
     }
 
     /**
@@ -101,8 +101,8 @@ public class GPUImageSphereRefractionFilter extends GPUImageFilter {
      * @param refractiveIndex default 0.71
      */
     public void setRefractiveIndex(float refractiveIndex) {
-        mRefractiveIndex = refractiveIndex;
-        setFloat(mRefractiveIndexLocation, refractiveIndex);
+        this.refractiveIndex = refractiveIndex;
+        setFloat(refractiveIndexLocation, refractiveIndex);
     }
 
     /**
@@ -111,8 +111,8 @@ public class GPUImageSphereRefractionFilter extends GPUImageFilter {
      * @param center default (0.5, 0.5)
      */
     public void setCenter(PointF center) {
-        mCenter = center;
-        setPoint(mCenterLocation, center);
+        this.center = center;
+        setPoint(centerLocation, center);
     }
 
     /**
@@ -121,7 +121,7 @@ public class GPUImageSphereRefractionFilter extends GPUImageFilter {
      * @param radius from 0.0 to 1.0, default 0.25
      */
     public void setRadius(float radius) {
-        mRadius = radius;
-        setFloat(mRadiusLocation, radius);
+        this.radius = radius;
+        setFloat(radiusLocation, radius);
     }
 }

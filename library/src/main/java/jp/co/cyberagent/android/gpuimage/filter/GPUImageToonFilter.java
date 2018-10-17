@@ -70,10 +70,10 @@ public class GPUImageToonFilter extends GPUImage3x3TextureSamplingFilter {
             "gl_FragColor = vec4(posterizedImageColor * thresholdTest, textureColor.a);\n" +
             "}\n";
 
-    float mThreshold;
-    int mThresholdLocation;
-    float mQuantizationLevels;
-    int mQuantizationLevelsLocation;
+    private float threshold;
+    private int thresholdLocation;
+    private float quantizationLevels;
+    private int quantizationLevelsLocation;
 
     public GPUImageToonFilter() {
         this(0.2f, 10.0f);
@@ -81,22 +81,22 @@ public class GPUImageToonFilter extends GPUImage3x3TextureSamplingFilter {
 
     public GPUImageToonFilter(float threshold, float quantizationLevels) {
         super(TOON_FRAGMENT_SHADER);
-        mThreshold = threshold;
-        mQuantizationLevels = quantizationLevels;
+        this.threshold = threshold;
+        this.quantizationLevels = quantizationLevels;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mThresholdLocation = GLES20.glGetUniformLocation(getProgram(), "threshold");
-        mQuantizationLevelsLocation = GLES20.glGetUniformLocation(getProgram(), "quantizationLevels");
+        thresholdLocation = GLES20.glGetUniformLocation(getProgram(), "threshold");
+        quantizationLevelsLocation = GLES20.glGetUniformLocation(getProgram(), "quantizationLevels");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setThreshold(mThreshold);
-        setQuantizationLevels(mQuantizationLevels);
+        setThreshold(threshold);
+        setQuantizationLevels(quantizationLevels);
     }
 
     /**
@@ -105,8 +105,8 @@ public class GPUImageToonFilter extends GPUImage3x3TextureSamplingFilter {
      * @param threshold default 0.2
      */
     public void setThreshold(final float threshold) {
-        mThreshold = threshold;
-        setFloat(mThresholdLocation, threshold);
+        this.threshold = threshold;
+        setFloat(thresholdLocation, threshold);
     }
 
     /**
@@ -115,7 +115,7 @@ public class GPUImageToonFilter extends GPUImage3x3TextureSamplingFilter {
      * @param quantizationLevels default 10.0
      */
     public void setQuantizationLevels(final float quantizationLevels) {
-        mQuantizationLevels = quantizationLevels;
-        setFloat(mQuantizationLevelsLocation, quantizationLevels);
+        this.quantizationLevels = quantizationLevels;
+        setFloat(quantizationLevelsLocation, quantizationLevels);
     }
 }

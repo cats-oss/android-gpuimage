@@ -114,8 +114,8 @@ public class GPUImageKuwaharaFilter extends GPUImageFilter {
             "}\n" +
             "}\n";
 
-    private int mRadius;
-    private int mRadiusLocation;
+    private int radius;
+    private int radiusLocation;
 
     public GPUImageKuwaharaFilter() {
         this(3);
@@ -123,19 +123,19 @@ public class GPUImageKuwaharaFilter extends GPUImageFilter {
 
     public GPUImageKuwaharaFilter(int radius) {
         super(NO_FILTER_VERTEX_SHADER, KUWAHARA_FRAGMENT_SHADER);
-        mRadius = radius;
+        this.radius = radius;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mRadiusLocation = GLES20.glGetUniformLocation(getProgram(), "radius");
+        radiusLocation = GLES20.glGetUniformLocation(getProgram(), "radius");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setRadius(mRadius);
+        setRadius(radius);
     }
 
     /**
@@ -145,7 +145,7 @@ public class GPUImageKuwaharaFilter extends GPUImageFilter {
      * @param radius default 3
      */
     public void setRadius(final int radius) {
-        mRadius = radius;
-        setInteger(mRadiusLocation, radius);
+        this.radius = radius;
+        setInteger(radiusLocation, radius);
     }
 }

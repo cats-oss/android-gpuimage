@@ -37,14 +37,14 @@ import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE
  */
 public class GPUImageFilterGroup extends GPUImageFilter {
 
-    protected List<GPUImageFilter> mFilters;
-    protected List<GPUImageFilter> mMergedFilters;
-    private int[] mFrameBuffers;
-    private int[] mFrameBufferTextures;
+    private List<GPUImageFilter> filters;
+    private List<GPUImageFilter> mergedFilters;
+    private int[] frameBuffers;
+    private int[] frameBufferTextures;
 
-    private final FloatBuffer mGLCubeBuffer;
-    private final FloatBuffer mGLTextureBuffer;
-    private final FloatBuffer mGLTextureFlipBuffer;
+    private final FloatBuffer glCubeBuffer;
+    private final FloatBuffer glTextureBuffer;
+    private final FloatBuffer glTextureFlipBuffer;
 
     /**
      * Instantiates a new GPUImageFilterGroup with no filters.
@@ -59,35 +59,35 @@ public class GPUImageFilterGroup extends GPUImageFilter {
      * @param filters the filters which represent this filter
      */
     public GPUImageFilterGroup(List<GPUImageFilter> filters) {
-        mFilters = filters;
-        if (mFilters == null) {
-            mFilters = new ArrayList<GPUImageFilter>();
+        this.filters = filters;
+        if (this.filters == null) {
+            this.filters = new ArrayList<>();
         } else {
             updateMergedFilters();
         }
 
-        mGLCubeBuffer = ByteBuffer.allocateDirect(CUBE.length * 4)
+        glCubeBuffer = ByteBuffer.allocateDirect(CUBE.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        mGLCubeBuffer.put(CUBE).position(0);
+        glCubeBuffer.put(CUBE).position(0);
 
-        mGLTextureBuffer = ByteBuffer.allocateDirect(TEXTURE_NO_ROTATION.length * 4)
+        glTextureBuffer = ByteBuffer.allocateDirect(TEXTURE_NO_ROTATION.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        mGLTextureBuffer.put(TEXTURE_NO_ROTATION).position(0);
+        glTextureBuffer.put(TEXTURE_NO_ROTATION).position(0);
 
         float[] flipTexture = TextureRotationUtil.getRotation(Rotation.NORMAL, false, true);
-        mGLTextureFlipBuffer = ByteBuffer.allocateDirect(flipTexture.length * 4)
+        glTextureFlipBuffer = ByteBuffer.allocateDirect(flipTexture.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        mGLTextureFlipBuffer.put(flipTexture).position(0);
+        glTextureFlipBuffer.put(flipTexture).position(0);
     }
 
     public void addFilter(GPUImageFilter aFilter) {
         if (aFilter == null) {
             return;
         }
-        mFilters.add(aFilter);
+        filters.add(aFilter);
         updateMergedFilters();
     }
 
@@ -98,7 +98,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     @Override
     public void onInit() {
         super.onInit();
-        for (GPUImageFilter filter : mFilters) {
+        for (GPUImageFilter filter : filters) {
             filter.init();
         }
     }
@@ -110,20 +110,20 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     @Override
     public void onDestroy() {
         destroyFramebuffers();
-        for (GPUImageFilter filter : mFilters) {
+        for (GPUImageFilter filter : filters) {
             filter.destroy();
         }
         super.onDestroy();
     }
 
     private void destroyFramebuffers() {
-        if (mFrameBufferTextures != null) {
-            GLES20.glDeleteTextures(mFrameBufferTextures.length, mFrameBufferTextures, 0);
-            mFrameBufferTextures = null;
+        if (frameBufferTextures != null) {
+            GLES20.glDeleteTextures(frameBufferTextures.length, frameBufferTextures, 0);
+            frameBufferTextures = null;
         }
-        if (mFrameBuffers != null) {
-            GLES20.glDeleteFramebuffers(mFrameBuffers.length, mFrameBuffers, 0);
-            mFrameBuffers = null;
+        if (frameBuffers != null) {
+            GLES20.glDeleteFramebuffers(frameBuffers.length, frameBuffers, 0);
+            frameBuffers = null;
         }
     }
 
@@ -136,24 +136,24 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     @Override
     public void onOutputSizeChanged(final int width, final int height) {
         super.onOutputSizeChanged(width, height);
-        if (mFrameBuffers != null) {
+        if (frameBuffers != null) {
             destroyFramebuffers();
         }
 
-        int size = mFilters.size();
+        int size = filters.size();
         for (int i = 0; i < size; i++) {
-            mFilters.get(i).onOutputSizeChanged(width, height);
+            filters.get(i).onOutputSizeChanged(width, height);
         }
 
-        if (mMergedFilters != null && mMergedFilters.size() > 0) {
-            size = mMergedFilters.size();
-            mFrameBuffers = new int[size - 1];
-            mFrameBufferTextures = new int[size - 1];
+        if (mergedFilters != null && mergedFilters.size() > 0) {
+            size = mergedFilters.size();
+            frameBuffers = new int[size - 1];
+            frameBufferTextures = new int[size - 1];
 
             for (int i = 0; i < size - 1; i++) {
-                GLES20.glGenFramebuffers(1, mFrameBuffers, i);
-                GLES20.glGenTextures(1, mFrameBufferTextures, i);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mFrameBufferTextures[i]);
+                GLES20.glGenFramebuffers(1, frameBuffers, i);
+                GLES20.glGenTextures(1, frameBufferTextures, i);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, frameBufferTextures[i]);
                 GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, width, height, 0,
                         GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
                 GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
@@ -165,9 +165,9 @@ public class GPUImageFilterGroup extends GPUImageFilter {
                 GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
                         GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 
-                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[i]);
+                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBuffers[i]);
                 GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
-                        GLES20.GL_TEXTURE_2D, mFrameBufferTextures[i], 0);
+                        GLES20.GL_TEXTURE_2D, frameBufferTextures[i], 0);
 
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
                 GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
@@ -185,31 +185,31 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
                        final FloatBuffer textureBuffer) {
         runPendingOnDrawTasks();
-        if (!isInitialized() || mFrameBuffers == null || mFrameBufferTextures == null) {
+        if (!isInitialized() || frameBuffers == null || frameBufferTextures == null) {
             return;
         }
-        if (mMergedFilters != null) {
-            int size = mMergedFilters.size();
+        if (mergedFilters != null) {
+            int size = mergedFilters.size();
             int previousTexture = textureId;
             for (int i = 0; i < size; i++) {
-                GPUImageFilter filter = mMergedFilters.get(i);
+                GPUImageFilter filter = mergedFilters.get(i);
                 boolean isNotLast = i < size - 1;
                 if (isNotLast) {
-                    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[i]);
+                    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBuffers[i]);
                     GLES20.glClearColor(0, 0, 0, 0);
                 }
 
                 if (i == 0) {
                     filter.onDraw(previousTexture, cubeBuffer, textureBuffer);
                 } else if (i == size - 1) {
-                    filter.onDraw(previousTexture, mGLCubeBuffer, (size % 2 == 0) ? mGLTextureFlipBuffer : mGLTextureBuffer);
+                    filter.onDraw(previousTexture, glCubeBuffer, (size % 2 == 0) ? glTextureFlipBuffer : glTextureBuffer);
                 } else {
-                    filter.onDraw(previousTexture, mGLCubeBuffer, mGLTextureBuffer);
+                    filter.onDraw(previousTexture, glCubeBuffer, glTextureBuffer);
                 }
 
                 if (isNotLast) {
                     GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-                    previousTexture = mFrameBufferTextures[i];
+                    previousTexture = frameBufferTextures[i];
                 }
             }
         }
@@ -221,35 +221,35 @@ public class GPUImageFilterGroup extends GPUImageFilter {
      * @return the filters
      */
     public List<GPUImageFilter> getFilters() {
-        return mFilters;
+        return filters;
     }
 
     public List<GPUImageFilter> getMergedFilters() {
-        return mMergedFilters;
+        return mergedFilters;
     }
 
     public void updateMergedFilters() {
-        if (mFilters == null) {
+        if (filters == null) {
             return;
         }
 
-        if (mMergedFilters == null) {
-            mMergedFilters = new ArrayList<GPUImageFilter>();
+        if (mergedFilters == null) {
+            mergedFilters = new ArrayList<>();
         } else {
-            mMergedFilters.clear();
+            mergedFilters.clear();
         }
 
         List<GPUImageFilter> filters;
-        for (GPUImageFilter filter : mFilters) {
+        for (GPUImageFilter filter : this.filters) {
             if (filter instanceof GPUImageFilterGroup) {
                 ((GPUImageFilterGroup) filter).updateMergedFilters();
                 filters = ((GPUImageFilterGroup) filter).getMergedFilters();
                 if (filters == null || filters.isEmpty())
                     continue;
-                mMergedFilters.addAll(filters);
+                mergedFilters.addAll(filters);
                 continue;
             }
-            mMergedFilters.add(filter);
+            mergedFilters.add(filter);
         }
     }
 }

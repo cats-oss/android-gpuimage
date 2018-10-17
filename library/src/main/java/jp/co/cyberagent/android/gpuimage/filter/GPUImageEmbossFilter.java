@@ -22,7 +22,7 @@ package jp.co.cyberagent.android.gpuimage.filter;
  * Intensity ranges from 0.0 to 4.0, with 1.0 as the normal level
  */
 public class GPUImageEmbossFilter extends GPUImage3x3ConvolutionFilter {
-    private float mIntensity;
+    private float intensity;
 
     public GPUImageEmbossFilter() {
         this(1.0f);
@@ -30,17 +30,17 @@ public class GPUImageEmbossFilter extends GPUImage3x3ConvolutionFilter {
 
     public GPUImageEmbossFilter(final float intensity) {
         super();
-        mIntensity = intensity;
+        this.intensity = intensity;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        setIntensity(mIntensity);
+        setIntensity(intensity);
     }
 
     public void setIntensity(final float intensity) {
-        mIntensity = intensity;
+        this.intensity = intensity;
         setConvolutionKernel(new float[]{
                 intensity * (-2.0f), -intensity, 0.0f,
                 -intensity, 1.0f, intensity,
@@ -49,6 +49,6 @@ public class GPUImageEmbossFilter extends GPUImage3x3ConvolutionFilter {
     }
 
     public float getIntensity() {
-        return mIntensity;
+        return intensity;
     }
 }

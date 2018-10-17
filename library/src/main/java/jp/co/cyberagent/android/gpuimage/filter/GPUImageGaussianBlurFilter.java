@@ -78,7 +78,7 @@ public class GPUImageGaussianBlurFilter extends GPUImageTwoPassTextureSamplingFi
                     "	gl_FragColor = vec4(sum,fragColor.a);\n" +
                     "}";
 
-    protected float mBlurSize = 1f;
+    protected float blurSize = 1f;
 
     public GPUImageGaussianBlurFilter() {
         this(1f);
@@ -86,17 +86,17 @@ public class GPUImageGaussianBlurFilter extends GPUImageTwoPassTextureSamplingFi
 
     public GPUImageGaussianBlurFilter(float blurSize) {
         super(VERTEX_SHADER, FRAGMENT_SHADER, VERTEX_SHADER, FRAGMENT_SHADER);
-        mBlurSize = blurSize;
+        this.blurSize = blurSize;
     }
 
     @Override
     public float getVerticalTexelOffsetRatio() {
-        return mBlurSize;
+        return blurSize;
     }
 
     @Override
     public float getHorizontalTexelOffsetRatio() {
-        return mBlurSize;
+        return blurSize;
     }
 
     /**
@@ -105,7 +105,7 @@ public class GPUImageGaussianBlurFilter extends GPUImageTwoPassTextureSamplingFi
      * @param blurSize from 0.0 on up, default 1.0
      */
     public void setBlurSize(float blurSize) {
-        mBlurSize = blurSize;
+        this.blurSize = blurSize;
         runOnDraw(new Runnable() {
             @Override
             public void run() {

@@ -49,14 +49,14 @@ public class GPUImageVignetteFilter extends GPUImageFilter {
             "     gl_FragColor = vec4(mix(rgb.x, vignetteColor.x, percent), mix(rgb.y, vignetteColor.y, percent), mix(rgb.z, vignetteColor.z, percent), 1.0);\n" +
             " }";
 
-    private int mVignetteCenterLocation;
-    private PointF mVignetteCenter;
-    private int mVignetteColorLocation;
-    private float[] mVignetteColor;
-    private int mVignetteStartLocation;
-    private float mVignetteStart;
-    private int mVignetteEndLocation;
-    private float mVignetteEnd;
+    private int vignetteCenterLocation;
+    private PointF vignetteCenter;
+    private int vignetteColorLocation;
+    private float[] vignetteColor;
+    private int vignetteStartLocation;
+    private float vignetteStart;
+    private int vignetteEndLocation;
+    private float vignetteEnd;
 
     public GPUImageVignetteFilter() {
         this(new PointF(), new float[]{0.0f, 0.0f, 0.0f}, 0.3f, 0.75f);
@@ -64,45 +64,45 @@ public class GPUImageVignetteFilter extends GPUImageFilter {
 
     public GPUImageVignetteFilter(final PointF vignetteCenter, final float[] vignetteColor, final float vignetteStart, final float vignetteEnd) {
         super(NO_FILTER_VERTEX_SHADER, VIGNETTING_FRAGMENT_SHADER);
-        mVignetteCenter = vignetteCenter;
-        mVignetteColor = vignetteColor;
-        mVignetteStart = vignetteStart;
-        mVignetteEnd = vignetteEnd;
+        this.vignetteCenter = vignetteCenter;
+        this.vignetteColor = vignetteColor;
+        this.vignetteStart = vignetteStart;
+        this.vignetteEnd = vignetteEnd;
 
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mVignetteCenterLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteCenter");
-        mVignetteColorLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteColor");
-        mVignetteStartLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteStart");
-        mVignetteEndLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteEnd");
+        vignetteCenterLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteCenter");
+        vignetteColorLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteColor");
+        vignetteStartLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteStart");
+        vignetteEndLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteEnd");
 
-        setVignetteCenter(mVignetteCenter);
-        setVignetteColor(mVignetteColor);
-        setVignetteStart(mVignetteStart);
-        setVignetteEnd(mVignetteEnd);
+        setVignetteCenter(vignetteCenter);
+        setVignetteColor(vignetteColor);
+        setVignetteStart(vignetteStart);
+        setVignetteEnd(vignetteEnd);
     }
 
 
     public void setVignetteCenter(final PointF vignetteCenter) {
-        mVignetteCenter = vignetteCenter;
-        setPoint(mVignetteCenterLocation, mVignetteCenter);
+        this.vignetteCenter = vignetteCenter;
+        setPoint(vignetteCenterLocation, this.vignetteCenter);
     }
 
     public void setVignetteColor(final float[] vignetteColor) {
-        mVignetteColor = vignetteColor;
-        setFloatVec3(mVignetteColorLocation, mVignetteColor);
+        this.vignetteColor = vignetteColor;
+        setFloatVec3(vignetteColorLocation, this.vignetteColor);
     }
 
     public void setVignetteStart(final float vignetteStart) {
-        mVignetteStart = vignetteStart;
-        setFloat(mVignetteStartLocation, mVignetteStart);
+        this.vignetteStart = vignetteStart;
+        setFloat(vignetteStartLocation, this.vignetteStart);
     }
 
     public void setVignetteEnd(final float vignetteEnd) {
-        mVignetteEnd = vignetteEnd;
-        setFloat(mVignetteEndLocation, mVignetteEnd);
+        this.vignetteEnd = vignetteEnd;
+        setFloat(vignetteEndLocation, this.vignetteEnd);
     }
 }

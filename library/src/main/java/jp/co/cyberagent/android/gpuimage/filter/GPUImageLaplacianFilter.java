@@ -60,8 +60,8 @@ public class GPUImageLaplacianFilter extends GPUImage3x3TextureSamplingFilter {
             "gl_FragColor = vec4(resultColor, centerColor.a);\n" +
             "}\n";
 
-    private float[] mConvolutionKernel;
-    private int mUniformConvolutionMatrix;
+    private float[] convolutionKernel;
+    private int uniformConvolutionMatrix;
 
     public GPUImageLaplacianFilter() {
         this(new float[]{
@@ -73,18 +73,18 @@ public class GPUImageLaplacianFilter extends GPUImage3x3TextureSamplingFilter {
 
     private GPUImageLaplacianFilter(final float[] convolutionKernel) {
         super(LAPLACIAN_FRAGMENT_SHADER);
-        mConvolutionKernel = convolutionKernel;
+        this.convolutionKernel = convolutionKernel;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mUniformConvolutionMatrix = GLES20.glGetUniformLocation(getProgram(), "convolutionMatrix");
-        setConvolutionKernel(mConvolutionKernel);
+        uniformConvolutionMatrix = GLES20.glGetUniformLocation(getProgram(), "convolutionMatrix");
+        setConvolutionKernel(convolutionKernel);
     }
 
     private void setConvolutionKernel(final float[] convolutionKernel) {
-        mConvolutionKernel = convolutionKernel;
-        setUniformMatrix3f(mUniformConvolutionMatrix, mConvolutionKernel);
+        this.convolutionKernel = convolutionKernel;
+        setUniformMatrix3f(uniformConvolutionMatrix, this.convolutionKernel);
     }
 }

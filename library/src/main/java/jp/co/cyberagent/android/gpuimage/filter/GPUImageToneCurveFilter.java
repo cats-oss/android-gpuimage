@@ -45,37 +45,37 @@ public class GPUImageToneCurveFilter extends GPUImageFilter {
             "     gl_FragColor = vec4(redCurveValue, greenCurveValue, blueCurveValue, textureColor.a);\n" +
             " }";
 
-    private int[] mToneCurveTexture = new int[]{OpenGlUtils.NO_TEXTURE};
-    private int mToneCurveTextureUniformLocation;
+    private int[] toneCurveTexture = new int[]{OpenGlUtils.NO_TEXTURE};
+    private int toneCurveTextureUniformLocation;
 
-    private PointF[] mRgbCompositeControlPoints;
-    private PointF[] mRedControlPoints;
-    private PointF[] mGreenControlPoints;
-    private PointF[] mBlueControlPoints;
+    private PointF[] rgbCompositeControlPoints;
+    private PointF[] redControlPoints;
+    private PointF[] greenControlPoints;
+    private PointF[] blueControlPoints;
 
-    private ArrayList<Float> mRgbCompositeCurve;
-    private ArrayList<Float> mRedCurve;
-    private ArrayList<Float> mGreenCurve;
-    private ArrayList<Float> mBlueCurve;
+    private ArrayList<Float> rgbCompositeCurve;
+    private ArrayList<Float> redCurve;
+    private ArrayList<Float> greenCurve;
+    private ArrayList<Float> blueCurve;
 
 
     public GPUImageToneCurveFilter() {
         super(NO_FILTER_VERTEX_SHADER, TONE_CURVE_FRAGMENT_SHADER);
 
         PointF[] defaultCurvePoints = new PointF[]{new PointF(0.0f, 0.0f), new PointF(0.5f, 0.5f), new PointF(1.0f, 1.0f)};
-        mRgbCompositeControlPoints = defaultCurvePoints;
-        mRedControlPoints = defaultCurvePoints;
-        mGreenControlPoints = defaultCurvePoints;
-        mBlueControlPoints = defaultCurvePoints;
+        rgbCompositeControlPoints = defaultCurvePoints;
+        redControlPoints = defaultCurvePoints;
+        greenControlPoints = defaultCurvePoints;
+        blueControlPoints = defaultCurvePoints;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mToneCurveTextureUniformLocation = GLES20.glGetUniformLocation(getProgram(), "toneCurveTexture");
+        toneCurveTextureUniformLocation = GLES20.glGetUniformLocation(getProgram(), "toneCurveTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
-        GLES20.glGenTextures(1, mToneCurveTexture, 0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mToneCurveTexture[0]);
+        GLES20.glGenTextures(1, toneCurveTexture, 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, toneCurveTexture[0]);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
@@ -85,18 +85,18 @@ public class GPUImageToneCurveFilter extends GPUImageFilter {
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setRgbCompositeControlPoints(mRgbCompositeControlPoints);
-        setRedControlPoints(mRedControlPoints);
-        setGreenControlPoints(mGreenControlPoints);
-        setBlueControlPoints(mBlueControlPoints);
+        setRgbCompositeControlPoints(rgbCompositeControlPoints);
+        setRedControlPoints(redControlPoints);
+        setGreenControlPoints(greenControlPoints);
+        setBlueControlPoints(blueControlPoints);
     }
 
     @Override
     protected void onDrawArraysPre() {
-        if (mToneCurveTexture[0] != OpenGlUtils.NO_TEXTURE) {
+        if (toneCurveTexture[0] != OpenGlUtils.NO_TEXTURE) {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mToneCurveTexture[0]);
-            GLES20.glUniform1i(mToneCurveTextureUniformLocation, 3);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, toneCurveTexture[0]);
+            GLES20.glUniform1i(toneCurveTextureUniformLocation, 3);
         }
     }
 
@@ -105,7 +105,7 @@ public class GPUImageToneCurveFilter extends GPUImageFilter {
             int version = readShort(input);
             int totalCurves = readShort(input);
 
-            ArrayList<PointF[]> curves = new ArrayList<PointF[]>(totalCurves);
+            ArrayList<PointF[]> curves = new ArrayList<>(totalCurves);
             float pointRate = 1.0f / 255;
 
             for (int i = 0; i < totalCurves; i++) {
@@ -129,10 +129,10 @@ public class GPUImageToneCurveFilter extends GPUImageFilter {
             }
             input.close();
 
-            mRgbCompositeControlPoints = curves.get(0);
-            mRedControlPoints = curves.get(1);
-            mGreenControlPoints = curves.get(2);
-            mBlueControlPoints = curves.get(3);
+            rgbCompositeControlPoints = curves.get(0);
+            redControlPoints = curves.get(1);
+            greenControlPoints = curves.get(2);
+            blueControlPoints = curves.get(3);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -143,26 +143,26 @@ public class GPUImageToneCurveFilter extends GPUImageFilter {
     }
 
     public void setRgbCompositeControlPoints(PointF[] points) {
-        mRgbCompositeControlPoints = points;
-        mRgbCompositeCurve = createSplineCurve(mRgbCompositeControlPoints);
+        rgbCompositeControlPoints = points;
+        rgbCompositeCurve = createSplineCurve(rgbCompositeControlPoints);
         updateToneCurveTexture();
     }
 
     public void setRedControlPoints(PointF[] points) {
-        mRedControlPoints = points;
-        mRedCurve = createSplineCurve(mRedControlPoints);
+        redControlPoints = points;
+        redCurve = createSplineCurve(redControlPoints);
         updateToneCurveTexture();
     }
 
     public void setGreenControlPoints(PointF[] points) {
-        mGreenControlPoints = points;
-        mGreenCurve = createSplineCurve(mGreenControlPoints);
+        greenControlPoints = points;
+        greenCurve = createSplineCurve(greenControlPoints);
         updateToneCurveTexture();
     }
 
     public void setBlueControlPoints(PointF[] points) {
-        mBlueControlPoints = points;
-        mBlueCurve = createSplineCurve(mBlueControlPoints);
+        blueControlPoints = points;
+        blueCurve = createSplineCurve(blueControlPoints);
         updateToneCurveTexture();
     }
 
@@ -171,16 +171,16 @@ public class GPUImageToneCurveFilter extends GPUImageFilter {
             @Override
             public void run() {
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mToneCurveTexture[0]);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, toneCurveTexture[0]);
 
-                if ((mRedCurve.size() >= 256) && (mGreenCurve.size() >= 256) && (mBlueCurve.size() >= 256) && (mRgbCompositeCurve.size() >= 256)) {
+                if ((redCurve.size() >= 256) && (greenCurve.size() >= 256) && (blueCurve.size() >= 256) && (rgbCompositeCurve.size() >= 256)) {
                     byte[] toneCurveByteArray = new byte[256 * 4];
                     for (int currentCurveIndex = 0; currentCurveIndex < 256; currentCurveIndex++) {
                         // BGRA for upload to texture
-                        toneCurveByteArray[currentCurveIndex * 4 + 2] = (byte) ((int) Math.min(Math.max(currentCurveIndex + mBlueCurve.get(currentCurveIndex) + mRgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
-                        toneCurveByteArray[currentCurveIndex * 4 + 1] = (byte) ((int) Math.min(Math.max(currentCurveIndex + mGreenCurve.get(currentCurveIndex) + mRgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
-                        toneCurveByteArray[currentCurveIndex * 4] = (byte) ((int) Math.min(Math.max(currentCurveIndex + mRedCurve.get(currentCurveIndex) + mRgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
-                        toneCurveByteArray[currentCurveIndex * 4 + 3] = (byte) (255 & 0xff);
+                        toneCurveByteArray[currentCurveIndex * 4 + 2] = (byte) ((int) Math.min(Math.max(currentCurveIndex + blueCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                        toneCurveByteArray[currentCurveIndex * 4 + 1] = (byte) ((int) Math.min(Math.max(currentCurveIndex + greenCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                        toneCurveByteArray[currentCurveIndex * 4] = (byte) ((int) Math.min(Math.max(currentCurveIndex + redCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                        toneCurveByteArray[currentCurveIndex * 4 + 3] = (byte) (0xff);
                     }
 
                     GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, 256 /*width*/, 1 /*height*/, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ByteBuffer.wrap(toneCurveByteArray));
@@ -246,7 +246,7 @@ public class GPUImageToneCurveFilter extends GPUImageFilter {
         }
 
         // Prepare the spline points.
-        ArrayList<Float> preparedSplinePoints = new ArrayList<Float>(splinePoints.size());
+        ArrayList<Float> preparedSplinePoints = new ArrayList<>(splinePoints.size());
         for (Point newPoint : splinePoints) {
             Point origPoint = new Point(newPoint.x, newPoint.x);
 
@@ -279,7 +279,7 @@ public class GPUImageToneCurveFilter extends GPUImageFilter {
         }
 
 
-        ArrayList<Point> output = new ArrayList<Point>(n + 1);
+        ArrayList<Point> output = new ArrayList<>(n + 1);
 
         for (int i = 0; i < n - 1; i++) {
             Point cur = points[i];
@@ -359,7 +359,7 @@ public class GPUImageToneCurveFilter extends GPUImageFilter {
             result[i] -= k * result[i + 1];
         }
 
-        ArrayList<Double> output = new ArrayList<Double>(n);
+        ArrayList<Double> output = new ArrayList<>(n);
         for (int i = 0; i < n; i++) output.add(result[i] / matrix[i][1]);
 
         return output;

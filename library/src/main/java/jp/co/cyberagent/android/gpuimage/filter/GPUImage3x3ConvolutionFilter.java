@@ -60,8 +60,8 @@ public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilt
             "    gl_FragColor = resultColor;\n" +
             "}";
 
-    private float[] mConvolutionKernel;
-    private int mUniformConvolutionMatrix;
+    private float[] convolutionKernel;
+    private int uniformConvolutionMatrix;
 
     /**
      * Instantiates a new GPUimage3x3ConvolutionFilter with default values, that
@@ -82,14 +82,14 @@ public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilt
      */
     public GPUImage3x3ConvolutionFilter(final float[] convolutionKernel) {
         super(THREE_X_THREE_TEXTURE_SAMPLING_FRAGMENT_SHADER);
-        mConvolutionKernel = convolutionKernel;
+        this.convolutionKernel = convolutionKernel;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mUniformConvolutionMatrix = GLES20.glGetUniformLocation(getProgram(), "convolutionMatrix");
-        setConvolutionKernel(mConvolutionKernel);
+        uniformConvolutionMatrix = GLES20.glGetUniformLocation(getProgram(), "convolutionMatrix");
+        setConvolutionKernel(convolutionKernel);
     }
 
     /**
@@ -98,7 +98,7 @@ public class GPUImage3x3ConvolutionFilter extends GPUImage3x3TextureSamplingFilt
      * @param convolutionKernel the new convolution kernel
      */
     public void setConvolutionKernel(final float[] convolutionKernel) {
-        mConvolutionKernel = convolutionKernel;
-        setUniformMatrix3f(mUniformConvolutionMatrix, mConvolutionKernel);
+        this.convolutionKernel = convolutionKernel;
+        setUniformMatrix3f(uniformConvolutionMatrix, this.convolutionKernel);
     }
 }

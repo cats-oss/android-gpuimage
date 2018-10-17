@@ -37,8 +37,8 @@ public class GPUImagePosterizeFilter extends GPUImageFilter {
             "   gl_FragColor = floor((textureColor * colorLevels) + vec4(0.5)) / colorLevels;\n" +
             "}";
 
-    private int mGLUniformColorLevels;
-    private int mColorLevels;
+    private int glUniformColorLevels;
+    private int colorLevels;
 
     public GPUImagePosterizeFilter() {
         this(10);
@@ -46,18 +46,18 @@ public class GPUImagePosterizeFilter extends GPUImageFilter {
 
     public GPUImagePosterizeFilter(final int colorLevels) {
         super(GPUImageFilter.NO_FILTER_VERTEX_SHADER, POSTERIZE_FRAGMENT_SHADER);
-        mColorLevels = colorLevels;
+        this.colorLevels = colorLevels;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mGLUniformColorLevels = GLES20.glGetUniformLocation(getProgram(), "colorLevels");
-        setColorLevels(mColorLevels);
+        glUniformColorLevels = GLES20.glGetUniformLocation(getProgram(), "colorLevels");
+        setColorLevels(colorLevels);
     }
 
     public void setColorLevels(final int colorLevels) {
-        mColorLevels = colorLevels;
-        setFloat(mGLUniformColorLevels, colorLevels);
+        this.colorLevels = colorLevels;
+        setFloat(glUniformColorLevels, colorLevels);
     }
 }

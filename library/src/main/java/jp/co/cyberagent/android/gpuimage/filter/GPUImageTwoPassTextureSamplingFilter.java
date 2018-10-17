@@ -33,18 +33,18 @@ public class GPUImageTwoPassTextureSamplingFilter extends GPUImageTwoPassFilter 
 
     protected void initTexelOffsets() {
         float ratio = getHorizontalTexelOffsetRatio();
-        GPUImageFilter filter = mFilters.get(0);
+        GPUImageFilter filter = getFilters().get(0);
         int texelWidthOffsetLocation = GLES20.glGetUniformLocation(filter.getProgram(), "texelWidthOffset");
         int texelHeightOffsetLocation = GLES20.glGetUniformLocation(filter.getProgram(), "texelHeightOffset");
-        filter.setFloat(texelWidthOffsetLocation, ratio / mOutputWidth);
+        filter.setFloat(texelWidthOffsetLocation, ratio / getOutputWidth());
         filter.setFloat(texelHeightOffsetLocation, 0);
 
         ratio = getVerticalTexelOffsetRatio();
-        filter = mFilters.get(1);
+        filter = getFilters().get(1);
         texelWidthOffsetLocation = GLES20.glGetUniformLocation(filter.getProgram(), "texelWidthOffset");
         texelHeightOffsetLocation = GLES20.glGetUniformLocation(filter.getProgram(), "texelHeightOffset");
         filter.setFloat(texelWidthOffsetLocation, 0);
-        filter.setFloat(texelHeightOffsetLocation, ratio / mOutputHeight);
+        filter.setFloat(texelHeightOffsetLocation, ratio / getOutputHeight());
     }
 
     @Override

@@ -38,10 +38,10 @@ public class GPUImageColorMatrixFilter extends GPUImageFilter {
             "    gl_FragColor = (intensity * outputColor) + ((1.0 - intensity) * textureColor);\n" +
             "}";
 
-    private float mIntensity;
-    private float[] mColorMatrix;
-    private int mColorMatrixLocation;
-    private int mIntensityLocation;
+    private float intensity;
+    private float[] colorMatrix;
+    private int colorMatrixLocation;
+    private int intensityLocation;
 
     public GPUImageColorMatrixFilter() {
         this(1.0f, new float[]{
@@ -54,31 +54,31 @@ public class GPUImageColorMatrixFilter extends GPUImageFilter {
 
     public GPUImageColorMatrixFilter(final float intensity, final float[] colorMatrix) {
         super(NO_FILTER_VERTEX_SHADER, COLOR_MATRIX_FRAGMENT_SHADER);
-        mIntensity = intensity;
-        mColorMatrix = colorMatrix;
+        this.intensity = intensity;
+        this.colorMatrix = colorMatrix;
     }
 
     @Override
     public void onInit() {
         super.onInit();
-        mColorMatrixLocation = GLES20.glGetUniformLocation(getProgram(), "colorMatrix");
-        mIntensityLocation = GLES20.glGetUniformLocation(getProgram(), "intensity");
+        colorMatrixLocation = GLES20.glGetUniformLocation(getProgram(), "colorMatrix");
+        intensityLocation = GLES20.glGetUniformLocation(getProgram(), "intensity");
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setIntensity(mIntensity);
-        setColorMatrix(mColorMatrix);
+        setIntensity(intensity);
+        setColorMatrix(colorMatrix);
     }
 
     public void setIntensity(final float intensity) {
-        mIntensity = intensity;
-        setFloat(mIntensityLocation, intensity);
+        this.intensity = intensity;
+        setFloat(intensityLocation, intensity);
     }
 
     public void setColorMatrix(final float[] colorMatrix) {
-        mColorMatrix = colorMatrix;
-        setUniformMatrix4f(mColorMatrixLocation, colorMatrix);
+        this.colorMatrix = colorMatrix;
+        setUniformMatrix4f(colorMatrixLocation, colorMatrix);
     }
 }
