@@ -33,8 +33,9 @@ dependencies {
 ```
 
 ### Sample Code
-With preview:
+#### With preview:
 
+Java:
 ```java
 @Override
 public void onCreate(final Bundle savedInstanceState) {
@@ -52,7 +53,24 @@ public void onCreate(final Bundle savedInstanceState) {
 }
 ```
 
-Using GPUImageView
+Kotlin:
+```kotlin
+public override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_gallery)
+
+    val imageUri: Uri = ...
+    gpuImage = GPUImage(this)
+    gpuImage.setGLSurfaceView(findViewById<GLSurfaceView>(R.id.surfaceView))
+    gpuImage.setImage(imageUri) // this loads image on the current thread, should be run in a thread
+    gpuImage.setFilter(GPUImageSepiaFilter())
+
+    // Later when image should be saved saved:
+    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null)
+}
+```
+
+#### Using GPUImageView
 ```xml
 <jp.co.cyberagent.android.gpuimage.GPUImageView
     android:id="@+id/gpuimageview"
@@ -61,6 +79,7 @@ Using GPUImageView
     app:surface_type="texture_view" /> <!-- surface_view or texture_view -->
 ```
 
+Java:
 ```java
 @Override
 public void onCreate(final Bundle savedInstanceState) {
@@ -77,8 +96,25 @@ public void onCreate(final Bundle savedInstanceState) {
 }
 ```
 
-Without preview:
+Kotlin:
+```kotlin
+public override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_gallery)
 
+    val imageUri: Uri = ...
+    gpuImageView = findViewById<GPUImageView>(R.id.gpuimageview)
+    gpuImageView.setImage(imageUri) // this loads image on the current thread, should be run in a thread
+    gpuImageView.setFilter(GPUImageSepiaFilter())
+
+    // Later when image should be saved saved:
+    gpuImageView.saveToPictures("GPUImage", "ImageWithFilter.jpg", null)
+}
+```
+
+#### Without preview:
+
+Java:
 ```java
 public void onCreate(final Bundle savedInstanceState) {
     public void onCreate(final Bundle savedInstanceState) {
@@ -87,6 +123,19 @@ public void onCreate(final Bundle savedInstanceState) {
     gpuImage.setFilter(new GPUImageSobelEdgeDetection());
     gpuImage.setImage(imageUri);
     gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
+}
+```
+
+Kotlin:
+```kotlin
+public override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_gallery)
+    val imageUri: Uri = ...
+    gpuImage = GPUImage(this)
+    gpuImage.setFilter(GPUImageSepiaFilter())
+    gpuImage.setImage(imageUri)
+    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null)
 }
 ```
 
