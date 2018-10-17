@@ -169,12 +169,12 @@ public class PixelBuffer {
             int d, s, r, g, b, a;
 
             // Expand on this logic to dump other attributes
-            d = getConfigAttribute(config, EGL_DEPTH_SIZE);
-            s = getConfigAttribute(config, EGL_STENCIL_SIZE);
-            r = getConfigAttribute(config, EGL_RED_SIZE);
-            g = getConfigAttribute(config, EGL_GREEN_SIZE);
-            b = getConfigAttribute(config, EGL_BLUE_SIZE);
-            a = getConfigAttribute(config, EGL_ALPHA_SIZE);
+            d = getConfigAttrib(config, EGL_DEPTH_SIZE);
+            s = getConfigAttrib(config, EGL_STENCIL_SIZE);
+            r = getConfigAttrib(config, EGL_RED_SIZE);
+            g = getConfigAttrib(config, EGL_GREEN_SIZE);
+            b = getConfigAttrib(config, EGL_BLUE_SIZE);
+            a = getConfigAttrib(config, EGL_ALPHA_SIZE);
             Log.i(TAG, "    <d,s,r,g,b,a> = <" + d + "," + s + "," +
                     r + "," + g + "," + b + "," + a + ">");
         }
@@ -182,7 +182,7 @@ public class PixelBuffer {
         Log.i(TAG, "}");
     }
 
-    private int getConfigAttribute(final EGLConfig config, final int attribute) {
+    private int getConfigAttrib(final EGLConfig config, final int attribute) {
         int[] value = new int[1];
         return egl10.eglGetConfigAttrib(eglDisplay, config,
                 attribute, value) ? value[0] : 0;
