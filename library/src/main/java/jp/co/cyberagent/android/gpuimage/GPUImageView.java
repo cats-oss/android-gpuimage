@@ -23,7 +23,6 @@ import android.graphics.Color;
 import android.hardware.Camera;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -40,7 +39,6 @@ import android.widget.ProgressBar;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter;
@@ -355,29 +353,18 @@ public class GPUImageView extends FrameLayout {
         final int height = surfaceView.getMeasuredHeight();
 
         // Take picture on OpenGL thread
-        final int[] pixelMirroredArray = new int[width * height];
+        final Bitmap resultBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         gpuImage.runOnGLThread(new Runnable() {
             @Override
             public void run() {
-                final IntBuffer pixelBuffer = IntBuffer.allocate(width * height);
-                GLES20.glReadPixels(0, 0, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
-                int[] pixelArray = pixelBuffer.array();
-
-                // Convert upside down mirror-reversed image to right-side up normal image.
-                for (int i = 0; i < height; i++) {
-                    for (int j = 0; j < width; j++) {
-                        pixelMirroredArray[(height - i - 1) * width + j] = pixelArray[i * width + j];
-                    }
-                }
+                GPUImageNativeLibrary.adjustBitmap(resultBitmap);
                 waiter.release();
             }
         });
         requestRender();
         waiter.acquire();
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        bitmap.copyPixelsFromBuffer(IntBuffer.wrap(pixelMirroredArray));
-        return bitmap;
+        return resultBitmap;
     }
 
     /**
