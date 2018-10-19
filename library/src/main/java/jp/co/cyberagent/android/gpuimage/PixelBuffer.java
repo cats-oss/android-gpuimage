@@ -12,8 +12,6 @@ import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
-import java.nio.IntBuffer;
-
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
@@ -32,8 +30,6 @@ import static javax.microedition.khronos.egl.EGL10.EGL_NO_CONTEXT;
 import static javax.microedition.khronos.egl.EGL10.EGL_RED_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_STENCIL_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_WIDTH;
-import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
-import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
 
 public class PixelBuffer {
     private final static String TAG = "PixelBuffer";
@@ -189,22 +185,7 @@ public class PixelBuffer {
     }
 
     private void convertToBitmap() {
-        int[] iat = new int[width * height];
-        IntBuffer ib = IntBuffer.allocate(width * height);
-        gl10.glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, ib);
-        int[] ia = ib.array();
-
-        //Stupid !
-        // Convert upside down mirror-reversed image to right-side up normal
-        // image.
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                iat[(height - i - 1) * width + j] = ia[i * width + j];
-            }
-        }
-
-
         bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        bitmap.copyPixelsFromBuffer(IntBuffer.wrap(iat));
+        GPUImageNativeLibrary.adjustBitmap(bitmap);
     }
 }
