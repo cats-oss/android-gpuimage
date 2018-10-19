@@ -26,7 +26,7 @@ For Sample
 - [x] Exposure
 - [x] RGB
 - [x] RGB Diation
-- [ ] Hue
+- [x] Hue
 - [x] White Balance
 - [x] Monochrome
 - [x] False Color
@@ -98,27 +98,27 @@ For Sample
 - [ ] Erosion
 - [ ] Opening Filter
 - [ ] Closing Filter
-- [ ] LocalBinaryPattern
-- [ ] ColorLocalBinaryPattern
-- [x] DissolveBlend
-- [ ] ChromaKeyBlend
-- [x] AddBlend
-- [x] DivideBlend
-- [x] MultiplyBlend
-- [x] OverlayBlend
-- [x] LightenBlend
-- [x] DarkenBlend
-- [x] ColorBurnBlend
-- [x] ColorDodgeBlend
-- [x] LinearBurnBlend
-- [x] ScreenBlend
-- [x] DifferenceBlend
-- [x] SubtractBlend
-- [x] ExclusionBlend
-- [x] HardLightBlend
-- [x] SoftLightBlend
-- [x] ColorBlend
-- [x] HueBlend
+- [ ] Local Binary Pattern
+- [ ] Color Local Binary Pattern
+- [x] Dissolve Blend
+- [ ] Chroma Key Blend
+- [x] Add Blend
+- [x] Divide Blend
+- [x] Multiply Blend
+- [x] Overlay Blend
+- [x] Lighten Blend
+- [x] Darken Blend
+- [x] Color Burn Blend
+- [x] Color Dodge Blend
+- [x] Linear Burn Blend
+- [x] Screen Blend
+- [x] Difference Blend
+- [x] Subtract Blend
+- [x] Exclusion Blend
+- [x] HardLight Blend
+- [x] SoftLight Blend
+- [x] Color Blend
+- [ ] Hue Blend
 - [x] Saturation Blend
 - [x] Luminosity Blend
 - [x] Normal Blend
