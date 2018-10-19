@@ -3,7 +3,7 @@
 [![Download](https://api.bintray.com/packages/cats-oss/maven/gpuimage/images/download.svg) ](https://bintray.com/cats-oss/maven/gpuimage/_latestVersion)
 [![Build Status](https://app.bitrise.io/app/d8d8090a71066e7c/status.svg?token=sJNbvX8CkecWcUA5Z898lQ&branch=master)](https://app.bitrise.io/app/d8d8090a71066e7c)
 
-Idea from: [iOS GPUImage framework](https://github.com/BradLarson/GPUImage)
+Idea from: [iOS GPUImage framework](https://github.com/BradLarson/GPUImage2)
 
 Goal is to have something as similar to GPUImage as possible. Vertex and fragment shaders are exactly the same. That way it makes it easier to port filters from GPUImage iOS to Android.
 
@@ -17,6 +17,126 @@ For Core Library
 For Sample
 - [x] Migrate to AndroidX
 - [ ] Use Camera2 for Oreo or Higher
+
+## Support status of [GPUImage for iOS](https://github.com/BradLarson/GPUImage2) shaders
+- [x] Saturation
+- [x] Contrast
+- [x] Brightness
+- [x] Levels
+- [x] Exposure
+- [x] RGB
+- [x] RGB Diation
+- [ ] Hue
+- [x] White Balance
+- [x] Monochrome
+- [x] False Color
+- [x] Sharpen
+- [ ] Unsharp Mask
+- [x] Transform Operation
+- [ ] Crop
+- [ ] Luminance
+- [x] Gamma
+- [ ] Highlights and Shadows
+- [x] Haze
+- [x] Sepia Tone
+- [ ] Amatorka
+- [ ] Miss Etikate
+- [ ] Soft Elegance
+- [x] Color Inversion
+- [ ] Solarize
+- [ ] Vibrance
+- [x] Highlight and Shadow Tint
+- [ ] Luminance
+- [ ] Average Color
+- [ ] Average Luminance
+- [ ] Average Luminance Threshold
+- [ ] Luminance Threshold
+- [ ] Adaptive Threshold
+- [ ] Polar Pixellate
+- [x] Pixellate
+- [ ] Polka Dot
+- [x] Halftone
+- [x] Crosshatch
+- [x] Sobel Edge Detection
+- [ ] Prewitt Edge Detection
+- [ ] Canny Edge Detection
+- [x] Threshold Sobel EdgeDetection
+- [ ] Harris Corner Detector
+- [ ] Noble Corner Detector
+- [ ] Shi Tomasi Feature Detector
+- [ ] Colour FAST Feature Detector
+- [ ] Low Pass Filter
+- [ ] High Pass Filter
+- [x] Sketch Filter
+- [ ] Threshold Sketch Filter
+- [x] Toon Filter
+- [x] SmoothToon Filter
+- [ ] Tilt Shift
+- [x] CGA Colorspace Filter
+- [x] Posterize
+- [x] Convolution 3x3
+- [x] Emboss Filter
+- [x] Laplacian
+- [x] Chroma Keying
+- [x] Kuwahara Filter
+- [ ] Kuwahara Radius3 Filter
+- [x] Vignette
+- [x] Gaussian Blur
+- [x] Box Blur
+- [x] Bilateral Blur
+- [ ] Motion Blur
+- [ ] Zoom Blur
+- [ ] iOS Blur
+- [ ] Median Filter
+- [x] Swirl Distortion
+- [x] Bulge Distortion
+- [ ] Pinch Distortion
+- [x] Sphere Refraction
+- [x] Glass Sphere Refraction
+- [ ] Stretch Distortion
+- [x] Dilation
+- [ ] Erosion
+- [ ] Opening Filter
+- [ ] Closing Filter
+- [ ] LocalBinaryPattern
+- [ ] ColorLocalBinaryPattern
+- [x] DissolveBlend
+- [ ] ChromaKeyBlend
+- [x] AddBlend
+- [x] DivideBlend
+- [x] MultiplyBlend
+- [x] OverlayBlend
+- [x] LightenBlend
+- [x] DarkenBlend
+- [x] ColorBurnBlend
+- [x] ColorDodgeBlend
+- [x] LinearBurnBlend
+- [x] ScreenBlend
+- [x] DifferenceBlend
+- [x] SubtractBlend
+- [x] ExclusionBlend
+- [x] HardLightBlend
+- [x] SoftLightBlend
+- [x] ColorBlend
+- [x] HueBlend
+- [x] Saturation Blend
+- [x] Luminosity Blend
+- [x] Normal Blend
+- [x] Source Over Blend
+- [x] Alpha Blend
+- [x] Non Maximum Suppression
+- [ ] Thresholded Non Maximum Suppression
+- [ ] Directional Non Maximum Suppression
+- [x] Opacity
+- [x] Weak Pixel Inclusion Filter
+- [x] Color Matrix
+- [x] Directional Sobel Edge Detection
+- [x] Lookup
+- [x] Tone Curve (*.acv files) 
+
+## Others
+- [x] Texture 3x3
+- [x] Gray Scale
 
 ## Usage
 
