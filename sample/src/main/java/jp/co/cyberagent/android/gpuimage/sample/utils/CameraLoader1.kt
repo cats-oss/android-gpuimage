@@ -20,14 +20,6 @@ class CameraLoader1(val activity: Activity) : CameraLoader() {
         releaseCamera()
     }
 
-    override fun getCameraWidth(): Int? {
-        return cameraInstance?.parameters?.previewSize?.width
-    }
-
-    override fun getCameraHeight(): Int? {
-        return cameraInstance?.parameters?.previewSize?.height
-    }
-
     override fun switchCamera() {
         cameraFacing = when (cameraFacing) {
             Camera.CameraInfo.CAMERA_FACING_FRONT -> Camera.CameraInfo.CAMERA_FACING_BACK
@@ -38,7 +30,7 @@ class CameraLoader1(val activity: Activity) : CameraLoader() {
         setUpCamera()
     }
 
-    override fun getCameraOrientation(): Int? {
+    override fun getCameraOrientation(): Int {
         val degrees = when (activity.windowManager.defaultDisplay.rotation) {
             Surface.ROTATION_0 -> 0
             Surface.ROTATION_90 -> 90
@@ -50,22 +42,6 @@ class CameraLoader1(val activity: Activity) : CameraLoader() {
             (90 + degrees) % 360
         } else { // back-facing
             (90 - degrees) % 360
-        }
-    }
-
-    override fun takePicture(onPictureTaken: (data: ByteArray) -> Unit) {
-        val params = cameraInstance!!.parameters
-        params.setRotation(90)
-        cameraInstance!!.parameters = params
-
-        when (cameraInstance!!.parameters.focusMode) {
-            Camera.Parameters.FOCUS_MODE_FIXED ->
-                cameraInstance!!.takePicture(null, null) { data, _ -> onPictureTaken(data) }
-            Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE ->
-                cameraInstance!!.takePicture(null, null) { data, _ -> onPictureTaken(data) }
-            else -> cameraInstance!!.autoFocus { _, _ ->
-                cameraInstance!!.takePicture(null, null) { data, _ -> onPictureTaken(data) }
-            }
         }
     }
 
