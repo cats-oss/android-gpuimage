@@ -17,6 +17,8 @@ abstract class CameraLoader {
 
     abstract fun getCameraOrientation(): Int?
 
+    abstract fun hasMultipleCamera(): Boolean
+
     abstract fun takePicture(onPictureTaken: (data: ByteArray) -> Unit)
 
     fun setOnPreviewFrameListener(onPreviewFrame: (data: ByteArray, width: Int, height: Int) -> Unit) {
