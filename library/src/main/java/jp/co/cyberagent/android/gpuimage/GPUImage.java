@@ -219,6 +219,17 @@ public class GPUImage {
     }
 
     /**
+     * Update camera preview frame with YUV format data.
+     *
+     * @param data Camera preview YUV data for frame.
+     * @param width width of camera preview
+     * @param height height of camera preview
+     */
+    public void updatePreviewFrame(final byte[] data, final int width, final int height) {
+        renderer.onPreviewFrame(data, width, height);
+    }
+
+    /**
      * This sets the scale type of GPUImage. This has to be run before setting the image.
      * If image is set and scale type changed, image needs to be reset.
      *
