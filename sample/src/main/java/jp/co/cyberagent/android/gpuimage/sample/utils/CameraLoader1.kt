@@ -69,6 +69,10 @@ class CameraLoader1(val activity: Activity) : CameraLoader() {
         }
     }
 
+    override fun hasMultipleCamera(): Boolean {
+        return Camera.getNumberOfCameras() > 1
+    }
+
     private fun setUpCamera() {
         val id = getCurrentCameraId()
         cameraInstance = getCameraInstance(id)
