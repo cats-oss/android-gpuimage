@@ -56,6 +56,9 @@ public class GPUImageView extends FrameLayout {
     public Size forceSize = null;
     private float ratio = 0.0f;
 
+    public final static int RENDERMODE_WHEN_DIRTY = 0;
+    public final static int RENDERMODE_CONTINUOUSLY = 1;
+
     public GPUImageView(Context context) {
         super(context);
         init(context, null);
@@ -150,6 +153,28 @@ public class GPUImageView extends FrameLayout {
      */
     public void setBackgroundColor(float red, float green, float blue) {
         gpuImage.setBackgroundColor(red, green, blue);
+    }
+
+    /**
+     *
+     * Set the rendering mode. When renderMode is
+     * RENDERMODE_CONTINUOUSLY, the renderer is called
+     * repeatedly to re-render the scene. When renderMode
+     * is RENDERMODE_WHEN_DIRTY, the renderer only rendered when the surface
+     * is created, or when {@link #requestRender} is called. Defaults to RENDERMODE_CONTINUOUSLY.
+     *
+     * @param renderMode one of the RENDERMODE_X constants
+     * @see #RENDERMODE_CONTINUOUSLY
+     * @see #RENDERMODE_WHEN_DIRTY
+     * @see GLSurfaceView#setRenderMode(int)
+     * @see GLTextureView#setRenderMode(int)
+     */
+    public void setRenderMode(int renderMode) {
+        if (surfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) surfaceView).setRenderMode(renderMode);
+        } else if (surfaceView instanceof GLTextureView) {
+            ((GLTextureView) surfaceView).setRenderMode(renderMode);
+        }
     }
 
     // TODO Should be an xml attribute. But then GPUImage can not be distributed as .jar anymore.
