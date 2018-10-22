@@ -41,7 +41,7 @@ class CameraActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT < 21) {
             CameraLoader1(this)
         } else {
-            CameraLoader2()
+            CameraLoader2(this)
         }
     }
     private var filterAdjuster: FilterAdjuster? = null
@@ -74,6 +74,7 @@ class CameraActivity : AppCompatActivity() {
             gpuImageView.gpuImage.updatePreviewFrame(data, width, height)
         }
         gpuImageView.setRotation(getRotation(cameraLoader.getCameraOrientation()))
+        gpuImageView.setRenderMode(GPUImageView.RENDERMODE_CONTINUOUSLY)
     }
 
     override fun onResume() {
