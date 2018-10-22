@@ -129,7 +129,7 @@ object GPUImageFilterTools {
             GPUImageFilterTools.FilterType.HUE -> GPUImageHueFilter(90.0f)
             GPUImageFilterTools.FilterType.BRIGHTNESS -> GPUImageBrightnessFilter(1.5f)
             GPUImageFilterTools.FilterType.GRAYSCALE -> GPUImageGrayscaleFilter()
-            GPUImageFilterTools.FilterType.SEPIA -> GPUImageSepiaFilter()
+            GPUImageFilterTools.FilterType.SEPIA -> GPUImageSepiaToneFilter()
             GPUImageFilterTools.FilterType.SHARPEN -> GPUImageSharpenFilter().apply {
                 setSharpness(2.0f)
             }
@@ -347,7 +347,7 @@ object GPUImageFilterTools {
         init {
             when (filter) {
                 is GPUImageSharpenFilter -> adjuster = SharpnessAdjuster(filter)
-                is GPUImageSepiaFilter -> adjuster = SepiaAdjuster(filter)
+                is GPUImageSepiaToneFilter -> adjuster = SepiaAdjuster(filter)
                 is GPUImageContrastFilter -> adjuster = ContrastAdjuster(filter)
                 is GPUImageGammaFilter -> adjuster = GammaAdjuster(filter)
                 is GPUImageBrightnessFilter -> adjuster = BrightnessAdjuster(filter)
@@ -444,8 +444,8 @@ object GPUImageFilterTools {
             }
         }
 
-        private inner class SepiaAdjuster(filter: GPUImageSepiaFilter) :
-            Adjuster<GPUImageSepiaFilter>(filter) {
+        private inner class SepiaAdjuster(filter: GPUImageSepiaToneFilter) :
+            Adjuster<GPUImageSepiaToneFilter>(filter) {
             override fun adjust(percentage: Int) {
                 filter.setIntensity(range(percentage, 0.0f, 2.0f))
             }
