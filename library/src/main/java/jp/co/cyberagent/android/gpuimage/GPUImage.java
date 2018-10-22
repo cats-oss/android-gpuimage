@@ -396,9 +396,6 @@ public class GPUImage {
     }
 
     /**
-     * Deprecated: Please use
-     * {@link GPUImageView#saveToPictures(String, String, jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener)}
-     * <p>
      * Save current image with applied filter to Pictures. It will be stored on
      * the default Picture folder on the phone below the given folderName and
      * fileName. <br>
@@ -409,16 +406,12 @@ public class GPUImage {
      * @param fileName   the file name
      * @param listener   the listener
      */
-    @Deprecated
     public void saveToPictures(final String folderName, final String fileName,
                                final OnPictureSavedListener listener) {
         saveToPictures(currentBitmap, folderName, fileName, listener);
     }
 
     /**
-     * Deprecated: Please use
-     * {@link GPUImageView#saveToPictures(String, String, jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener)}
-     * <p>
      * Apply and save the given bitmap with applied filter to Pictures. It will
      * be stored on the default Picture folder on the phone below the given
      * folerName and fileName. <br>
@@ -430,7 +423,6 @@ public class GPUImage {
      * @param fileName   the file name
      * @param listener   the listener
      */
-    @Deprecated
     public void saveToPictures(final Bitmap bitmap, final String folderName, final String fileName,
                                final OnPictureSavedListener listener) {
         new SaveTask(bitmap, folderName, fileName, listener).execute();
