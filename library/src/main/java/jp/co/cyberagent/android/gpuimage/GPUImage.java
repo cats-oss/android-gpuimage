@@ -537,6 +537,8 @@ public class GPUImage {
                 InputStream inputStream;
                 if (uri.getScheme().startsWith("http") || uri.getScheme().startsWith("https")) {
                     inputStream = new URL(uri.toString()).openStream();
+                } else if (uri.getPath().startsWith("/android_asset/")) {
+                    inputStream = context.getAssets().open(uri.getPath().substring(("/android_asset/").length()));
                 } else {
                     inputStream = context.getContentResolver().openInputStream(uri);
                 }
