@@ -10,134 +10,6 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 ## Requirements
 * Android 2.2 or higher (OpenGL ES 2.0)
 
-## Milestone
-For Core Library
-- [x] GLTextureView support
-
-For Sample
-- [x] Migrate to AndroidX
-- [ ] Use Camera2 for Oreo or Higher
-
-## Support status of [GPUImage for iOS](https://github.com/BradLarson/GPUImage2) shaders
-- [x] Saturation
-- [x] Contrast
-- [x] Brightness
-- [x] Levels
-- [x] Exposure
-- [x] RGB
-- [x] RGB Diation
-- [x] Hue
-- [x] White Balance
-- [x] Monochrome
-- [x] False Color
-- [x] Sharpen
-- [ ] Unsharp Mask
-- [x] Transform Operation
-- [ ] Crop
-- [ ] Luminance
-- [x] Gamma
-- [ ] Highlights and Shadows
-- [x] Haze
-- [x] Sepia Tone
-- [ ] Amatorka
-- [ ] Miss Etikate
-- [ ] Soft Elegance
-- [x] Color Inversion
-- [ ] Solarize
-- [ ] Vibrance
-- [x] Highlight and Shadow Tint
-- [ ] Luminance
-- [ ] Average Color
-- [ ] Average Luminance
-- [ ] Average Luminance Threshold
-- [ ] Luminance Threshold
-- [ ] Adaptive Threshold
-- [ ] Polar Pixellate
-- [x] Pixellate
-- [ ] Polka Dot
-- [x] Halftone
-- [x] Crosshatch
-- [x] Sobel Edge Detection
-- [ ] Prewitt Edge Detection
-- [ ] Canny Edge Detection
-- [x] Threshold Sobel EdgeDetection
-- [ ] Harris Corner Detector
-- [ ] Noble Corner Detector
-- [ ] Shi Tomasi Feature Detector
-- [ ] Colour FAST Feature Detector
-- [ ] Low Pass Filter
-- [ ] High Pass Filter
-- [x] Sketch Filter
-- [ ] Threshold Sketch Filter
-- [x] Toon Filter
-- [x] SmoothToon Filter
-- [ ] Tilt Shift
-- [x] CGA Colorspace Filter
-- [x] Posterize
-- [x] Convolution 3x3
-- [x] Emboss Filter
-- [x] Laplacian
-- [x] Chroma Keying
-- [x] Kuwahara Filter
-- [ ] Kuwahara Radius3 Filter
-- [x] Vignette
-- [x] Gaussian Blur
-- [x] Box Blur
-- [x] Bilateral Blur
-- [ ] Motion Blur
-- [ ] Zoom Blur
-- [ ] iOS Blur
-- [ ] Median Filter
-- [x] Swirl Distortion
-- [x] Bulge Distortion
-- [ ] Pinch Distortion
-- [x] Sphere Refraction
-- [x] Glass Sphere Refraction
-- [ ] Stretch Distortion
-- [x] Dilation
-- [ ] Erosion
-- [ ] Opening Filter
-- [ ] Closing Filter
-- [ ] Local Binary Pattern
-- [ ] Color Local Binary Pattern
-- [x] Dissolve Blend
-- [ ] Chroma Key Blend
-- [x] Add Blend
-- [x] Divide Blend
-- [x] Multiply Blend
-- [x] Overlay Blend
-- [x] Lighten Blend
-- [x] Darken Blend
-- [x] Color Burn Blend
-- [x] Color Dodge Blend
-- [x] Linear Burn Blend
-- [x] Screen Blend
-- [x] Difference Blend
-- [x] Subtract Blend
-- [x] Exclusion Blend
-- [x] HardLight Blend
-- [x] SoftLight Blend
-- [x] Color Blend
-- [ ] Hue Blend
-- [x] Saturation Blend
-- [x] Luminosity Blend
-- [x] Normal Blend
-- [x] Source Over Blend
-- [x] Alpha Blend
-- [x] Non Maximum Suppression
-- [ ] Thresholded Non Maximum Suppression
-- [ ] Directional Non Maximum Suppression
-- [x] Opacity
-- [x] Weak Pixel Inclusion Filter
-- [x] Color Matrix
-- [x] Directional Sobel Edge Detection
-- [x] Lookup
-- [x] Tone Curve (*.acv files) 
-
-## Others
-- [x] Texture 3x3
-- [x] Gray Scale
-
 ## Usage
 
 ### Gradle dependency
@@ -259,6 +131,126 @@ public override fun onCreate(savedInstanceState: Bundle?) {
     gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null)
 }
 ```
+
+### Support status of [GPUImage for iOS](https://github.com/BradLarson/GPUImage2) shaders
+- [x] Saturation
+- [x] Contrast
+- [x] Brightness
+- [x] Levels
+- [x] Exposure
+- [x] RGB
+- [x] RGB Diation
+- [x] Hue
+- [x] White Balance
+- [x] Monochrome
+- [x] False Color
+- [x] Sharpen
+- [ ] Unsharp Mask
+- [x] Transform Operation
+- [ ] Crop
+- [ ] Luminance
+- [x] Gamma
+- [ ] Highlights and Shadows
+- [x] Haze
+- [x] Sepia Tone
+- [ ] Amatorka
+- [ ] Miss Etikate
+- [ ] Soft Elegance
+- [x] Color Inversion
+- [ ] Solarize
+- [ ] Vibrance
+- [x] Highlight and Shadow Tint
+- [ ] Luminance
+- [ ] Average Color
+- [ ] Average Luminance
+- [ ] Average Luminance Threshold
+- [ ] Luminance Threshold
+- [ ] Adaptive Threshold
+- [ ] Polar Pixellate
+- [x] Pixellate
+- [ ] Polka Dot
+- [x] Halftone
+- [x] Crosshatch
+- [x] Sobel Edge Detection
+- [ ] Prewitt Edge Detection
+- [ ] Canny Edge Detection
+- [x] Threshold Sobel EdgeDetection
+- [ ] Harris Corner Detector
+- [ ] Noble Corner Detector
+- [ ] Shi Tomasi Feature Detector
+- [ ] Colour FAST Feature Detector
+- [ ] Low Pass Filter
+- [ ] High Pass Filter
+- [x] Sketch Filter
+- [ ] Threshold Sketch Filter
+- [x] Toon Filter
+- [x] SmoothToon Filter
+- [ ] Tilt Shift
+- [x] CGA Colorspace Filter
+- [x] Posterize
+- [x] Convolution 3x3
+- [x] Emboss Filter
+- [x] Laplacian
+- [x] Chroma Keying
+- [x] Kuwahara Filter
+- [ ] Kuwahara Radius3 Filter
+- [x] Vignette
+- [x] Gaussian Blur
+- [x] Box Blur
+- [x] Bilateral Blur
+- [ ] Motion Blur
+- [ ] Zoom Blur
+- [ ] iOS Blur
+- [ ] Median Filter
+- [x] Swirl Distortion
+- [x] Bulge Distortion
+- [ ] Pinch Distortion
+- [x] Sphere Refraction
+- [x] Glass Sphere Refraction
+- [ ] Stretch Distortion
+- [x] Dilation
+- [ ] Erosion
+- [ ] Opening Filter
+- [ ] Closing Filter
+- [ ] Local Binary Pattern
+- [ ] Color Local Binary Pattern
+- [x] Dissolve Blend
+- [ ] Chroma Key Blend
+- [x] Add Blend
+- [x] Divide Blend
+- [x] Multiply Blend
+- [x] Overlay Blend
+- [x] Lighten Blend
+- [x] Darken Blend
+- [x] Color Burn Blend
+- [x] Color Dodge Blend
+- [x] Linear Burn Blend
+- [x] Screen Blend
+- [x] Difference Blend
+- [x] Subtract Blend
+- [x] Exclusion Blend
+- [x] HardLight Blend
+- [x] SoftLight Blend
+- [x] Color Blend
+- [ ] Hue Blend
+- [x] Saturation Blend
+- [x] Luminosity Blend
+- [x] Normal Blend
+- [x] Source Over Blend
+- [x] Alpha Blend
+- [x] Non Maximum Suppression
+- [ ] Thresholded Non Maximum Suppression
+- [ ] Directional Non Maximum Suppression
+- [x] Opacity
+- [x] Weak Pixel Inclusion Filter
+- [x] Color Matrix
+- [x] Directional Sobel Edge Detection
+- [x] Lookup
+- [x] Tone Curve (*.acv files) 
+
+## Others
+- [x] Texture 3x3
+- [x] Gray Scale
 
 ### Gradle
 Make sure that you run the clean target when using maven.
