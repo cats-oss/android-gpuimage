@@ -44,7 +44,7 @@ import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
 import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
 
 public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.Renderer, PreviewCallback {
-    public static final int NO_IMAGE = -1;
+    private static final int NO_IMAGE = -1;
     public static final float CUBE[] = {
             -1.0f, -1.0f,
             1.0f, -1.0f,
