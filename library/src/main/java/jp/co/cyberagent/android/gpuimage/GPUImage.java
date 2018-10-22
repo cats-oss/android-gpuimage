@@ -489,8 +489,7 @@ public class GPUImage {
         }
 
         private void saveImage(final String folderName, final String fileName, final Bitmap image) {
-            File path = Environment
-                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             File file = new File(path, folderName + "/" + fileName);
             try {
                 file.getParentFile().mkdirs();
@@ -525,21 +524,21 @@ public class GPUImage {
 
     private class LoadImageUriTask extends LoadImageTask {
 
-        private final Uri mUri;
+        private final Uri uri;
 
         public LoadImageUriTask(GPUImage gpuImage, Uri uri) {
             super(gpuImage);
-            mUri = uri;
+            this.uri = uri;
         }
 
         @Override
         protected Bitmap decode(BitmapFactory.Options options) {
             try {
                 InputStream inputStream;
-                if (mUri.getScheme().startsWith("http") || mUri.getScheme().startsWith("https")) {
-                    inputStream = new URL(mUri.toString()).openStream();
+                if (uri.getScheme().startsWith("http") || uri.getScheme().startsWith("https")) {
+                    inputStream = new URL(uri.toString()).openStream();
                 } else {
-                    inputStream = context.getContentResolver().openInputStream(mUri);
+                    inputStream = context.getContentResolver().openInputStream(uri);
                 }
                 return BitmapFactory.decodeStream(inputStream, null, options);
             } catch (Exception e) {
@@ -550,7 +549,7 @@ public class GPUImage {
 
         @Override
         protected int getImageOrientation() throws IOException {
-            Cursor cursor = context.getContentResolver().query(mUri,
+            Cursor cursor = context.getContentResolver().query(uri,
                     new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
             if (cursor == null || cursor.getCount() != 1) {
@@ -566,21 +565,21 @@ public class GPUImage {
 
     private class LoadImageFileTask extends LoadImageTask {
 
-        private final File mImageFile;
+        private final File imageFile;
 
         public LoadImageFileTask(GPUImage gpuImage, File file) {
             super(gpuImage);
-            mImageFile = file;
+            imageFile = file;
         }
 
         @Override
         protected Bitmap decode(BitmapFactory.Options options) {
-            return BitmapFactory.decodeFile(mImageFile.getAbsolutePath(), options);
+            return BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
         }
 
         @Override
         protected int getImageOrientation() throws IOException {
-            ExifInterface exif = new ExifInterface(mImageFile.getAbsolutePath());
+            ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
             switch (orientation) {
                 case ExifInterface.ORIENTATION_NORMAL:
@@ -603,7 +602,6 @@ public class GPUImage {
         private int outputWidth;
         private int outputHeight;
 
-        @SuppressWarnings("deprecation")
         public LoadImageTask(final GPUImage gpuImage) {
             this.gpuImage = gpuImage;
         }
