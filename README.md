@@ -196,6 +196,7 @@ public override fun onCreate(savedInstanceState: Bundle?) {
     android:id="@+id/gpuimageview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:show_loading="false"
     app:surface_type="texture_view" /> <!-- surface_view or texture_view -->
 ```
 
