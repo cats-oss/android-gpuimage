@@ -53,8 +53,8 @@ public class GPUImageChromaKeyBlendFilter extends GPUImageTwoInputFilter {
     private int thresholdSensitivityLocation;
     private int smoothingLocation;
     private int colorToReplaceLocation;
+    private float thresholdSensitivity = 0.4f;
     private float smoothing = 0.1f;
-    private float thresholdSensitivity = 0.3f;
     private float[] colorToReplace = new float[]{0.0f, 1.0f, 0.0f};
 
     public GPUImageChromaKeyBlendFilter() {
