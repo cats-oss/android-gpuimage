@@ -302,7 +302,7 @@ object GPUImageFilterTools {
             }
             GPUImageFilterTools.FilterType.HALFTONE -> GPUImageHalftoneFilter()
 
-            GPUImageFilterTools.FilterType.BILATERAL_BLUR -> GPUImageBilateralFilter()
+            GPUImageFilterTools.FilterType.BILATERAL_BLUR -> GPUImageBilateralBlurFilter()
 
             GPUImageFilterTools.FilterType.TRANSFORM2D -> GPUImageTransformFilter()
         }
@@ -376,7 +376,7 @@ object GPUImageFilterTools {
                 is GPUImageSwirlFilter -> adjuster = SwirlAdjuster(filter)
                 is GPUImageColorBalanceFilter -> adjuster = ColorBalanceAdjuster(filter)
                 is GPUImageLevelsFilter -> adjuster = LevelsMinMidAdjuster(filter)
-                is GPUImageBilateralFilter -> adjuster = BilateralAdjuster(filter)
+                is GPUImageBilateralBlurFilter -> adjuster = BilateralAdjuster(filter)
                 is GPUImageTransformFilter -> adjuster = RotateAdjuster(filter)
                 else -> adjuster = null
             }
@@ -624,8 +624,8 @@ object GPUImageFilterTools {
             }
         }
 
-        private inner class BilateralAdjuster(filter: GPUImageBilateralFilter) :
-            Adjuster<GPUImageBilateralFilter>(filter) {
+        private inner class BilateralAdjuster(filter: GPUImageBilateralBlurFilter) :
+            Adjuster<GPUImageBilateralBlurFilter>(filter) {
             override fun adjust(percentage: Int) {
                 filter.setDistanceNormalizationFactor(range(percentage, 0.0f, 15.0f))
             }

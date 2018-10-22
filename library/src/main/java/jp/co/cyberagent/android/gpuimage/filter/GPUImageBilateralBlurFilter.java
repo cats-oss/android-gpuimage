@@ -8,7 +8,7 @@ package jp.co.cyberagent.android.gpuimage.filter;
 import android.opengl.GLES20;
 
 
-public class GPUImageBilateralFilter extends GPUImageFilter {
+public class GPUImageBilateralBlurFilter extends GPUImageFilter {
     public static final String BILATERAL_VERTEX_SHADER = "" +
             "attribute vec4 position;\n" +
             "attribute vec4 inputTextureCoordinate;\n" +
@@ -108,18 +108,17 @@ public class GPUImageBilateralFilter extends GPUImageFilter {
             "     gaussianWeightTotal += gaussianWeight;\n" +
             "     sum += sampleColor * gaussianWeight;\n" +
             "     gl_FragColor = sum / gaussianWeightTotal;\n" +
-//			" gl_FragColor.r = distanceNormalizationFactor / 20.0;" + 
             " }";
 
     private float distanceNormalizationFactor;
     private int disFactorLocation;
     private int singleStepOffsetLocation;
 
-    public GPUImageBilateralFilter() {
+    public GPUImageBilateralBlurFilter() {
         this(8.0f);
     }
 
-    public GPUImageBilateralFilter(final float distanceNormalizationFactor) {
+    public GPUImageBilateralBlurFilter(final float distanceNormalizationFactor) {
         super(BILATERAL_VERTEX_SHADER, BILATERAL_FRAGMENT_SHADER);
         this.distanceNormalizationFactor = distanceNormalizationFactor;
     }
