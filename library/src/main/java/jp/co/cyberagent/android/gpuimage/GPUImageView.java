@@ -125,15 +125,22 @@ public class GPUImageView extends FrameLayout {
     }
 
     /**
+     * Deprecated: Please call
+     * {@link GPUImage#updatePreviewFrame(byte[], int, int)} frame by frame
+     * <p>
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
      *
      * @param camera the camera
      */
+    @Deprecated
     public void setUpCamera(final Camera camera) {
         gpuImage.setUpCamera(camera);
     }
 
     /**
+     * Deprecated: Please call
+     * {@link GPUImage#updatePreviewFrame(byte[], int, int)} frame by frame
+     * <p>
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
      *
      * @param camera         the camera
@@ -141,6 +148,7 @@ public class GPUImageView extends FrameLayout {
      * @param flipHorizontal if the image should be flipped horizontally
      * @param flipVertical   if the image should be flipped vertically
      */
+    @Deprecated
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
                             final boolean flipVertical) {
         gpuImage.setUpCamera(camera, degrees, flipHorizontal, flipVertical);
@@ -158,7 +166,6 @@ public class GPUImageView extends FrameLayout {
     }
 
     /**
-     *
      * Set the rendering mode. When renderMode is
      * RENDERMODE_CONTINUOUSLY, the renderer is called
      * repeatedly to re-render the scene. When renderMode
