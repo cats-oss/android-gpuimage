@@ -283,9 +283,12 @@ public class GPUImage {
         };
         Cursor cursor = context.getContentResolver()
                 .query(uri, projection, null, null, null);
-        int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         String path = null;
+        if (cursor == null) {
+            return null;
+        }
         if (cursor.moveToFirst()) {
+            int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             path = cursor.getString(pathIndex);
         }
         cursor.close();
