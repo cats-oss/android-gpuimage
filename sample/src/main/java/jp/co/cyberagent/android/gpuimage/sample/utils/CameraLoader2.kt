@@ -9,6 +9,7 @@ import android.media.Image
 import android.media.ImageReader
 import android.os.Build
 import android.util.Log
+import android.util.Size
 import android.view.Surface
 import androidx.annotation.RequiresApi
 
@@ -50,7 +51,7 @@ class CameraLoader2(val activity: Activity) : CameraLoader() {
             Surface.ROTATION_270 -> 270
             else -> 0
         }
-        val cameraId = getCurrentCameraId() ?: return 0
+        val cameraId = getCameraId(cameraFacing) ?: return 0
         val characteristics = cameraManager.getCameraCharacteristics(cameraId)
         val orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: return 0
         return if (cameraFacing == CameraCharacteristics.LENS_FACING_FRONT) {
@@ -66,7 +67,7 @@ class CameraLoader2(val activity: Activity) : CameraLoader() {
 
     @SuppressLint("MissingPermission")
     private fun setUpCamera() {
-        val cameraId = getCurrentCameraId() ?: return
+        val cameraId = getCameraId(cameraFacing) ?: return
         try {
             cameraManager.openCamera(cameraId, CameraDeviceCallback(), null)
         } catch (e: CameraAccessException) {
@@ -83,20 +84,22 @@ class CameraLoader2(val activity: Activity) : CameraLoader() {
         captureSession = null
     }
 
-    private fun getCurrentCameraId(): String? {
+    private fun getCameraId(facing: Int): String? {
         return cameraManager.cameraIdList.find { id ->
-            cameraManager.getCameraCharacteristics(id).get(CameraCharacteristics.LENS_FACING) == cameraFacing
+            cameraManager.getCameraCharacteristics(id).get(CameraCharacteristics.LENS_FACING) == facing
         }
     }
 
     private fun startCaptureSession() {
-        imageReader = ImageReader.newInstance(640, 480, ImageFormat.YUV_420_888, 2).apply {
-            setOnImageAvailableListener({ reader ->
-                val image = reader?.acquireNextImage() ?: return@setOnImageAvailableListener
-                onPreviewFrame?.invoke(generateNV21Data(image), image.width, image.height)
-                image.close()
-            }, null)
-        }
+        val size = chooseOptimalSize()
+        imageReader =
+                ImageReader.newInstance(size.width, size.height, ImageFormat.YUV_420_888, 2).apply {
+                    setOnImageAvailableListener({ reader ->
+                        val image = reader?.acquireNextImage() ?: return@setOnImageAvailableListener
+                        onPreviewFrame?.invoke(generateNV21Data(image), image.width, image.height)
+                        image.close()
+                    }, null)
+                }
 
         try {
             cameraInstance?.createCaptureSession(
@@ -107,6 +110,26 @@ class CameraLoader2(val activity: Activity) : CameraLoader() {
         } catch (e: CameraAccessException) {
             Log.e(TAG, "Failed to start camera session")
         }
+    }
+
+    private fun chooseOptimalSize(): Size {
+        val backCameraId = getCameraId(CameraCharacteristics.LENS_FACING_BACK) ?: return Size(0, 0)
+        val frontCameraId =
+            getCameraId(CameraCharacteristics.LENS_FACING_FRONT) ?: return Size(0, 0)
+        val backSizes =
+            cameraManager.getCameraCharacteristics(backCameraId)
+                .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                ?.getOutputSizes(ImageFormat.YUV_420_888)
+        val frontSizes =
+            cameraManager.getCameraCharacteristics(frontCameraId)
+                .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                ?.getOutputSizes(ImageFormat.YUV_420_888)
+
+        return backSizes?.filter {
+            frontSizes?.contains(it) ?: true
+        }?.maxBy {
+            it.width * it.height
+        } ?: Size(0, 0)
     }
 
     private fun generateNV21Data(image: Image): ByteArray {
