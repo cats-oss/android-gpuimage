@@ -124,7 +124,7 @@ public class GPUImageView extends FrameLayout {
 
     /**
      * Deprecated: Please call
-     * {@link GPUImage#updatePreviewFrame(byte[], int, int)} frame by frame
+     * {@link GPUImageView#updatePreviewFrame(byte[], int, int)} frame by frame
      * <p>
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
      *
@@ -137,7 +137,7 @@ public class GPUImageView extends FrameLayout {
 
     /**
      * Deprecated: Please call
-     * {@link GPUImage#updatePreviewFrame(byte[], int, int)} frame by frame
+     * {@link GPUImageView#updatePreviewFrame(byte[], int, int)} frame by frame
      * <p>
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
      *
@@ -150,6 +150,17 @@ public class GPUImageView extends FrameLayout {
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
                             final boolean flipVertical) {
         gpuImage.setUpCamera(camera, degrees, flipHorizontal, flipVertical);
+    }
+
+    /**
+     * Update camera preview frame with YUV format data.
+     *
+     * @param data   Camera preview YUV data for frame.
+     * @param width  width of camera preview
+     * @param height height of camera preview
+     */
+    public void updatePreviewFrame(byte[] data, int width, int height) {
+        gpuImage.updatePreviewFrame(data, width, height);
     }
 
     /**

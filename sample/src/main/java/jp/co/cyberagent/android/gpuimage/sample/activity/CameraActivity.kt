@@ -28,9 +28,9 @@ import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster
 import jp.co.cyberagent.android.gpuimage.sample.R
-import jp.co.cyberagent.android.gpuimage.sample.utils.CameraLoader
 import jp.co.cyberagent.android.gpuimage.sample.utils.Camera1Loader
 import jp.co.cyberagent.android.gpuimage.sample.utils.Camera2Loader
+import jp.co.cyberagent.android.gpuimage.sample.utils.CameraLoader
 import jp.co.cyberagent.android.gpuimage.util.Rotation
 
 class CameraActivity : AppCompatActivity() {
@@ -71,7 +71,7 @@ class CameraActivity : AppCompatActivity() {
             }
         }
         cameraLoader.setOnPreviewFrameListener { data, width, height ->
-            gpuImageView.gpuImage.updatePreviewFrame(data, width, height)
+            gpuImageView.updatePreviewFrame(data, width, height)
         }
         gpuImageView.setRotation(getRotation(cameraLoader.getCameraOrientation()))
         gpuImageView.setRenderMode(GPUImageView.RENDERMODE_CONTINUOUSLY)
