@@ -1,72 +1,52 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
-    buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
 
-        versionCode "git rev-list origin/master --count".execute().text.toInteger()
-        versionName VERSION_NAME
-
-        consumerProguardFiles 'proguard-rules.txt'
-
-        ndk {
-            moduleName "gpuimage-library"
-            stl "gnustl_shared"
-            abiFilters "all"
-            ldLibs "log"
+        versionCode = VERSION_CODE as int
+        versionName = VERSION_NAME
+        externalNativeBuild {
+            cmake { cppFlags "" }
         }
     }
+    externalNativeBuild {
+        cmake { path "src/main/cpp/CMakeLists.txt" }
+    }
 
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-            jni.srcDirs = ['jni']
+    buildTypes {
+        debug {
+            debuggable true
         }
-
-        instrumentTest.setRoot('tests')
-    }
-
-    lintOptions {
-        abortOnError false
+        release {
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 }
 
-task androidJavadocs(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'gpuimage'
+    bintrayUserOrg = 'cats-oss'
+    publishedGroupId = 'jp.co.cyberagent.android'
+    libraryName = 'gpuimage'
+    artifact = 'gpuimage'
+    libraryDescription = 'Image filters for Android with OpenGL (based on GPUImage for iOS)'
+    siteUrl = 'https://github.com/cats-oss/android-gpuimage'
+    gitUrl = 'https://github.com/cats-oss/android-gpuimage.git'
+    issueUrl = 'https://github.com/cats-oss/android-gpuimage/issues'
+    libraryVersion = VERSION_NAME
+    developerId = 'cats'
+    developerName = 'CATS'
+    developerEmail = 'dadadada.chop@gmail.com'
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
 }
 
-task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-    classifier = 'javadoc'
-    from androidJavadocs.destinationDir
-}
-
-task androidSourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
-}
-
-artifacts {
-    archives androidSourcesJar
-    archives androidJavadocsJar
-}
-
-publish {
-    userOrg = POM_DEVELOPER_ID
-    groupId = GROUP
-    artifactId = ARTIFACT_ID
-    publishVersion = VERSION_NAME
-    desc = POM_DESCRIPTION
-    website = POM_URL
-}
+apply from: 'https://gist.githubusercontent.com/wasabeef/cf14805bee509baf7461974582f17d26/raw/bintray-v1.gradle'
+apply from: 'https://gist.githubusercontent.com/wasabeef/cf14805bee509baf7461974582f17d26/raw/install-v1.gradle'
