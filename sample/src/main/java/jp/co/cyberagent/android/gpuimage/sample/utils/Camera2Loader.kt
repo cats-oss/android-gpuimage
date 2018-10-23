@@ -14,7 +14,7 @@ import android.view.Surface
 import androidx.annotation.RequiresApi
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-class CameraLoader2(val activity: Activity) : CameraLoader() {
+class Camera2Loader(val activity: Activity) : CameraLoader() {
 
     private var cameraInstance: CameraDevice? = null
     private var captureSession: CameraCaptureSession? = null
@@ -184,6 +184,6 @@ class CameraLoader2(val activity: Activity) : CameraLoader() {
     }
 
     companion object {
-        private const val TAG = "CameraLoader2"
+        private const val TAG = "Camera2Loader"
     }
 }

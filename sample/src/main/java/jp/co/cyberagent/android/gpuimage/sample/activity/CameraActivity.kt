@@ -29,8 +29,8 @@ import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster
 import jp.co.cyberagent.android.gpuimage.sample.R
 import jp.co.cyberagent.android.gpuimage.sample.utils.CameraLoader
-import jp.co.cyberagent.android.gpuimage.sample.utils.CameraLoader1
-import jp.co.cyberagent.android.gpuimage.sample.utils.CameraLoader2
+import jp.co.cyberagent.android.gpuimage.sample.utils.Camera1Loader
+import jp.co.cyberagent.android.gpuimage.sample.utils.Camera2Loader
 import jp.co.cyberagent.android.gpuimage.util.Rotation
 
 class CameraActivity : AppCompatActivity() {
@@ -39,9 +39,9 @@ class CameraActivity : AppCompatActivity() {
     private val seekBar: SeekBar by lazy { findViewById<SeekBar>(R.id.seekBar) }
     private val cameraLoader: CameraLoader by lazy {
         if (Build.VERSION.SDK_INT < 21) {
-            CameraLoader1(this)
+            Camera1Loader(this)
         } else {
-            CameraLoader2(this)
+            Camera2Loader(this)
         }
     }
     private var filterAdjuster: FilterAdjuster? = null

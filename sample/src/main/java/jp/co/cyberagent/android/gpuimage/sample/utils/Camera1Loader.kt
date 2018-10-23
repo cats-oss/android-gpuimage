@@ -7,7 +7,7 @@ import android.hardware.Camera
 import android.util.Log
 import android.view.Surface
 
-class CameraLoader1(val activity: Activity) : CameraLoader() {
+class Camera1Loader(val activity: Activity) : CameraLoader() {
 
     private var cameraInstance: Camera? = null
     private var cameraFacing: Int = Camera.CameraInfo.CAMERA_FACING_BACK
@@ -53,7 +53,7 @@ class CameraLoader1(val activity: Activity) : CameraLoader() {
         val id = getCurrentCameraId()
         cameraInstance = getCameraInstance(id)
         if (cameraInstance == null) {
-            Log.e("CameraLoader1", "Camera not found")
+            Log.e("Camera1Loader", "Camera not found")
         }
         val parameters = cameraInstance!!.parameters
 
