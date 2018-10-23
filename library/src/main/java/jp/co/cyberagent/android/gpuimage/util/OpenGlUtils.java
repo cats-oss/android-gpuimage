@@ -58,7 +58,7 @@ public class OpenGlUtils {
         return textures[0];
     }
 
-    public static int loadTexture(final IntBuffer data, final Size size, final int usedTexId) {
+    public static int loadTexture(final IntBuffer data, final int width, final int height, final int usedTexId) {
         int textures[] = new int[1];
         if (usedTexId == NO_TEXTURE) {
             GLES20.glGenTextures(1, textures, 0);
@@ -71,12 +71,12 @@ public class OpenGlUtils {
                     GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
                     GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, size.width, size.height,
+            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, width, height,
                     0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, data);
         } else {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, usedTexId);
-            GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, size.width,
-                    size.height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, data);
+            GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, width,
+                    height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, data);
             textures[0] = usedTexId;
         }
         return textures[0];

@@ -156,15 +156,22 @@ public class GPUImage {
     }
 
     /**
+     * Deprecated: Please call
+     * {@link GPUImage#updatePreviewFrame(byte[], int, int)} frame by frame
+     * <p>
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
      *
      * @param camera the camera
      */
+    @Deprecated
     public void setUpCamera(final Camera camera) {
         setUpCamera(camera, 0, false, false);
     }
 
     /**
+     * Deprecated: Please call
+     * {@link GPUImage#updatePreviewFrame(byte[], int, int)} frame by frame
+     * <p>
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
      *
      * @param camera         the camera
@@ -172,6 +179,7 @@ public class GPUImage {
      * @param flipHorizontal if the image should be flipped horizontally
      * @param flipVertical   if the image should be flipped vertically
      */
+    @Deprecated
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
                             final boolean flipVertical) {
         if (surfaceType == SURFACE_TYPE_SURFACE_VIEW) {
@@ -216,6 +224,17 @@ public class GPUImage {
         currentBitmap = bitmap;
         renderer.setImageBitmap(bitmap, false);
         requestRender();
+    }
+
+    /**
+     * Update camera preview frame with YUV format data.
+     *
+     * @param data   Camera preview YUV data for frame.
+     * @param width  width of camera preview
+     * @param height height of camera preview
+     */
+    public void updatePreviewFrame(final byte[] data, final int width, final int height) {
+        renderer.onPreviewFrame(data, width, height);
     }
 
     /**

@@ -150,21 +150,23 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
         final Size previewSize = camera.getParameters().getPreviewSize();
+        onPreviewFrame(data, previewSize.width, previewSize.height);
+    }
+
+    public void onPreviewFrame(final byte[] data, final int width, final int height) {
         if (glRgbBuffer == null) {
-            glRgbBuffer = IntBuffer.allocate(previewSize.width * previewSize.height);
+            glRgbBuffer = IntBuffer.allocate(width * height);
         }
         if (runOnDraw.isEmpty()) {
             runOnDraw(new Runnable() {
                 @Override
                 public void run() {
-                    GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
-                            glRgbBuffer.array());
-                    glTextureId = OpenGlUtils.loadTexture(glRgbBuffer, previewSize, glTextureId);
-                    camera.addCallbackBuffer(data);
+                    GPUImageNativeLibrary.YUVtoRBGA(data, width, height, glRgbBuffer.array());
+                    glTextureId = OpenGlUtils.loadTexture(glRgbBuffer, width, height, glTextureId);
 
-                    if (imageWidth != previewSize.width) {
-                        imageWidth = previewSize.width;
-                        imageHeight = previewSize.height;
+                    if (imageWidth != width) {
+                        imageWidth = width;
+                        imageHeight = height;
                         adjustImageScaling();
                     }
                 }
