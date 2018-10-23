@@ -65,9 +65,12 @@ class CameraActivity : AppCompatActivity() {
             saveSnapshot()
         }
         findViewById<View>(R.id.img_switch_camera).run {
-            setOnClickListener { cameraLoader.switchCamera() }
             if (!cameraLoader.hasMultipleCamera()) {
                 visibility = View.GONE
+            }
+            setOnClickListener {
+                cameraLoader.switchCamera()
+                gpuImageView.setRotation(getRotation(cameraLoader.getCameraOrientation()))
             }
         }
         cameraLoader.setOnPreviewFrameListener { data, width, height ->
