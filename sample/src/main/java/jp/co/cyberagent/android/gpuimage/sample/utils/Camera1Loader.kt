@@ -51,9 +51,11 @@ class Camera1Loader(val activity: Activity) : CameraLoader() {
 
     private fun setUpCamera() {
         val id = getCurrentCameraId()
-        cameraInstance = getCameraInstance(id)
-        if (cameraInstance == null) {
-            Log.e("Camera1Loader", "Camera not found")
+        try {
+            cameraInstance = getCameraInstance(id)
+        } catch (e: IllegalAccessError) {
+            Log.e(TAG, "Camera not found")
+            return
         }
         val parameters = cameraInstance!!.parameters
 
@@ -83,12 +85,11 @@ class Camera1Loader(val activity: Activity) : CameraLoader() {
         return 0
     }
 
-    private fun getCameraInstance(id: Int): Camera? {
+    private fun getCameraInstance(id: Int): Camera {
         return try {
             Camera.open(id)
         } catch (e: Exception) {
-            Log.e("Camera not found", e.toString())
-            null
+            throw IllegalAccessError("Camera not found")
         }
     }
 
@@ -96,5 +97,9 @@ class Camera1Loader(val activity: Activity) : CameraLoader() {
         cameraInstance!!.setPreviewCallback(null)
         cameraInstance!!.release()
         cameraInstance = null
+    }
+
+    companion object {
+        private const val TAG = "Camera1Loader"
     }
 }
