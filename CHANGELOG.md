@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 1.4.1 *(2016-03-15)*
+Version 2.0.0 *(2018-10-23)*
 ----------------------------
 
 * Change the minSdkVersion 9 to 14
@@ -11,6 +11,10 @@ Version 1.4.1 *(2016-03-15)*
 * Support Camera2 API
 * Fix some bugs
 
+
+Version 1.4.1 *(2016-03-15)*
+----------------------------
+ Using Bintray's JCenter.
 
 Version 1.4.0 *(2016-02-28)*
 ----------------------------
