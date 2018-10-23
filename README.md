@@ -10,15 +10,129 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 ## Requirements
 * Android 2.2 or higher (OpenGL ES 2.0)
 
-## Milestone
-For Core Library
-- [x] GLTextureView support
+## Usage
 
-For Sample
-- [x] Migrate to AndroidX
-- [ ] Use Camera2 for Oreo or Higher
+### Gradle dependency
 
-## Support status of [GPUImage for iOS](https://github.com/BradLarson/GPUImage2) shaders
+```groovy
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'jp.co.cyberagent.android:gpuimage:2.0.0'
+}
+```
+
+### Sample Code
+#### With preview:
+
+Java:
+```java
+@Override
+public void onCreate(final Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity);
+
+    Uri imageUri = ...;
+    gpuImage = new GPUImage(this);
+    gpuImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
+    gpuImage.setImage(imageUri); // this loads image on the current thread, should be run in a thread
+    gpuImage.setFilter(new GPUImageSepiaFilter());
+
+    // Later when image should be saved saved:
+    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
+}
+```
+
+Kotlin:
+```kotlin
+public override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_gallery)
+
+    val imageUri: Uri = ...
+    gpuImage = GPUImage(this)
+    gpuImage.setGLSurfaceView(findViewById<GLSurfaceView>(R.id.surfaceView))
+    gpuImage.setImage(imageUri) // this loads image on the current thread, should be run in a thread
+    gpuImage.setFilter(GPUImageSepiaFilter())
+
+    // Later when image should be saved saved:
+    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null)
+}
+```
+
+#### Using GPUImageView
+```xml
+<jp.co.cyberagent.android.gpuimage.GPUImageView
+    android:id="@+id/gpuimageview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:show_loading="false"
+    app:surface_type="texture_view" /> <!-- surface_view or texture_view -->
+```
+
+Java:
+```java
+@Override
+public void onCreate(final Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity);
+
+    Uri imageUri = ...;
+    gpuImageView = findViewById(R.id.gpuimageview);
+    gpuImageView.setImage(imageUri); // this loads image on the current thread, should be run in a thread
+    gpuImageView.setFilter(new GPUImageSepiaFilter());
+
+    // Later when image should be saved saved:
+    gpuImageView.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
+}
+```
+
+Kotlin:
+```kotlin
+public override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_gallery)
+
+    val imageUri: Uri = ...
+    gpuImageView = findViewById<GPUImageView>(R.id.gpuimageview)
+    gpuImageView.setImage(imageUri) // this loads image on the current thread, should be run in a thread
+    gpuImageView.setFilter(GPUImageSepiaFilter())
+
+    // Later when image should be saved saved:
+    gpuImageView.saveToPictures("GPUImage", "ImageWithFilter.jpg", null)
+}
+```
+
+#### Without preview:
+
+Java:
+```java
+public void onCreate(final Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
+    Uri imageUri = ...;
+    gpuImage = new GPUImage(context);
+    gpuImage.setFilter(new GPUImageSobelEdgeDetection());
+    gpuImage.setImage(imageUri);
+    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
+}
+```
+
+Kotlin:
+```kotlin
+public override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_gallery)
+    val imageUri: Uri = ...
+    gpuImage = GPUImage(this)
+    gpuImage.setFilter(GPUImageSepiaFilter())
+    gpuImage.setImage(imageUri)
+    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null)
+}
+```
+
+### Support status of [GPUImage for iOS](https://github.com/BradLarson/GPUImage2) shaders
 - [x] Saturation
 - [x] Contrast
 - [x] Brightness
@@ -137,127 +251,6 @@ For Sample
 ## Others
 - [x] Texture 3x3
 - [x] Gray Scale
-
-## Usage
-
-### Gradle dependency
-
-```groovy
-repositories {
-    jcenter()
-}
-
-dependencies {
-    implementation 'jp.co.cyberagent.android:gpuimage:2.0.0'
-}
-```
-
-### Sample Code
-#### With preview:
-
-Java:
-```java
-@Override
-public void onCreate(final Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity);
-
-    Uri imageUri = ...;
-    gpuImage = new GPUImage(this);
-    gpuImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
-    gpuImage.setImage(imageUri); // this loads image on the current thread, should be run in a thread
-    gpuImage.setFilter(new GPUImageSepiaFilter());
-
-    // Later when image should be saved saved:
-    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
-}
-```
-
-Kotlin:
-```kotlin
-public override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_gallery)
-
-    val imageUri: Uri = ...
-    gpuImage = GPUImage(this)
-    gpuImage.setGLSurfaceView(findViewById<GLSurfaceView>(R.id.surfaceView))
-    gpuImage.setImage(imageUri) // this loads image on the current thread, should be run in a thread
-    gpuImage.setFilter(GPUImageSepiaFilter())
-
-    // Later when image should be saved saved:
-    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null)
-}
-```
-
-#### Using GPUImageView
-```xml
-<jp.co.cyberagent.android.gpuimage.GPUImageView
-    android:id="@+id/gpuimageview"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:surface_type="texture_view" /> <!-- surface_view or texture_view -->
-```
-
-Java:
-```java
-@Override
-public void onCreate(final Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity);
-
-    Uri imageUri = ...;
-    gpuImageView = findViewById(R.id.gpuimageview);
-    gpuImageView.setImage(imageUri); // this loads image on the current thread, should be run in a thread
-    gpuImageView.setFilter(new GPUImageSepiaFilter());
-
-    // Later when image should be saved saved:
-    gpuImageView.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
-}
-```
-
-Kotlin:
-```kotlin
-public override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_gallery)
-
-    val imageUri: Uri = ...
-    gpuImageView = findViewById<GPUImageView>(R.id.gpuimageview)
-    gpuImageView.setImage(imageUri) // this loads image on the current thread, should be run in a thread
-    gpuImageView.setFilter(GPUImageSepiaFilter())
-
-    // Later when image should be saved saved:
-    gpuImageView.saveToPictures("GPUImage", "ImageWithFilter.jpg", null)
-}
-```
-
-#### Without preview:
-
-Java:
-```java
-public void onCreate(final Bundle savedInstanceState) {
-    public void onCreate(final Bundle savedInstanceState) {
-    Uri imageUri = ...;
-    gpuImage = new GPUImage(context);
-    gpuImage.setFilter(new GPUImageSobelEdgeDetection());
-    gpuImage.setImage(imageUri);
-    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null);
-}
-```
-
-Kotlin:
-```kotlin
-public override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_gallery)
-    val imageUri: Uri = ...
-    gpuImage = GPUImage(this)
-    gpuImage.setFilter(GPUImageSepiaFilter())
-    gpuImage.setImage(imageUri)
-    gpuImage.saveToPictures("GPUImage", "ImageWithFilter.jpg", null)
-}
-```
 
 ### Gradle
 Make sure that you run the clean target when using maven.

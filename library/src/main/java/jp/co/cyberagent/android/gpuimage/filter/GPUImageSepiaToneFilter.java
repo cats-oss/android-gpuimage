@@ -19,13 +19,13 @@ package jp.co.cyberagent.android.gpuimage.filter;
 /**
  * Applies a simple sepia effect.
  */
-public class GPUImageSepiaFilter extends GPUImageColorMatrixFilter {
+public class GPUImageSepiaToneFilter extends GPUImageColorMatrixFilter {
 
-    public GPUImageSepiaFilter() {
+    public GPUImageSepiaToneFilter() {
         this(1.0f);
     }
 
-    public GPUImageSepiaFilter(final float intensity) {
+    public GPUImageSepiaToneFilter(final float intensity) {
         super(intensity, new float[]{
                 0.3588f, 0.7044f, 0.1368f, 0.0f,
                 0.2990f, 0.5870f, 0.1140f, 0.0f,

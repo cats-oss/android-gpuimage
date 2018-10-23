@@ -52,6 +52,7 @@ public class GPUImageView extends FrameLayout {
     private int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
     private View surfaceView;
     private GPUImage gpuImage;
+    private boolean isShowLoading = true;
     private GPUImageFilter filter;
     public Size forceSize = null;
     private float ratio = 0.0f;
@@ -74,11 +75,12 @@ public class GPUImageView extends FrameLayout {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.GPUImageView, 0, 0);
             try {
                 surfaceType = a.getInt(R.styleable.GPUImageView_surface_type, surfaceType);
+                isShowLoading = a.getBoolean(R.styleable.GPUImageView_show_loading, isShowLoading);
             } finally {
                 a.recycle();
             }
         }
-        gpuImage = new GPUImage(getContext());
+        gpuImage = new GPUImage(context);
         if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
             surfaceView = new GPUImageGLTextureView(context, attrs);
             gpuImage.setGLTextureView((GLTextureView) surfaceView);
@@ -289,7 +291,7 @@ public class GPUImageView extends FrameLayout {
      */
     public void saveToPictures(final String folderName, final String fileName,
                                final OnPictureSavedListener listener) {
-        new SaveTask(folderName, fileName, listener).execute();
+        new SaveTask(folderName, fileName, listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**
@@ -308,7 +310,7 @@ public class GPUImageView extends FrameLayout {
     public void saveToPictures(final String folderName, final String fileName,
                                int width, int height,
                                final OnPictureSavedListener listener) {
-        new SaveTask(folderName, fileName, width, height, listener).execute();
+        new SaveTask(folderName, fileName, width, height, listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**
@@ -341,14 +343,18 @@ public class GPUImageView extends FrameLayout {
                 waiter.release();
             }
         });
-        post(new Runnable() {
-            @Override
-            public void run() {
-                // Show loading
-                addView(new LoadingView(getContext()));
-                surfaceView.requestLayout();
-            }
-        });
+
+        if (isShowLoading) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    // Show loading
+                    addView(new LoadingView(getContext()));
+                    surfaceView.requestLayout();
+                }
+            });
+        }
+
         waiter.acquire();
 
         // Run one render pass
@@ -372,13 +378,15 @@ public class GPUImageView extends FrameLayout {
         });
         requestRender();
 
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Remove loading view
-                removeViewAt(1);
-            }
-        }, 300);
+        if (isShowLoading) {
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Remove loading view
+                    removeViewAt(1);
+                }
+            }, 300);
+        }
 
         return bitmap;
     }
@@ -542,8 +550,7 @@ public class GPUImageView extends FrameLayout {
         }
 
         private void saveImage(final String folderName, final String fileName, final Bitmap image) {
-            File path = Environment
-                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             File file = new File(path, folderName + "/" + fileName);
             try {
                 file.getParentFile().mkdirs();
