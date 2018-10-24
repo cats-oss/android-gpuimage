@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 2.0.1 *(2018-10-24)*
+----------------------------
+
+* Add GPUImageLuminanceFilter (by @takasfz)
+* Add GPUImageLuminanceThresholdFilter (by @takasfz)
+
 Version 2.0.0 *(2018-10-23)*
 ----------------------------
 

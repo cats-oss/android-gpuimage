@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'jp.co.cyberagent.android:gpuimage:2.0.0'
+    implementation 'jp.co.cyberagent.android:gpuimage:2.x.x'
 }
 ```
 
