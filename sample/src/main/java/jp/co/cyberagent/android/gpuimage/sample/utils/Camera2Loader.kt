@@ -12,7 +12,6 @@ import android.util.Log
 import android.util.Size
 import android.view.Surface
 import androidx.annotation.RequiresApi
-import kotlin.math.absoluteValue
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class Camera2Loader(private val activity: Activity) : CameraLoader() {
@@ -125,19 +124,12 @@ class Camera2Loader(private val activity: Activity) : CameraLoader() {
         val outputSizes = cameraManager.getCameraCharacteristics(cameraId)
             .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
             ?.getOutputSizes(ImageFormat.YUV_420_888)
-        val optimalSize = outputSizes?.filter {
-            it.width * it.height > PREVIEW_WIDTH * PREVIEW_HEIGHT
-        }?.minBy {
-            (it.width / it.height - viewWidth / viewHeight).absoluteValue
-        }
 
-        return if (optimalSize == null) {
-            Size(PREVIEW_WIDTH, PREVIEW_HEIGHT)
-        } else if (optimalSize.width > viewWidth || optimalSize.height > viewHeight) {
-            Size(optimalSize.width / 2, optimalSize.height / 2)
-        } else {
-            optimalSize
-        }
+        return outputSizes?.filter {
+            it.width < viewWidth / 2 && it.height < viewHeight / 2
+        }?.maxBy {
+            it.width * it.height
+        } ?: Size(PREVIEW_WIDTH, PREVIEW_HEIGHT)
     }
 
     private fun generateNV21Data(image: Image): ByteArray {
