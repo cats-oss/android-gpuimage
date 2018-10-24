@@ -297,7 +297,7 @@ public class GPUImageFilter {
     }
     
     private void checkIsInitialized() {
-        if (!mInInitialized) {
+        if (!mIsInitialized) {
             throw new AssertionError("Filter should be initialized");
         }
     }
