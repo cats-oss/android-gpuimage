@@ -81,7 +81,10 @@ public class GPUImageTransformFilter extends GPUImageFilter {
 
         if (!ignoreAspectRatio) {
             Matrix.orthoM(orthographicMatrix, 0, -1.0f, 1.0f, -1.0f * (float) height / (float) width, 1.0f * (float) height / (float) width, -1.0f, 1.0f);
-            setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);
+            
+            if (isInitialized) {
+                setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);
+            }
         }
     }
 
