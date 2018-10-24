@@ -23,7 +23,6 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import jp.co.cyberagent.android.gpuimage.GPUImageView
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools
@@ -32,6 +31,7 @@ import jp.co.cyberagent.android.gpuimage.sample.R
 import jp.co.cyberagent.android.gpuimage.sample.utils.Camera1Loader
 import jp.co.cyberagent.android.gpuimage.sample.utils.Camera2Loader
 import jp.co.cyberagent.android.gpuimage.sample.utils.CameraLoader
+import jp.co.cyberagent.android.gpuimage.sample.utils.doOnLayout
 import jp.co.cyberagent.android.gpuimage.util.Rotation
 
 class CameraActivity : AppCompatActivity() {
@@ -116,32 +116,5 @@ class CameraActivity : AppCompatActivity() {
             filterAdjuster = FilterAdjuster(filter)
             filterAdjuster?.adjust(seekBar.progress)
         }
-    }
-
-    private inline fun View.doOnLayout(crossinline action: (view: View) -> Unit) {
-        if (ViewCompat.isLaidOut(this) && !isLayoutRequested) {
-            action(this)
-        } else {
-            doOnNextLayout { action(it) }
-        }
-    }
-
-    private inline fun View.doOnNextLayout(crossinline action: (view: View) -> Unit) {
-        addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-            override fun onLayoutChange(
-                view: View,
-                left: Int,
-                top: Int,
-                right: Int,
-                bottom: Int,
-                oldLeft: Int,
-                oldTop: Int,
-                oldRight: Int,
-                oldBottom: Int
-            ) {
-                view.removeOnLayoutChangeListener(this)
-                action(view)
-            }
-        })
     }
 }
