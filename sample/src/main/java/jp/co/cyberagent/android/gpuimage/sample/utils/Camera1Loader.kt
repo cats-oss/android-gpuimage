@@ -7,12 +7,12 @@ import android.hardware.Camera
 import android.util.Log
 import android.view.Surface
 
-class Camera1Loader(val activity: Activity) : CameraLoader() {
+class Camera1Loader(private val activity: Activity) : CameraLoader() {
 
     private var cameraInstance: Camera? = null
     private var cameraFacing: Int = Camera.CameraInfo.CAMERA_FACING_BACK
 
-    override fun onResume() {
+    override fun onResume(width: Int, height: Int) {
         setUpCamera()
     }
 

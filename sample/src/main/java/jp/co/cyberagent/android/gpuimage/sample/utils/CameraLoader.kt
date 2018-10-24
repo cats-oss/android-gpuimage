@@ -5,7 +5,7 @@ abstract class CameraLoader {
 
     protected var onPreviewFrame: ((data: ByteArray, width: Int, height: Int) -> Unit)? = null
 
-    abstract fun onResume()
+    abstract fun onResume(width: Int, height: Int)
 
     abstract fun onPause()
 
