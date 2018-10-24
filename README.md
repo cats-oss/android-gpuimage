@@ -148,7 +148,6 @@ public override fun onCreate(savedInstanceState: Bundle?) {
 - [ ] Unsharp Mask
 - [x] Transform Operation
 - [ ] Crop
-- [ ] Luminance
 - [x] Gamma
 - [ ] Highlights and Shadows
 - [x] Haze
@@ -160,11 +159,11 @@ public override fun onCreate(savedInstanceState: Bundle?) {
 - [ ] Solarize
 - [ ] Vibrance
 - [x] Highlight and Shadow Tint
-- [ ] Luminance
+- [x] Luminance
+- [x] Luminance Threshold
 - [ ] Average Color
 - [ ] Average Luminance
 - [ ] Average Luminance Threshold
-- [ ] Luminance Threshold
 - [ ] Adaptive Threshold
 - [ ] Polar Pixellate
 - [x] Pixellate
