@@ -66,14 +66,13 @@ public class GPUImageTransformFilter extends GPUImageFilter {
         super.onInit();
         transformMatrixUniform = GLES20.glGetUniformLocation(getProgram(), "transformMatrix");
         orthographicMatrixUniform = GLES20.glGetUniformLocation(getProgram(), "orthographicMatrix");
-
-        setUniformMatrix4f(transformMatrixUniform, transform3D);
-        setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
+        setUniformMatrix4f(transformMatrixUniform, transform3D);
+        setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);
     }
 
     @Override
@@ -117,7 +116,10 @@ public class GPUImageTransformFilter extends GPUImageFilter {
 
     public void setTransform3D(float[] transform3D) {
         this.transform3D = transform3D;
-        setUniformMatrix4f(transformMatrixUniform, transform3D);
+        
+        if (isInitialized) {
+            setUniformMatrix4f(transformMatrixUniform, transform3D);
+        }
     }
 
     public float[] getTransform3D() {
@@ -129,7 +131,10 @@ public class GPUImageTransformFilter extends GPUImageFilter {
 
         if (ignoreAspectRatio) {
             Matrix.orthoM(orthographicMatrix, 0, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
-            setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);
+            
+            if (isInitialized) {
+                setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);
+            }
         } else {
             onOutputSizeChanged(getOutputWidth(), getOutputHeight());
         }
