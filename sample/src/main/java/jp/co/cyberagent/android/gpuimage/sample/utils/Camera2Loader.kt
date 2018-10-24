@@ -14,18 +14,22 @@ import android.view.Surface
 import androidx.annotation.RequiresApi
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-class Camera2Loader(val activity: Activity) : CameraLoader() {
+class Camera2Loader(private val activity: Activity) : CameraLoader() {
 
     private var cameraInstance: CameraDevice? = null
     private var captureSession: CameraCaptureSession? = null
     private var imageReader: ImageReader? = null
     private var cameraFacing: Int = CameraCharacteristics.LENS_FACING_BACK
+    private var viewWidth: Int = 0
+    private var viewHeight: Int = 0
 
     private val cameraManager: CameraManager by lazy {
         activity.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     }
 
-    override fun onResume() {
+    override fun onResume(width: Int, height: Int) {
+        viewWidth = width
+        viewHeight = height
         setUpCamera()
     }
 
@@ -113,23 +117,19 @@ class Camera2Loader(val activity: Activity) : CameraLoader() {
     }
 
     private fun chooseOptimalSize(): Size {
-        val backCameraId = getCameraId(CameraCharacteristics.LENS_FACING_BACK) ?: return Size(0, 0)
-        val frontCameraId =
-            getCameraId(CameraCharacteristics.LENS_FACING_FRONT) ?: return Size(0, 0)
-        val backSizes =
-            cameraManager.getCameraCharacteristics(backCameraId)
-                .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                ?.getOutputSizes(ImageFormat.YUV_420_888)
-        val frontSizes =
-            cameraManager.getCameraCharacteristics(frontCameraId)
-                .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                ?.getOutputSizes(ImageFormat.YUV_420_888)
+        if (viewWidth == 0 || viewHeight == 0) {
+            return Size(0, 0)
+        }
+        val cameraId = getCameraId(cameraFacing) ?: return Size(0, 0)
+        val outputSizes = cameraManager.getCameraCharacteristics(cameraId)
+            .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+            ?.getOutputSizes(ImageFormat.YUV_420_888)
 
-        return backSizes?.filter {
-            frontSizes?.contains(it) ?: true
+        return outputSizes?.filter {
+            it.width < viewWidth / 2 && it.height < viewHeight / 2
         }?.maxBy {
             it.width * it.height
-        } ?: Size(0, 0)
+        } ?: Size(PREVIEW_WIDTH, PREVIEW_HEIGHT)
     }
 
     private fun generateNV21Data(image: Image): ByteArray {
@@ -185,5 +185,8 @@ class Camera2Loader(val activity: Activity) : CameraLoader() {
 
     companion object {
         private const val TAG = "Camera2Loader"
+
+        private const val PREVIEW_WIDTH = 480
+        private const val PREVIEW_HEIGHT = 640
     }
 }
