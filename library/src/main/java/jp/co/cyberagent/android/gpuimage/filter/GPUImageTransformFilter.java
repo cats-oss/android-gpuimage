@@ -82,7 +82,7 @@ public class GPUImageTransformFilter extends GPUImageFilter {
         if (!ignoreAspectRatio) {
             Matrix.orthoM(orthographicMatrix, 0, -1.0f, 1.0f, -1.0f * (float) height / (float) width, 1.0f * (float) height / (float) width, -1.0f, 1.0f);
             
-            if (isInitialized) {
+            if (isInitialized()) {
                 setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);
             }
         }
@@ -120,7 +120,7 @@ public class GPUImageTransformFilter extends GPUImageFilter {
     public void setTransform3D(float[] transform3D) {
         this.transform3D = transform3D;
         
-        if (isInitialized) {
+        if (isInitialized()) {
             setUniformMatrix4f(transformMatrixUniform, transform3D);
         }
     }
@@ -135,7 +135,7 @@ public class GPUImageTransformFilter extends GPUImageFilter {
         if (ignoreAspectRatio) {
             Matrix.orthoM(orthographicMatrix, 0, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
             
-            if (isInitialized) {
+            if (isInitialized()) {
                 setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);
             }
         } else {
