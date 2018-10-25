@@ -31,6 +31,7 @@ import jp.co.cyberagent.android.gpuimage.sample.R
 import jp.co.cyberagent.android.gpuimage.sample.utils.Camera1Loader
 import jp.co.cyberagent.android.gpuimage.sample.utils.Camera2Loader
 import jp.co.cyberagent.android.gpuimage.sample.utils.CameraLoader
+import jp.co.cyberagent.android.gpuimage.sample.utils.doOnLayout
 import jp.co.cyberagent.android.gpuimage.util.Rotation
 
 class CameraActivity : AppCompatActivity() {
@@ -82,7 +83,9 @@ class CameraActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        cameraLoader.onResume()
+        gpuImageView.doOnLayout {
+            cameraLoader.onResume(it.width, it.height)
+        }
     }
 
     override fun onPause() {
