@@ -71,6 +71,7 @@ public class GPUImageFilter {
     }
 
     public final void init() {
+        if (isInitialized) return;
         onInit();
         onInitialized();
     }
@@ -79,8 +80,7 @@ public class GPUImageFilter {
         glProgId = OpenGlUtils.loadProgram(vertexShader, fragmentShader);
         glAttribPosition = GLES20.glGetAttribLocation(glProgId, "position");
         glUniformTexture = GLES20.glGetUniformLocation(glProgId, "inputImageTexture");
-        glAttribTextureCoordinate = GLES20.glGetAttribLocation(glProgId,
-                "inputTextureCoordinate");
+        glAttribTextureCoordinate = GLES20.glGetAttribLocation(glProgId, "inputTextureCoordinate");
         isInitialized = true;
     }
 
@@ -167,7 +167,7 @@ public class GPUImageFilter {
 
     protected void setInteger(final int location, final int intValue) {
         checkIsInitialized();
-        
+
         runOnDraw(new Runnable() {
             @Override
             public void run() {
@@ -178,7 +178,7 @@ public class GPUImageFilter {
 
     protected void setFloat(final int location, final float floatValue) {
         checkIsInitialized();
-        
+
         runOnDraw(new Runnable() {
             @Override
             public void run() {
@@ -189,7 +189,7 @@ public class GPUImageFilter {
 
     protected void setFloatVec2(final int location, final float[] arrayValue) {
         checkIsInitialized();
-        
+
         runOnDraw(new Runnable() {
             @Override
             public void run() {
@@ -200,7 +200,7 @@ public class GPUImageFilter {
 
     protected void setFloatVec3(final int location, final float[] arrayValue) {
         checkIsInitialized();
-        
+
         runOnDraw(new Runnable() {
             @Override
             public void run() {
@@ -211,7 +211,7 @@ public class GPUImageFilter {
 
     protected void setFloatVec4(final int location, final float[] arrayValue) {
         checkIsInitialized();
-        
+
         runOnDraw(new Runnable() {
             @Override
             public void run() {
@@ -222,7 +222,7 @@ public class GPUImageFilter {
 
     protected void setFloatArray(final int location, final float[] arrayValue) {
         checkIsInitialized();
-        
+
         runOnDraw(new Runnable() {
             @Override
             public void run() {
@@ -233,7 +233,7 @@ public class GPUImageFilter {
 
     protected void setPoint(final int location, final PointF point) {
         checkIsInitialized();
-        
+
         runOnDraw(new Runnable() {
 
             @Override
@@ -248,7 +248,7 @@ public class GPUImageFilter {
 
     protected void setUniformMatrix3f(final int location, final float[] matrix) {
         checkIsInitialized();
-        
+
         runOnDraw(new Runnable() {
 
             @Override
@@ -260,7 +260,7 @@ public class GPUImageFilter {
 
     protected void setUniformMatrix4f(final int location, final float[] matrix) {
         checkIsInitialized();
-        
+
         runOnDraw(new Runnable() {
 
             @Override
@@ -295,7 +295,7 @@ public class GPUImageFilter {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
-    
+
     private void checkIsInitialized() {
         if (!isInitialized) {
             throw new AssertionError("Filter should be initialized");
