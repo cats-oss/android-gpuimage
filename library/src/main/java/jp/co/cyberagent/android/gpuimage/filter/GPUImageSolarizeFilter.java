@@ -47,6 +47,8 @@ public class GPUImageSolarizeFilter extends GPUImageFilter {
 
     public void setThreshold(final float threshold) {
         this.threshold = threshold;
-        setFloat(uniformThresholdLocation, threshold);
+        if (isInitialized()) {
+            setFloat(uniformThresholdLocation, threshold);
+        }
     }
 }
