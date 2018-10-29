@@ -394,10 +394,14 @@ object GPUImageFilterTools {
         }
 
         fun adjust(percentage: Int) {
+            adjuster?.init()
             adjuster?.adjust(percentage)
         }
 
         private abstract inner class Adjuster<T : GPUImageFilter>(protected val filter: T) {
+
+            fun init() = filter.init()
+
             abstract fun adjust(percentage: Int)
 
             protected fun range(percentage: Int, start: Float, end: Float): Float {
