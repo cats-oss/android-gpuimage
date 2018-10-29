@@ -156,7 +156,7 @@ public override fun onCreate(savedInstanceState: Bundle?) {
 - [ ] Miss Etikate
 - [ ] Soft Elegance
 - [x] Color Inversion
-- [ ] Solarize
+- [x] Solarize
 - [ ] Vibrance
 - [x] Highlight and Shadow Tint
 - [x] Luminance
