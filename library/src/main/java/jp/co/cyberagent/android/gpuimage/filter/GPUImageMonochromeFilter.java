@@ -91,11 +91,11 @@ public class GPUImageMonochromeFilter extends GPUImageFilter {
 
     public void setColor(final float[] color) {
         this.color = color;
-        setColorRed(this.color[0], this.color[1], this.color[2]);
+        setColor(this.color[0], this.color[1], this.color[2]);
 
     }
 
-    public void setColorRed(final float red, final float green, final float blue) {
+    public void setColor(final float red, final float green, final float blue) {
         setFloatVec3(filterColorLocation, new float[]{red, green, blue});
     }
 }

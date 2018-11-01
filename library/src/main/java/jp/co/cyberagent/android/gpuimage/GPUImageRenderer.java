@@ -99,7 +99,7 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
     public void onSurfaceCreated(final GL10 unused, final EGLConfig config) {
         GLES20.glClearColor(backgroundRed, backgroundGreen, backgroundBlue, 1);
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-        filter.init();
+        filter.ifNeedInit();
     }
 
     @Override
@@ -202,7 +202,7 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
                 if (oldFilter != null) {
                     oldFilter.destroy();
                 }
-                GPUImageRenderer.this.filter.init();
+                GPUImageRenderer.this.filter.ifNeedInit();
                 GLES20.glUseProgram(GPUImageRenderer.this.filter.getProgram());
                 GPUImageRenderer.this.filter.onOutputSizeChanged(outputWidth, outputHeight);
             }

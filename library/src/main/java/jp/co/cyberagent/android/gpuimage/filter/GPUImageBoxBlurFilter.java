@@ -71,7 +71,7 @@ public class GPUImageBoxBlurFilter extends GPUImageTwoPassTextureSamplingFilter 
                     "gl_FragColor = fragmentColor;\n" +
                     "}\n";
 
-    private float blurSize = 1f;
+    private float blurSize;
 
     /**
      * Construct new BoxBlurFilter with default blur size of 1.0.
@@ -84,6 +84,12 @@ public class GPUImageBoxBlurFilter extends GPUImageTwoPassTextureSamplingFilter 
     public GPUImageBoxBlurFilter(float blurSize) {
         super(VERTEX_SHADER, FRAGMENT_SHADER, VERTEX_SHADER, FRAGMENT_SHADER);
         this.blurSize = blurSize;
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
+        setBlurSize(blurSize);
     }
 
     /**

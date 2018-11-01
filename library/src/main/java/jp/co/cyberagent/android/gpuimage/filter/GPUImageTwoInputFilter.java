@@ -64,7 +64,11 @@ public class GPUImageTwoInputFilter extends GPUImageFilter {
         filterSecondTextureCoordinateAttribute = GLES20.glGetAttribLocation(getProgram(), "inputTextureCoordinate2");
         filterInputTextureUniform2 = GLES20.glGetUniformLocation(getProgram(), "inputImageTexture2"); // This does assume a name of "inputImageTexture2" for second input texture in the fragment shader
         GLES20.glEnableVertexAttribArray(filterSecondTextureCoordinateAttribute);
+    }
 
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         if (bitmap != null && !bitmap.isRecycled()) {
             setBitmap(bitmap);
         }

@@ -81,6 +81,7 @@ public class GPUImageBulgeDistortionFilter extends GPUImageFilter {
     @Override
     public void onInitialized() {
         super.onInitialized();
+        setAspectRatio(aspectRatio);
         setRadius(radius);
         setScale(scale);
         setCenter(center);

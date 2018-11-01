@@ -46,7 +46,6 @@ public class GPUImageRGBFilter extends GPUImageFilter {
     private float green;
     private int blueLocation;
     private float blue;
-    private boolean isInitialized = false;
 
     public GPUImageRGBFilter() {
         this(1.0f, 1.0f, 1.0f);
@@ -65,7 +64,11 @@ public class GPUImageRGBFilter extends GPUImageFilter {
         redLocation = GLES20.glGetUniformLocation(getProgram(), "red");
         greenLocation = GLES20.glGetUniformLocation(getProgram(), "green");
         blueLocation = GLES20.glGetUniformLocation(getProgram(), "blue");
-        isInitialized = true;
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setRed(red);
         setGreen(green);
         setBlue(blue);
@@ -73,22 +76,16 @@ public class GPUImageRGBFilter extends GPUImageFilter {
 
     public void setRed(final float red) {
         this.red = red;
-        if (isInitialized) {
-            setFloat(redLocation, this.red);
-        }
+        setFloat(redLocation, this.red);
     }
 
     public void setGreen(final float green) {
         this.green = green;
-        if (isInitialized) {
-            setFloat(greenLocation, this.green);
-        }
+        setFloat(greenLocation, this.green);
     }
 
     public void setBlue(final float blue) {
         this.blue = blue;
-        if (isInitialized) {
-            setFloat(blueLocation, this.blue);
-        }
+        setFloat(blueLocation, this.blue);
     }
 }

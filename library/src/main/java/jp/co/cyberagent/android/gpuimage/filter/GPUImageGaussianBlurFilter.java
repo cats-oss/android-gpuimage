@@ -78,7 +78,7 @@ public class GPUImageGaussianBlurFilter extends GPUImageTwoPassTextureSamplingFi
                     "	gl_FragColor = vec4(sum,fragColor.a);\n" +
                     "}";
 
-    protected float blurSize = 1f;
+    protected float blurSize;
 
     public GPUImageGaussianBlurFilter() {
         this(1f);
@@ -87,6 +87,12 @@ public class GPUImageGaussianBlurFilter extends GPUImageTwoPassTextureSamplingFi
     public GPUImageGaussianBlurFilter(float blurSize) {
         super(VERTEX_SHADER, FRAGMENT_SHADER, VERTEX_SHADER, FRAGMENT_SHADER);
         this.blurSize = blurSize;
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
+        setBlurSize(blurSize);
     }
 
     @Override

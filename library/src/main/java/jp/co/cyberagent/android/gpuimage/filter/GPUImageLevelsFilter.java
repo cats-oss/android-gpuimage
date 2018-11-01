@@ -50,7 +50,6 @@ public class GPUImageLevelsFilter extends GPUImageFilter {
         this.max = max;
         minOutput = minOUt;
         maxOutput = maxOut;
-        setMin(0.0f, 1.0f, 1.0f, 0.0f, 1.0f);
     }
 
     @Override
@@ -66,6 +65,7 @@ public class GPUImageLevelsFilter extends GPUImageFilter {
     @Override
     public void onInitialized() {
         super.onInitialized();
+        setMin(0.0f, 1.0f, 1.0f, 0.0f, 1.0f);
         updateUniforms();
     }
 

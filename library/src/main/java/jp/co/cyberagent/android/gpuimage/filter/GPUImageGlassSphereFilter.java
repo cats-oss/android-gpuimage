@@ -93,6 +93,7 @@ public class GPUImageGlassSphereFilter extends GPUImageFilter {
     @Override
     public void onInitialized() {
         super.onInitialized();
+        setAspectRatio(aspectRatio);
         setRadius(radius);
         setCenter(center);
         setRefractiveIndex(refractiveIndex);

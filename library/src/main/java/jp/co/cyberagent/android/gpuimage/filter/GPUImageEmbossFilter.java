@@ -36,6 +36,11 @@ public class GPUImageEmbossFilter extends GPUImage3x3ConvolutionFilter {
     @Override
     public void onInit() {
         super.onInit();
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setIntensity(intensity);
     }
 

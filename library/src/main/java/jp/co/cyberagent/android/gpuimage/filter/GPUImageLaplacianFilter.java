@@ -80,6 +80,11 @@ public class GPUImageLaplacianFilter extends GPUImage3x3TextureSamplingFilter {
     public void onInit() {
         super.onInit();
         uniformConvolutionMatrix = GLES20.glGetUniformLocation(getProgram(), "convolutionMatrix");
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setConvolutionKernel(convolutionKernel);
     }
 

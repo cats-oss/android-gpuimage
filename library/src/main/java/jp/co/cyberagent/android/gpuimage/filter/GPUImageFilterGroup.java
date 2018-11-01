@@ -99,7 +99,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     public void onInit() {
         super.onInit();
         for (GPUImageFilter filter : filters) {
-            filter.init();
+            filter.ifNeedInit();
         }
     }
 

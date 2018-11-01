@@ -46,7 +46,13 @@ public class GPUImageHalftoneFilter extends GPUImageFilter {
         super.onInit();
         fractionalWidthOfPixelLocation = GLES20.glGetUniformLocation(getProgram(), "fractionalWidthOfPixel");
         aspectRatioLocation = GLES20.glGetUniformLocation(getProgram(), "aspectRatio");
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setFractionalWidthOfAPixel(fractionalWidthOfAPixel);
+        setAspectRatio(aspectRatio);
     }
 
     @Override

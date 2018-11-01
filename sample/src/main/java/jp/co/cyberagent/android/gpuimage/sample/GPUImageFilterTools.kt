@@ -136,16 +136,10 @@ object GPUImageFilterTools {
             FilterType.BRIGHTNESS -> GPUImageBrightnessFilter(1.5f)
             FilterType.GRAYSCALE -> GPUImageGrayscaleFilter()
             FilterType.SEPIA -> GPUImageSepiaToneFilter()
-            FilterType.SHARPEN -> GPUImageSharpenFilter().apply {
-                setSharpness(2.0f)
-            }
+            FilterType.SHARPEN -> GPUImageSharpenFilter()
             FilterType.SOBEL_EDGE_DETECTION -> GPUImageSobelEdgeDetectionFilter()
             FilterType.THRESHOLD_EDGE_DETECTION -> GPUImageThresholdEdgeDetectionFilter()
-            FilterType.THREE_X_THREE_CONVOLUTION -> GPUImage3x3ConvolutionFilter().apply {
-                setConvolutionKernel(
-                    floatArrayOf(-1.0f, 0.0f, 1.0f, -2.0f, 0.0f, 2.0f, -1.0f, 0.0f, 1.0f)
-                )
-            }
+            FilterType.THREE_X_THREE_CONVOLUTION -> GPUImage3x3ConvolutionFilter()
             FilterType.EMBOSS -> GPUImageEmbossFilter()
             FilterType.POSTERIZE -> GPUImagePosterizeFilter()
             FilterType.FILTER_GROUP -> GPUImageFilterGroup(
@@ -209,7 +203,6 @@ object GPUImageFilterTools {
                 context,
                 GPUImageExclusionBlendFilter::class.java
             )
-
 
             FilterType.BLEND_HARD_LIGHT -> createBlendFilter(
                 context,
@@ -285,7 +278,6 @@ object GPUImageFilterTools {
             }
             FilterType.GAUSSIAN_BLUR -> GPUImageGaussianBlurFilter()
             FilterType.CROSSHATCH -> GPUImageCrosshatchFilter()
-
             FilterType.BOX_BLUR -> GPUImageBoxBlurFilter()
             FilterType.CGA_COLORSPACE -> GPUImageCGAColorspaceFilter()
             FilterType.DILATION -> GPUImageDilationFilter()
@@ -294,7 +286,6 @@ object GPUImageFilterTools {
             FilterType.SKETCH -> GPUImageSketchFilter()
             FilterType.TOON -> GPUImageToonFilter()
             FilterType.SMOOTH_TOON -> GPUImageSmoothToonFilter()
-
             FilterType.BULGE_DISTORTION -> GPUImageBulgeDistortionFilter()
             FilterType.GLASS_SPHERE -> GPUImageGlassSphereFilter()
             FilterType.HAZE -> GPUImageHazeFilter()
@@ -305,15 +296,10 @@ object GPUImageFilterTools {
             FilterType.WEAK_PIXEL_INCLUSION -> GPUImageWeakPixelInclusionFilter()
             FilterType.FALSE_COLOR -> GPUImageFalseColorFilter()
             FilterType.COLOR_BALANCE -> GPUImageColorBalanceFilter()
-            FilterType.LEVELS_FILTER_MIN -> GPUImageLevelsFilter().apply {
-                setMin(0.0f, 3.0f, 1.0f)
-            }
+            FilterType.LEVELS_FILTER_MIN -> GPUImageLevelsFilter()
             FilterType.HALFTONE -> GPUImageHalftoneFilter()
-
             FilterType.BILATERAL_BLUR -> GPUImageBilateralBlurFilter()
-
             FilterType.TRANSFORM2D -> GPUImageTransformFilter()
-
             FilterType.SOLARIZE -> GPUImageSolarizeFilter()
         }
     }
@@ -363,6 +349,7 @@ object GPUImageFilterTools {
                 is GPUImageBrightnessFilter -> BrightnessAdjuster(filter)
                 is GPUImageSobelEdgeDetectionFilter -> SobelAdjuster(filter)
                 is GPUImageThresholdEdgeDetectionFilter -> ThresholdAdjuster(filter)
+                is GPUImage3x3ConvolutionFilter -> ThreeXThreeConvolutionAjuster(filter)
                 is GPUImageEmbossFilter -> EmbossAdjuster(filter)
                 is GPUImage3x3TextureSamplingFilter -> GPU3x3TextureAdjuster(filter)
                 is GPUImageHueFilter -> HueAdjuster(filter)
@@ -403,6 +390,7 @@ object GPUImageFilterTools {
         }
 
         private abstract inner class Adjuster<T : GPUImageFilter>(protected val filter: T) {
+
             abstract fun adjust(percentage: Int)
 
             protected fun range(percentage: Int, start: Float, end: Float): Float {
@@ -475,6 +463,15 @@ object GPUImageFilterTools {
             override fun adjust(percentage: Int) {
                 filter.setLineSize(range(percentage, 0.0f, 5.0f))
                 filter.setThreshold(0.9f)
+            }
+        }
+
+        private inner class ThreeXThreeConvolutionAjuster(filter: GPUImage3x3ConvolutionFilter) :
+            Adjuster<GPUImage3x3ConvolutionFilter>(filter) {
+            override fun adjust(percentage: Int) {
+                filter.setConvolutionKernel(
+                        floatArrayOf(-1.0f, 0.0f, 1.0f, -2.0f, 0.0f, 2.0f, -1.0f, 0.0f, 1.0f)
+                    )
             }
         }
 
