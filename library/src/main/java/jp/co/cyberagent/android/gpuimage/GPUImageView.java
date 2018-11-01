@@ -74,8 +74,8 @@ public class GPUImageView extends FrameLayout {
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.GPUImageView, 0, 0);
             try {
-                surfaceType = a.getInt(R.styleable.GPUImageView_surface_type, surfaceType);
-                isShowLoading = a.getBoolean(R.styleable.GPUImageView_show_loading, isShowLoading);
+                surfaceType = a.getInt(R.styleable.GPUImageView_gpuimage_surface_type, surfaceType);
+                isShowLoading = a.getBoolean(R.styleable.GPUImageView_gpuimage_show_loading, isShowLoading);
             } finally {
                 a.recycle();
             }
