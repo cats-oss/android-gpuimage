@@ -78,13 +78,16 @@ public class GPUImageVignetteFilter extends GPUImageFilter {
         vignetteColorLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteColor");
         vignetteStartLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteStart");
         vignetteEndLocation = GLES20.glGetUniformLocation(getProgram(), "vignetteEnd");
+    }
 
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setVignetteCenter(vignetteCenter);
         setVignetteColor(vignetteColor);
         setVignetteStart(vignetteStart);
         setVignetteEnd(vignetteEnd);
     }
-
 
     public void setVignetteCenter(final PointF vignetteCenter) {
         this.vignetteCenter = vignetteCenter;

@@ -169,10 +169,10 @@ public class GPUImageColorBalanceFilter extends GPUImageFilter {
     @Override
     public void onInitialized() {
         super.onInitialized();
-        setMidtones(this.midtones);
-        setShowdows(this.showdows);
-        setHighlights(this.highlights);
-        setPreserveLuminosity(this.preserveLuminosity);
+        setMidtones(midtones);
+        setShowdows(showdows);
+        setHighlights(highlights);
+        setPreserveLuminosity(preserveLuminosity);
     }
 
     public void setShowdows(float[] showdows) {

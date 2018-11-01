@@ -81,6 +81,11 @@ public class GPUImage3x3TextureSamplingFilter extends GPUImageFilter {
         super.onInit();
         uniformTexelWidthLocation = GLES20.glGetUniformLocation(getProgram(), "texelWidth");
         uniformTexelHeightLocation = GLES20.glGetUniformLocation(getProgram(), "texelHeight");
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         if (texelWidth != 0) {
             updateTexelValues();
         }

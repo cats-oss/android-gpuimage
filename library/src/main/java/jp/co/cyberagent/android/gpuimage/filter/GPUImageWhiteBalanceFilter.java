@@ -73,11 +73,14 @@ public class GPUImageWhiteBalanceFilter extends GPUImageFilter {
         super.onInit();
         temperatureLocation = GLES20.glGetUniformLocation(getProgram(), "temperature");
         tintLocation = GLES20.glGetUniformLocation(getProgram(), "tint");
+    }
 
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setTemperature(temperature);
         setTint(tint);
     }
-
 
     public void setTemperature(final float temperature) {
         this.temperature = temperature;

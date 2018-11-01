@@ -103,6 +103,11 @@ public class GPUImageSharpenFilter extends GPUImageFilter {
         sharpnessLocation = GLES20.glGetUniformLocation(getProgram(), "sharpness");
         imageWidthFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageWidthFactor");
         imageHeightFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageHeightFactor");
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setSharpness(sharpness);
     }
 

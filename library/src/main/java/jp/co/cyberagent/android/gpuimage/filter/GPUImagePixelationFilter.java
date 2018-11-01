@@ -58,6 +58,11 @@ public class GPUImagePixelationFilter extends GPUImageFilter {
         imageWidthFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageWidthFactor");
         imageHeightFactorLocation = GLES20.glGetUniformLocation(getProgram(), "imageHeightFactor");
         pixelLocation = GLES20.glGetUniformLocation(getProgram(), "pixel");
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setPixel(pixel);
     }
 

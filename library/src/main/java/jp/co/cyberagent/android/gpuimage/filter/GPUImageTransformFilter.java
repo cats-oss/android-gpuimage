@@ -66,14 +66,13 @@ public class GPUImageTransformFilter extends GPUImageFilter {
         super.onInit();
         transformMatrixUniform = GLES20.glGetUniformLocation(getProgram(), "transformMatrix");
         orthographicMatrixUniform = GLES20.glGetUniformLocation(getProgram(), "orthographicMatrix");
-
-        setUniformMatrix4f(transformMatrixUniform, transform3D);
-        setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);
     }
 
     @Override
     public void onInitialized() {
         super.onInitialized();
+        setUniformMatrix4f(transformMatrixUniform, transform3D);
+        setUniformMatrix4f(orthographicMatrixUniform, orthographicMatrix);
     }
 
     @Override

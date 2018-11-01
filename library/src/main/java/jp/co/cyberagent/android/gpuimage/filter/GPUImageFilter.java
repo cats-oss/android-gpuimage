@@ -70,8 +70,7 @@ public class GPUImageFilter {
         this.fragmentShader = fragmentShader;
     }
 
-    public final void init() {
-        if (isInitialized) return;
+    private final void init() {
         onInit();
         onInitialized();
     }
@@ -85,6 +84,10 @@ public class GPUImageFilter {
     }
 
     public void onInitialized() {
+    }
+
+    public void ifNeedInit() {
+        if (!isInitialized) init();
     }
 
     public final void destroy() {
@@ -166,78 +169,70 @@ public class GPUImageFilter {
     }
 
     protected void setInteger(final int location, final int intValue) {
-        checkIsInitialized();
-
         runOnDraw(new Runnable() {
             @Override
             public void run() {
+                ifNeedInit();
                 GLES20.glUniform1i(location, intValue);
             }
         });
     }
 
     protected void setFloat(final int location, final float floatValue) {
-        checkIsInitialized();
-
         runOnDraw(new Runnable() {
             @Override
             public void run() {
+                ifNeedInit();
                 GLES20.glUniform1f(location, floatValue);
             }
         });
     }
 
     protected void setFloatVec2(final int location, final float[] arrayValue) {
-        checkIsInitialized();
-
         runOnDraw(new Runnable() {
             @Override
             public void run() {
+                ifNeedInit();
                 GLES20.glUniform2fv(location, 1, FloatBuffer.wrap(arrayValue));
             }
         });
     }
 
     protected void setFloatVec3(final int location, final float[] arrayValue) {
-        checkIsInitialized();
-
         runOnDraw(new Runnable() {
             @Override
             public void run() {
+                ifNeedInit();
                 GLES20.glUniform3fv(location, 1, FloatBuffer.wrap(arrayValue));
             }
         });
     }
 
     protected void setFloatVec4(final int location, final float[] arrayValue) {
-        checkIsInitialized();
-
         runOnDraw(new Runnable() {
             @Override
             public void run() {
+                ifNeedInit();
                 GLES20.glUniform4fv(location, 1, FloatBuffer.wrap(arrayValue));
             }
         });
     }
 
     protected void setFloatArray(final int location, final float[] arrayValue) {
-        checkIsInitialized();
-
         runOnDraw(new Runnable() {
             @Override
             public void run() {
+                ifNeedInit();
                 GLES20.glUniform1fv(location, arrayValue.length, FloatBuffer.wrap(arrayValue));
             }
         });
     }
 
     protected void setPoint(final int location, final PointF point) {
-        checkIsInitialized();
-
         runOnDraw(new Runnable() {
-
             @Override
             public void run() {
+                ifNeedInit();
                 float[] vec2 = new float[2];
                 vec2[0] = point.x;
                 vec2[1] = point.y;
@@ -247,24 +242,22 @@ public class GPUImageFilter {
     }
 
     protected void setUniformMatrix3f(final int location, final float[] matrix) {
-        checkIsInitialized();
-
         runOnDraw(new Runnable() {
 
             @Override
             public void run() {
+                ifNeedInit();
                 GLES20.glUniformMatrix3fv(location, 1, false, matrix, 0);
             }
         });
     }
 
     protected void setUniformMatrix4f(final int location, final float[] matrix) {
-        checkIsInitialized();
-
         runOnDraw(new Runnable() {
 
             @Override
             public void run() {
+                ifNeedInit();
                 GLES20.glUniformMatrix4fv(location, 1, false, matrix, 0);
             }
         });
@@ -294,11 +287,5 @@ public class GPUImageFilter {
     public static String convertStreamToString(java.io.InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
-    }
-
-    private void checkIsInitialized() {
-        if (!isInitialized) {
-            throw new AssertionError("Filter should be initialized");
-        }
     }
 }

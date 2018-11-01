@@ -53,6 +53,11 @@ public class GPUImagePosterizeFilter extends GPUImageFilter {
     public void onInit() {
         super.onInit();
         glUniformColorLevels = GLES20.glGetUniformLocation(getProgram(), "colorLevels");
+    }
+
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setColorLevels(colorLevels);
     }
 

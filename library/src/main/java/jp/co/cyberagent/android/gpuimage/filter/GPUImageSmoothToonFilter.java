@@ -38,7 +38,11 @@ public class GPUImageSmoothToonFilter extends GPUImageFilterGroup {
         addFilter(toonFilter);
 
         getFilters().add(blurFilter);
+    }
 
+    @Override
+    public void onInitialized() {
+        super.onInitialized();
         setBlurSize(0.5f);
         setThreshold(0.2f);
         setQuantizationLevels(10.0f);
