@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+Version 2.0.2 *(2018-11-01)*
+----------------------------
+
+* Add GPUImageSolarizeFilter (by @kettsun0123)
+
+* Change attr/names
+  `show_loading` to `gpuimage_show_loading`
+  `surface_type` to `gpuimage_surface_type`
+
+* Fix a bug about filter init [#420](https://github.com/cats-oss/android-gpuimage/pull/420)
+
 Version 2.0.1 *(2018-10-24)*
 ----------------------------
 
