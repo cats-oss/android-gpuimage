@@ -116,6 +116,8 @@ object GPUImageFilterTools {
             addFilter("Transform (2-D)", FilterType.TRANSFORM2D)
 
             addFilter("Solarize", FilterType.SOLARIZE)
+
+            addFilter("Vibrance", FilterType.VIBRANCE)
         }
 
         val builder = AlertDialog.Builder(context)
@@ -301,6 +303,7 @@ object GPUImageFilterTools {
             FilterType.BILATERAL_BLUR -> GPUImageBilateralBlurFilter()
             FilterType.TRANSFORM2D -> GPUImageTransformFilter()
             FilterType.SOLARIZE -> GPUImageSolarizeFilter()
+            FilterType.VIBRANCE -> GPUImageVibranceFilter()
         }
     }
 
@@ -324,7 +327,7 @@ object GPUImageFilterTools {
         BLEND_DIFFERENCE, BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
         BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA,
         GAUSSIAN_BLUR, CROSSHATCH, BOX_BLUR, CGA_COLORSPACE, DILATION, KUWAHARA, RGB_DILATION, SKETCH, TOON, SMOOTH_TOON, BULGE_DISTORTION, GLASS_SPHERE, HAZE, LAPLACIAN, NON_MAXIMUM_SUPPRESSION,
-        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE, LEVELS_FILTER_MIN, BILATERAL_BLUR, HALFTONE, TRANSFORM2D, SOLARIZE
+        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE, LEVELS_FILTER_MIN, BILATERAL_BLUR, HALFTONE, TRANSFORM2D, SOLARIZE, VIBRANCE
     }
 
     private class FilterList {
@@ -377,6 +380,7 @@ object GPUImageFilterTools {
                 is GPUImageBilateralBlurFilter -> BilateralAdjuster(filter)
                 is GPUImageTransformFilter -> RotateAdjuster(filter)
                 is GPUImageSolarizeFilter -> SolarizeAdjuster(filter)
+                is GPUImageVibranceFilter -> VibranceAdjuster(filter)
                 else -> null
             }
         }
@@ -470,8 +474,8 @@ object GPUImageFilterTools {
             Adjuster<GPUImage3x3ConvolutionFilter>(filter) {
             override fun adjust(percentage: Int) {
                 filter.setConvolutionKernel(
-                        floatArrayOf(-1.0f, 0.0f, 1.0f, -2.0f, 0.0f, 2.0f, -1.0f, 0.0f, 1.0f)
-                    )
+                    floatArrayOf(-1.0f, 0.0f, 1.0f, -2.0f, 0.0f, 2.0f, -1.0f, 0.0f, 1.0f)
+                )
             }
         }
 
@@ -663,5 +667,11 @@ object GPUImageFilterTools {
             }
         }
 
+        private inner class VibranceAdjuster(filter: GPUImageVibranceFilter) :
+            Adjuster<GPUImageVibranceFilter>(filter) {
+            override fun adjust(percentage: Int) {
+                filter.setVibrance(range(percentage, -1.2f, 1.2f))
+            }
+        }
     }
 }
