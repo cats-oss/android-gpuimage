@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 2.0.3 *(2018-11-09)*
+----------------------------
+
+* Add GPUImageVibranceFilter (by @itome)
+
 Version 2.0.2 *(2018-11-01)*
 ----------------------------
 
