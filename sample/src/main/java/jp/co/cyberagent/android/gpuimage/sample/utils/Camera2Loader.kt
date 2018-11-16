@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.ImageFormat
 import android.hardware.camera2.*
-import android.media.Image
 import android.media.ImageReader
 import android.os.Build
 import android.util.Log
@@ -100,7 +99,7 @@ class Camera2Loader(private val activity: Activity) : CameraLoader() {
                 ImageReader.newInstance(size.width, size.height, ImageFormat.YUV_420_888, 2).apply {
                     setOnImageAvailableListener({ reader ->
                         val image = reader?.acquireNextImage() ?: return@setOnImageAvailableListener
-                        onPreviewFrame?.invoke(generateNV21Data(image), image.width, image.height)
+                        onPreviewFrame?.invoke(image.generateNV21Data(), image.width, image.height)
                         image.close()
                     }, null)
                 }
@@ -125,25 +124,15 @@ class Camera2Loader(private val activity: Activity) : CameraLoader() {
             .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
             ?.getOutputSizes(ImageFormat.YUV_420_888)
 
+        val orientation = getCameraOrientation()
+        val maxPreviewWidth = if (orientation == 90 or 270) viewHeight else viewWidth
+        val maxPreviewHeight = if (orientation == 90 or 270) viewWidth else viewHeight
+
         return outputSizes?.filter {
-            it.width < viewWidth / 2 && it.height < viewHeight / 2
+            it.width < maxPreviewWidth / 2 && it.height < maxPreviewHeight / 2
         }?.maxBy {
             it.width * it.height
         } ?: Size(PREVIEW_WIDTH, PREVIEW_HEIGHT)
-    }
-
-    private fun generateNV21Data(image: Image): ByteArray {
-        val bufferY = image.planes[0].buffer
-        val bufferV = image.planes[1].buffer
-        val bufferU = image.planes[2].buffer
-        val bufferYSize = bufferY.remaining()
-        val bufferUSize = bufferU.remaining()
-        val bufferVSize = bufferV.remaining()
-        val bytes = ByteArray(bufferYSize + bufferUSize + bufferVSize)
-        bufferY.get(bytes, 0, bufferYSize)
-        bufferU.get(bytes, bufferYSize, bufferUSize)
-        bufferV.get(bytes, bufferYSize + bufferUSize, bufferVSize)
-        return bytes
     }
 
     private inner class CameraDeviceCallback : CameraDevice.StateCallback() {
