@@ -344,16 +344,17 @@ public class GPUImageView extends FrameLayout {
             }
         });
 
-        if (isShowLoading) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    // Show loading
+        post(new Runnable() {
+            @Override
+            public void run() {
+                // Optionally, show loading view:
+                if (isShowLoading) {
                     addView(new LoadingView(getContext()));
-                    surfaceView.requestLayout();
                 }
-            });
-        }
+                // Request layout to release waiter:
+                surfaceView.requestLayout();
+            }
+        });
 
         waiter.acquire();
 
