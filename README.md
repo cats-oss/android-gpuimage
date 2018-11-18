@@ -198,7 +198,7 @@ public override fun onCreate(savedInstanceState: Bundle?) {
 - [x] Box Blur
 - [x] Bilateral Blur
 - [ ] Motion Blur
-- [ ] Zoom Blur
+- [x] Zoom Blur
 - [ ] iOS Blur
 - [ ] Median Filter
 - [x] Swirl Distortion
