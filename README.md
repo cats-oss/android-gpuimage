@@ -158,7 +158,7 @@ public override fun onCreate(savedInstanceState: Bundle?) {
 - [x] Color Inversion
 - [x] Solarize
 - [x] Vibrance
-- [x] Highlight and Shadow Tint
+- [ ] Highlight and Shadow Tint
 - [x] Luminance
 - [x] Luminance Threshold
 - [ ] Average Color
