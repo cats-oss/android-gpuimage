@@ -261,7 +261,7 @@ public class GPUImage {
      * @return array with width and height of bitmap image
      */
     public int[] getScaleSize() {
-        return new int[] = {scaleWidth, scaleHeight};
+        return new int[] {scaleWidth, scaleHeight};
     }
 
     /**
