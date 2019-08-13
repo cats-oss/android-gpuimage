@@ -8,6 +8,9 @@ android {
     defaultConfig {
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
+
+        versionCode = VERSION_CODE as int
+        versionName = VERSION_NAME
     }
 
     buildTypes {
@@ -31,6 +34,6 @@ repositories {
 
 dependencies {
     implementation project(':library')
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

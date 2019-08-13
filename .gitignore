@@ -18,8 +18,7 @@ out/
 
 # Gradle files
 .gradle/
-build/
-
+build/ 
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -63,3 +62,4 @@ fastlane/readme.md
 
 # NDK
 .externalNativeBuild
+.cxx
