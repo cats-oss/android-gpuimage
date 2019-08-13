@@ -256,8 +256,6 @@ public class GPUImage {
      * This gets the size of the image. This makes it easier to adjust
      * the size of your imagePreview to the the size of the scaled image.
      *
-     * @param width The bitmap width
-     * @param height The bitmap height
      * @return array with width and height of bitmap image
      */
     public int[] getScaleSize() {
