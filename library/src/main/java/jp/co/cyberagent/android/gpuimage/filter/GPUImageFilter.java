@@ -135,8 +135,10 @@ public class GPUImageFilter {
     }
 
     protected void runPendingOnDrawTasks() {
-        while (!runOnDraw.isEmpty()) {
-            runOnDraw.removeFirst().run();
+        synchronized (runOnDraw) {
+            while (!runOnDraw.isEmpty()) {
+                runOnDraw.removeFirst().run();
+            }
         }
     }
 
