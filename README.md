@@ -149,7 +149,7 @@ public override fun onCreate(savedInstanceState: Bundle?) {
 - [x] Transform Operation
 - [ ] Crop
 - [x] Gamma
-- [ ] Highlights and Shadows
+- [x] Highlights and Shadows
 - [x] Haze
 - [x] Sepia Tone
 - [ ] Amatorka
@@ -158,7 +158,7 @@ public override fun onCreate(savedInstanceState: Bundle?) {
 - [x] Color Inversion
 - [x] Solarize
 - [x] Vibrance
-- [x] Highlight and Shadow Tint
+- [ ] Highlight and Shadow Tint
 - [x] Luminance
 - [x] Luminance Threshold
 - [ ] Average Color
@@ -214,7 +214,7 @@ public override fun onCreate(savedInstanceState: Bundle?) {
 - [ ] Local Binary Pattern
 - [ ] Color Local Binary Pattern
 - [x] Dissolve Blend
-- [ ] Chroma Key Blend
+- [x] Chroma Key Blend
 - [x] Add Blend
 - [x] Divide Blend
 - [x] Multiply Blend
@@ -231,7 +231,7 @@ public override fun onCreate(savedInstanceState: Bundle?) {
 - [x] HardLight Blend
 - [x] SoftLight Blend
 - [x] Color Blend
-- [ ] Hue Blend
+- [x] Hue Blend
 - [x] Saturation Blend
 - [x] Luminosity Blend
 - [x] Normal Blend
