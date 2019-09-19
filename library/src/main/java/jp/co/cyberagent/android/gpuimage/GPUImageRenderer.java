@@ -76,12 +76,6 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
     private boolean flipVertical;
     private GPUImage.ScaleType scaleType = GPUImage.ScaleType.CENTER_CROP;
     private Matrix matrix = new Matrix();
-    private final float[] MATRIX_TEXTURE_COORDINATES = {
-            0.0f, 1.0f,
-            1.0f, 1.0f,
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-    };
 
     private float backgroundRed = 0;
     private float backgroundGreen = 0;
@@ -320,7 +314,9 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
                     CUBE[6] / ratioHeight, CUBE[7] / ratioWidth,
             };
         } else {
-            matrix.mapPoints(textureCords, MATRIX_TEXTURE_COORDINATES);
+            float[] transformedTextureCords = new float[8];
+            matrix.mapPoints(transformedTextureCords, textureCords);
+            textureCords = transformedTextureCords;
         }
 
         glCubeBuffer.clear();
