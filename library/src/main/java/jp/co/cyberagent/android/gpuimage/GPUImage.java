@@ -54,7 +54,7 @@ import jp.co.cyberagent.android.gpuimage.util.Rotation;
  */
 public class GPUImage {
 
-    public enum ScaleType {CENTER_INSIDE, CENTER_CROP}
+    public enum ScaleType {CENTER_INSIDE, CENTER_CROP, MATRIX}
 
     static final int SURFACE_TYPE_SURFACE_VIEW = 0;
     static final int SURFACE_TYPE_TEXTURE_VIEW = 1;
@@ -67,6 +67,7 @@ public class GPUImage {
     private GPUImageFilter filter;
     private Bitmap currentBitmap;
     private ScaleType scaleType = ScaleType.CENTER_CROP;
+    private Matrix matrix = new Matrix();
     private int scaleWidth, scaleHeight;
 
     /**
@@ -252,6 +253,11 @@ public class GPUImage {
         requestRender();
     }
 
+    public void setMatrix(Matrix matrix) {
+        this.matrix = matrix;
+        renderer.setMatrix(matrix);
+    }
+
     /**
      * This gets the size of the image. This makes it easier to adjust
      * the size of your imagePreview to the the size of the scaled image.
@@ -378,6 +384,7 @@ public class GPUImage {
         renderer.setRotation(Rotation.NORMAL,
                 this.renderer.isFlippedHorizontally(), this.renderer.isFlippedVertically());
         renderer.setScaleType(scaleType);
+        renderer.setMatrix(matrix);
         PixelBuffer buffer = new PixelBuffer(bitmap.getWidth(), bitmap.getHeight());
         buffer.setRenderer(renderer);
         renderer.setImageBitmap(bitmap, recycle);

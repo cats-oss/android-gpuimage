@@ -18,6 +18,7 @@ package jp.co.cyberagent.android.gpuimage;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
@@ -74,6 +75,13 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
     private boolean flipHorizontal;
     private boolean flipVertical;
     private GPUImage.ScaleType scaleType = GPUImage.ScaleType.CENTER_CROP;
+    private Matrix matrix = new Matrix();
+    private final float[] MATRIX_TEXTURE_COORDINATES = {
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+    };
 
     private float backgroundRed = 0;
     private float backgroundGreen = 0;
@@ -263,6 +271,11 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
         this.scaleType = scaleType;
     }
 
+    public void setMatrix(Matrix matrix) {
+        this.matrix = matrix;
+        adjustImageScaling();
+    }
+
     protected int getFrameWidth() {
         return outputWidth;
     }
@@ -299,13 +312,15 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
                     addDistance(textureCords[4], distHorizontal), addDistance(textureCords[5], distVertical),
                     addDistance(textureCords[6], distHorizontal), addDistance(textureCords[7], distVertical),
             };
-        } else {
+        } else if (scaleType == GPUImage.ScaleType.CENTER_INSIDE) {
             cube = new float[]{
                     CUBE[0] / ratioHeight, CUBE[1] / ratioWidth,
                     CUBE[2] / ratioHeight, CUBE[3] / ratioWidth,
                     CUBE[4] / ratioHeight, CUBE[5] / ratioWidth,
                     CUBE[6] / ratioHeight, CUBE[7] / ratioWidth,
             };
+        } else {
+            matrix.mapPoints(textureCords, MATRIX_TEXTURE_COORDINATES);
         }
 
         glCubeBuffer.clear();
@@ -313,6 +328,7 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
         glTextureBuffer.clear();
         glTextureBuffer.put(textureCords).position(0);
     }
+
 
     private float addDistance(float coordinate, float distance) {
         return coordinate == 0.0f ? distance : 1 - distance;
