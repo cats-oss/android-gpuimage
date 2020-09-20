@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 2.1.0 *(2020-09-21)*
+----------------------------
+
+* Update
+  * Kotlin to 1.3.72
+  * The targetSdkVersion from 28 to 30
+  * The compileSdkVersion from 28 to 30
+
 Version 2.0.4 *(2019-08-13)*
 ----------------------------
 
