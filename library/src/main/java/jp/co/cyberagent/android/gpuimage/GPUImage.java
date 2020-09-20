@@ -779,4 +779,8 @@ public class GPUImage {
     public interface ResponseListener<T> {
         void response(T item);
     }
+
+    public GPUImageRenderer getRenderer() {
+        return renderer;
+    }
 }
