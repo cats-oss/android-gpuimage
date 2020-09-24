@@ -85,4 +85,8 @@ public class GPUImageLookupFilter extends GPUImageTwoInputFilter {
         this.intensity = intensity;
         setFloat(intensityLocation, this.intensity);
     }
+
+    public float getIntensity() {
+        return intensity;
+    }
 }

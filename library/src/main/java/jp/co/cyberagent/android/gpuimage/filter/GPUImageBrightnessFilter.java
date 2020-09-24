@@ -63,4 +63,8 @@ public class GPUImageBrightnessFilter extends GPUImageFilter {
         this.brightness = brightness;
         setFloat(brightnessLocation, this.brightness);
     }
+
+    public float getBrightness() {
+        return brightness;
+    }
 }

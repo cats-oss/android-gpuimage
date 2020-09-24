@@ -81,4 +81,8 @@ public class GPUImageColorMatrixFilter extends GPUImageFilter {
         this.colorMatrix = colorMatrix;
         setUniformMatrix4f(colorMatrixLocation, colorMatrix);
     }
+
+    public float getIntensity() {
+        return intensity;
+    }
 }

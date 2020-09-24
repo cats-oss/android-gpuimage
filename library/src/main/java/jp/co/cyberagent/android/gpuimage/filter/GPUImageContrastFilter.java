@@ -65,4 +65,8 @@ public class GPUImageContrastFilter extends GPUImageFilter {
         this.contrast = contrast;
         setFloat(contrastLocation, this.contrast);
     }
+
+    public float getContrast() {
+        return contrast;
+    }
 }

@@ -48,5 +48,9 @@ public class GPUImageVibranceFilter extends GPUImageFilter {
             setFloat(vibranceLocation, vibrance);
         }
     }
+
+    public float getVibrance() {
+        return vibrance;
+    }
 }
 
