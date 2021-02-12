@@ -301,6 +301,11 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
                     addDistance(textureCords[6], distHorizontal), addDistance(textureCords[7], distVertical),
             };
         } else {
+            if (rotation == Rotation.ROTATION_270 || rotation == Rotation.ROTATION_90) {
+                ratioWidth  = ratioWidth + ratioHeight;
+                ratioHeight = ratioWidth - ratioHeight;
+                ratioWidth  = ratioWidth - ratioHeight;
+            }
             cube = new float[]{
                     CUBE[0] / ratioHeight, CUBE[1] / ratioWidth,
                     CUBE[2] / ratioHeight, CUBE[3] / ratioWidth,
