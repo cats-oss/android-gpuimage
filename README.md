@@ -1,6 +1,7 @@
 # GPUImage for Android
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Download](https://api.bintray.com/packages/cats-oss/maven/gpuimage/images/download.svg) ](https://bintray.com/cats-oss/maven/gpuimage/_latestVersion)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/jp.co.cyberagent.android/gpuimage/badge.svg)](https://search.maven.org/artifact/jp.co.cyberagent.android/gpuimage)
 [![Build Status](https://app.bitrise.io/app/d8d8090a71066e7c/status.svg?token=sJNbvX8CkecWcUA5Z898lQ&branch=master)](https://app.bitrise.io/app/d8d8090a71066e7c)
 
 Idea from: [iOS GPUImage framework](https://github.com/BradLarson/GPUImage2)
@@ -16,7 +17,7 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 
 ```groovy
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {

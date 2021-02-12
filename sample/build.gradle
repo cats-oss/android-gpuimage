@@ -27,9 +27,7 @@ android {
     }
 }
 repositories {
-    google()
-    jcenter()
-//    maven { url  "https://dl.bintray.com/cats-oss/maven" }
+//     maven { url = "https://oss.sonatype.org/content/repositories/snapshots"}
 }
 
 dependencies {
