@@ -16,7 +16,7 @@ Goal is to have something as similar to GPUImage as possible. Vertex and fragmen
 
 ```groovy
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
