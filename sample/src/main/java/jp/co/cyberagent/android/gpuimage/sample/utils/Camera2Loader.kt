@@ -125,8 +125,8 @@ class Camera2Loader(private val activity: Activity) : CameraLoader() {
             ?.getOutputSizes(ImageFormat.YUV_420_888)
 
         val orientation = getCameraOrientation()
-        val maxPreviewWidth = if (orientation == 90 or 270) viewHeight else viewWidth
-        val maxPreviewHeight = if (orientation == 90 or 270) viewWidth else viewHeight
+        val maxPreviewWidth = if (orientation == 90 || orientation == 270) viewHeight else viewWidth
+        val maxPreviewHeight = if (orientation == 90 || orientation == 270) viewWidth else viewHeight
 
         return outputSizes?.filter {
             it.width < maxPreviewWidth / 2 && it.height < maxPreviewHeight / 2
