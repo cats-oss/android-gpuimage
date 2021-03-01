@@ -108,4 +108,20 @@ public class GPUImageVignetteFilter extends GPUImageFilter {
         this.vignetteEnd = vignetteEnd;
         setFloat(vignetteEndLocation, this.vignetteEnd);
     }
+
+    public PointF getVignetteCenter() {
+        return vignetteCenter;
+    }
+
+    public float[] getVignetteColor() {
+        return vignetteColor;
+    }
+
+    public float getVignetteStart() {
+        return vignetteStart;
+    }
+
+    public float getVignetteEnd() {
+        return vignetteEnd;
+    }
 }

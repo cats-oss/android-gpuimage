@@ -77,4 +77,8 @@ public class GPUImagePixelationFilter extends GPUImageFilter {
         this.pixel = pixel;
         setFloat(pixelLocation, this.pixel);
     }
+
+    public float getPixel() {
+        return pixel;
+    }
 }

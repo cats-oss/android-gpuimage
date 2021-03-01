@@ -148,4 +148,8 @@ public class GPUImageKuwaharaFilter extends GPUImageFilter {
         this.radius = radius;
         setInteger(radiusLocation, radius);
     }
+
+    public int getRadius() {
+        return radius;
+    }
 }

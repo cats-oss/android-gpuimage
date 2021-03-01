@@ -68,4 +68,8 @@ public class GPUImageZoomBlurFilter extends GPUImageFilter {
         this.blurSize = blurSize;
         setFloat(blurSizeLocation, blurSize);
     }
+
+    public float getBlurSize() {
+        return blurSize;
+    }
 }
