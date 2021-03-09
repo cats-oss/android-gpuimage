@@ -18,13 +18,17 @@ package jp.co.cyberagent.android.gpuimage.sample.activity
 
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
+import android.widget.Button
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import jp.co.cyberagent.android.gpuimage.GPUImageMovieWriter
 import jp.co.cyberagent.android.gpuimage.GPUImageView
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilterGroup
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools
 import jp.co.cyberagent.android.gpuimage.sample.GPUImageFilterTools.FilterAdjuster
 import jp.co.cyberagent.android.gpuimage.sample.R
@@ -38,6 +42,7 @@ class CameraActivity : AppCompatActivity() {
 
     private val gpuImageView: GPUImageView by lazy { findViewById<GPUImageView>(R.id.surfaceView) }
     private val seekBar: SeekBar by lazy { findViewById<SeekBar>(R.id.seekBar) }
+    private val recordBtn: Button by lazy { findViewById<Button>(R.id.btn_record) }
     private val cameraLoader: CameraLoader by lazy {
         if (Build.VERSION.SDK_INT < 21) {
             Camera1Loader(this)
@@ -46,6 +51,13 @@ class CameraActivity : AppCompatActivity() {
         }
     }
     private var filterAdjuster: FilterAdjuster? = null
+    private val mMovieWriter: GPUImageMovieWriter by lazy {
+        GPUImageMovieWriter()
+    }
+
+    private val mFilterGroup = GPUImageFilterGroup()
+
+    private var mIsRecording = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +77,18 @@ class CameraActivity : AppCompatActivity() {
         findViewById<View>(R.id.button_capture).setOnClickListener {
             saveSnapshot()
         }
+        recordBtn.setOnClickListener {
+            mIsRecording = !mIsRecording
+            if (mIsRecording) {
+                val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path +
+                        "/new" + System.nanoTime().toString() + ".mp4"
+                mMovieWriter.startRecording(path, 540, 960)
+                recordBtn.text = "stop record"
+            } else {
+                mMovieWriter.stopRecording()
+                recordBtn.text = "start record"
+            }
+        }
         findViewById<View>(R.id.img_switch_camera).run {
             if (!cameraLoader.hasMultipleCamera()) {
                 visibility = View.GONE
@@ -79,6 +103,8 @@ class CameraActivity : AppCompatActivity() {
         }
         gpuImageView.setRotation(getRotation(cameraLoader.getCameraOrientation()))
         gpuImageView.setRenderMode(GPUImageView.RENDERMODE_CONTINUOUSLY)
+        mFilterGroup.addFilter(mMovieWriter)
+        gpuImageView.filter = mFilterGroup
     }
 
     override fun onResume() {
@@ -91,6 +117,11 @@ class CameraActivity : AppCompatActivity() {
     override fun onPause() {
         cameraLoader.onPause()
         super.onPause()
+        if (mIsRecording) {
+            mMovieWriter.stopRecording()
+            mIsRecording = false
+            recordBtn.text = "start record"
+        }
     }
 
     private fun saveSnapshot() {
@@ -112,8 +143,9 @@ class CameraActivity : AppCompatActivity() {
 
     private fun switchFilterTo(filter: GPUImageFilter) {
         if (gpuImageView.filter == null || gpuImageView.filter!!.javaClass != filter.javaClass) {
-            gpuImageView.filter = filter
-            filterAdjuster = FilterAdjuster(filter)
+            mFilterGroup.addFilter(0, filter)
+            gpuImageView.filter = mFilterGroup
+            filterAdjuster = FilterAdjuster(mFilterGroup)
             filterAdjuster?.adjust(seekBar.progress)
         }
     }
