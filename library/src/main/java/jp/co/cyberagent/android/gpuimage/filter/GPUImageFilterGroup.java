@@ -91,6 +91,14 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         updateMergedFilters();
     }
 
+    public void addFilter(int index, GPUImageFilter aFilter) {
+        if (aFilter == null) {
+            return;
+        }
+        filters.add(index, aFilter);
+        updateMergedFilters();
+    }
+
     /*
      * (non-Javadoc)
      * @see jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter#onInit()

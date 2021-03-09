@@ -70,7 +70,7 @@ public class GPUImageFilter {
         this.fragmentShader = fragmentShader;
     }
 
-    private final void init() {
+    private void init() {
         onInit();
         onInitialized();
     }
