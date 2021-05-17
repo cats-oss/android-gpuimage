@@ -3,6 +3,7 @@
 [![Download](https://api.bintray.com/packages/cats-oss/maven/gpuimage/images/download.svg) ](https://bintray.com/cats-oss/maven/gpuimage/_latestVersion)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/jp.co.cyberagent.android/gpuimage/badge.svg)](https://search.maven.org/artifact/jp.co.cyberagent.android/gpuimage)
 [![Build Status](https://app.bitrise.io/app/d8d8090a71066e7c/status.svg?token=sJNbvX8CkecWcUA5Z898lQ&branch=master)](https://app.bitrise.io/app/d8d8090a71066e7c)
+[![Maintainability](https://cloud.quality-gate.com/dashboard/api/badge?projectName=cats-oss_android-gpuimage&branchName=master)](https://cloud.quality-gate.com/dashboard/branches/265443#overview)
 
 Idea from: [iOS GPUImage framework](https://github.com/BradLarson/GPUImage2)
 
