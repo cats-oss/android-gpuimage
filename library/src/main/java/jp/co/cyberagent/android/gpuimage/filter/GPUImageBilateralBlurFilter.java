@@ -113,6 +113,7 @@ public class GPUImageBilateralBlurFilter extends GPUImageFilter {
     private float distanceNormalizationFactor;
     private int disFactorLocation;
     private int singleStepOffsetLocation;
+    private float texelSpacingMultiplier;
 
     public GPUImageBilateralBlurFilter() {
         this(8.0f);
@@ -121,6 +122,7 @@ public class GPUImageBilateralBlurFilter extends GPUImageFilter {
     public GPUImageBilateralBlurFilter(final float distanceNormalizationFactor) {
         super(BILATERAL_VERTEX_SHADER, BILATERAL_FRAGMENT_SHADER);
         this.distanceNormalizationFactor = distanceNormalizationFactor;
+        this.texelSpacingMultiplier = 4.0f;
     }
 
     @Override
@@ -142,7 +144,12 @@ public class GPUImageBilateralBlurFilter extends GPUImageFilter {
     }
 
     private void setTexelSize(final float w, final float h) {
-        setFloatVec2(singleStepOffsetLocation, new float[]{1.0f / w, 1.0f / h});
+        setFloatVec2(singleStepOffsetLocation, new float[]{texelSpacingMultiplier / w, texelSpacingMultiplier / h});
+    }
+
+    public void setTexelSpacingMultiplier(float texelSpacingMultiplier) {
+        this.texelSpacingMultiplier = texelSpacingMultiplier;
+        setTexelSize(getOutputWidth(), getOutputHeight());
     }
 
     @Override
