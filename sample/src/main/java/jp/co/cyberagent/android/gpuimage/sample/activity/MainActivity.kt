@@ -35,6 +35,11 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.button_gallery).setOnClickListener {
             startActivity(Intent(this, GalleryActivity::class.java))
         }
+
+        findViewById<View>(R.id.button_image).setOnClickListener {
+            startActivity(Intent(this,ImageActivity::class.java))
+        }
+
         findViewById<View>(R.id.button_camera).setOnClickListener {
             if (!hasCameraPermission() || !hasStoragePermission()) {
                 ActivityCompat.requestPermissions(
