@@ -38,6 +38,7 @@ class ImageActivity : AppCompatActivity() {
             GPUImageSharpenFilter())).apply {
             setBackgroundColor(0.27f, 0.27f, 0.27f)
         }
+        gpuImage.setBackgroundColor(1f,1f,1f)
         gpuImage.setImage(Uri.parse("file:///android_asset/image.png"))
     }
 }
