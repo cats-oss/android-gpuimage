@@ -40,5 +40,6 @@ class ImageActivity : AppCompatActivity() {
         }
         gpuImage.setBackgroundColor(1f,1f,1f)
         gpuImage.setImage(Uri.parse("file:///android_asset/image.png"))
+
     }
 }
