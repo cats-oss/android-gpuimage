@@ -35,6 +35,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.Display;
+import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.WindowManager;
 
 import java.io.File;
@@ -47,6 +49,7 @@ import java.util.List;
 
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.util.Rotation;
+import jp.co.cyberagent.android.gpuimage.view.GLRenderView;
 
 /**
  * The main accessor for GPUImage functionality. This class helps to do common
@@ -61,9 +64,7 @@ public class GPUImage {
 
     private final Context context;
     private final GPUImageRenderer renderer;
-    private int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
-    private GLSurfaceView glSurfaceView;
-    private GLTextureView glTextureView;
+    private GLRenderView glRenderView;
     private GPUImageFilter filter;
     private Bitmap currentBitmap;
     private ScaleType scaleType = ScaleType.CENTER_CROP;
@@ -99,35 +100,22 @@ public class GPUImage {
     }
 
     /**
-     * Sets the GLSurfaceView which will display the preview.
+     * Sets the GLRenderView which will display the preview.
      *
-     * @param view the GLSurfaceView
+     * @param view the GLRenderView instance
      */
-    public void setGLSurfaceView(final GLSurfaceView view) {
-        surfaceType = SURFACE_TYPE_SURFACE_VIEW;
-        glSurfaceView = view;
-        glSurfaceView.setEGLContextClientVersion(2);
-        glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        glSurfaceView.getHolder().setFormat(PixelFormat.RGBA_8888);
-        glSurfaceView.setRenderer(renderer);
-        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        glSurfaceView.requestRender();
-    }
-
-    /**
-     * Sets the GLTextureView which will display the preview.
-     *
-     * @param view the GLTextureView
-     */
-    public void setGLTextureView(final GLTextureView view) {
-        surfaceType = SURFACE_TYPE_TEXTURE_VIEW;
-        glTextureView = view;
-        glTextureView.setEGLContextClientVersion(2);
-        glTextureView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        glTextureView.setOpaque(false);
-        glTextureView.setRenderer(renderer);
-        glTextureView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        glTextureView.requestRender();
+    public void setGLRenderView(final GLRenderView view) {
+        glRenderView = view;
+        glRenderView.setEGLContextClientVersion(2);
+        glRenderView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        if (glRenderView instanceof TextureView) {
+            ((TextureView) glRenderView).setOpaque(false);
+        } else if (glRenderView instanceof SurfaceView) {
+            ((SurfaceView) glRenderView).getHolder().setFormat(PixelFormat.RGBA_8888);
+        }
+        glRenderView.setRender(renderer);
+        glRenderView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        glRenderView.requestRender();
     }
 
     /**
@@ -145,14 +133,8 @@ public class GPUImage {
      * Request the preview to be rendered again.
      */
     public void requestRender() {
-        if (surfaceType == SURFACE_TYPE_SURFACE_VIEW) {
-            if (glSurfaceView != null) {
-                glSurfaceView.requestRender();
-            }
-        } else if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
-            if (glTextureView != null) {
-                glTextureView.requestRender();
-            }
+        if (glRenderView != null) {
+            glRenderView.requestRender();
         }
     }
 
@@ -183,11 +165,7 @@ public class GPUImage {
     @Deprecated
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
                             final boolean flipVertical) {
-        if (surfaceType == SURFACE_TYPE_SURFACE_VIEW) {
-            glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        } else if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
-            glTextureView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        }
+        glRenderView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         renderer.setUpSurfaceTexture(camera);
         Rotation rotation = Rotation.NORMAL;
         switch (degrees) {
@@ -259,7 +237,7 @@ public class GPUImage {
      * @return array with width and height of bitmap image
      */
     public int[] getScaleSize() {
-        return new int[] {scaleWidth, scaleHeight};
+        return new int[]{scaleWidth, scaleHeight};
     }
 
     /**
@@ -352,7 +330,7 @@ public class GPUImage {
      * @return the bitmap with filter applied
      */
     public Bitmap getBitmapWithFilterApplied(final Bitmap bitmap, boolean recycle) {
-        if (glSurfaceView != null || glTextureView != null) {
+        if (glRenderView != null) {
             renderer.deleteImage();
             renderer.runOnDraw(new Runnable() {
 
