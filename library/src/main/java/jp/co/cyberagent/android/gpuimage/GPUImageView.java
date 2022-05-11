@@ -43,6 +43,7 @@ import java.util.concurrent.Semaphore;
 
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.util.Rotation;
+import jp.co.cyberagent.android.gpuimage.view.GLRenderView;
 
 import static jp.co.cyberagent.android.gpuimage.GPUImage.SURFACE_TYPE_SURFACE_VIEW;
 import static jp.co.cyberagent.android.gpuimage.GPUImage.SURFACE_TYPE_TEXTURE_VIEW;
@@ -50,7 +51,7 @@ import static jp.co.cyberagent.android.gpuimage.GPUImage.SURFACE_TYPE_TEXTURE_VI
 public class GPUImageView extends FrameLayout {
 
     private int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
-    private View surfaceView;
+    private GLRenderView surfaceView;
     private GPUImage gpuImage;
     private boolean isShowLoading = true;
     private GPUImageFilter filter;
@@ -83,12 +84,14 @@ public class GPUImageView extends FrameLayout {
         gpuImage = new GPUImage(context);
         if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
             surfaceView = new GPUImageGLTextureView(context, attrs);
-            gpuImage.setGLTextureView((GLTextureView) surfaceView);
         } else {
             surfaceView = new GPUImageGLSurfaceView(context, attrs);
-            gpuImage.setGLSurfaceView((GLSurfaceView) surfaceView);
         }
-        addView(surfaceView);
+        gpuImage.setGLRenderView(surfaceView);
+
+        if (surfaceView instanceof View) {
+            addView((View) surfaceView);
+        }
     }
 
     @Override
@@ -451,7 +454,7 @@ public class GPUImageView extends FrameLayout {
         }
     }
 
-    private class GPUImageGLSurfaceView extends GLSurfaceView {
+    private class GPUImageGLSurfaceView extends GLSurfaceView implements GLRenderView {
         public GPUImageGLSurfaceView(Context context) {
             super(context);
         }
@@ -469,9 +472,16 @@ public class GPUImageView extends FrameLayout {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
         }
+
+        @Override
+        public void setRender(GLRenderView.Renderer render) {
+            if (render instanceof GLSurfaceView.Renderer) {
+                setRenderer((GLSurfaceView.Renderer) render);
+            }
+        }
     }
 
-    private class GPUImageGLTextureView extends GLTextureView {
+    private class GPUImageGLTextureView extends GLTextureView implements GLRenderView {
         public GPUImageGLTextureView(Context context) {
             super(context);
         }
@@ -487,6 +497,14 @@ public class GPUImageView extends FrameLayout {
                         MeasureSpec.makeMeasureSpec(forceSize.height, MeasureSpec.EXACTLY));
             } else {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            }
+        }
+
+
+        @Override
+        public void setRender(GLRenderView.Renderer render) {
+            if (render instanceof GLTextureView.Renderer) {
+                setRenderer((GLTextureView.Renderer) render);
             }
         }
     }
